@@ -22,13 +22,14 @@
     "Chrome 57"
   ],
   "source": "src/library/ts/index.ts",
-  "main": "dist/hilbert-gallery-viewer.cjs",
-  "browser": "dist/hilbert-gallery-viewer.js",
-  "module": "dist/hilbert-gallery-viewer.mjs",
-  "types": "dist/hilbert-gallery-viewer.d.ts",
+  "main": "dist/library/hilbert-gallery-viewer.cjs",
+  "browser": "dist/library/hilbert-gallery-viewer.js",
+  "module": "dist/library/hilbert-gallery-viewer.mjs",
+  "types": "dist/library/hilbert-gallery-viewer.d.ts",
   "targets": {
     "demo": {
       "source": "/src/demo/html/index.html",
+      "distDir": "dist/demo",
       "isLibrary": false,
       "context": "browser",
       "engines": {}
@@ -66,6 +67,8 @@
     "serve": "parcel serve --dist-dir dist-dev --target demo",
     "watch": "parcel watch",
     "build": "rm -r dist; parcel build --public-url .",
+    "build:library": "rm -r dist/library; parcel build --public-url . --target main --target browser --target module --target types",
+    "build:demo": "rm -r dist/demo; parcel build --public-url . --target demo",
     "format": "prettier --write '.'",
     "doc": "typedoc",
     "lint": "cd src/ && eslint '{**/*,*}.{js,ts,jsx,tsx}'",
