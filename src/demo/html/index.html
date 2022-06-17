@@ -7,29 +7,14 @@
     <script src="../ts/index.ts" type="module"></script>
   </head>
   <body>
+    <hilbert-gallery-viewer></hilbert-gallery-viewer>
     <div class="resizable cover">
       <div class="wrapper">
         <img src="../img/raster_cat.jpg" />
       </div>
     </div>
     <div>
-      <form>
-        <input
-          type="button"
-          value="viewer.zoom(3)"
-          onclick="window.eval(this.value)"
-        />
-        <input
-          type="button"
-          value="viewer.pan({x: 0.3, y: 0.7})"
-          onclick="window.eval(this.value)"
-        />
-        <input
-          type="button"
-          value="viewer.zoomPan(2, {x: 0.75, y: 0.25})"
-          onclick="window.eval(this.value)"
-        />
-      </form>
+      <form id="actions"></form>
     </div>
   </body>
 </html>

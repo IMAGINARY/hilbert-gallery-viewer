@@ -1,5 +1,7 @@
 import ready from 'document-ready';
 
+import { HilbertGalleryViewer } from '../../library/ts/hilbert-gallery-viewer';
+
 function zoom(zoomFactor: number, duration = 10) {
   const wrapper = document.querySelector('div.wrapper') as HTMLDivElement;
   wrapper.style.setProperty('--zoom-factor', `${zoomFactor}`);
@@ -30,11 +32,42 @@ const viewer = {
 
 Object.assign(window, { viewer });
 
-async function main() {}
+function createActionButtons() {
+  const buttonActions = [
+    () => viewer.zoom(3),
+    () => viewer.pan({ x: 0.3, y: 0.7 }),
+    () => viewer.zoomPan(2, { x: 0.75, y: 0.25 }),
+  ];
+  const form = document.querySelector('form[id=actions]') as HTMLFormElement;
+  buttonActions.forEach((buttonAction) => {
+    const button = document.createElement('input');
+    button.type = 'button';
+    button.value = buttonAction
+      .toString()
+      .split(/(\r\n|\n|\r)/)
+      .map((s) => s.trim())
+      .join(' ');
+    button.onclick = buttonAction;
+    form.appendChild(button);
+  });
+}
 
-ready(() => {
-  main().then(
-    () => {},
-    () => {},
-  );
-});
+async function main() {
+  await new Promise<void>(ready);
+  createActionButtons();
+
+  console.log(HilbertGalleryViewer);
+
+  const hGViewer = document.querySelector(
+    'hilbert-gallery-viewer',
+  ) as HilbertGalleryViewer;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  console.log(hGViewer.execute);
+  hGViewer.execute('preload', 'a');
+}
+
+function uncaughtErrorHandler(error: Error) {
+  console.error('Uncaught error', error);
+}
+
+main().catch(uncaughtErrorHandler);
