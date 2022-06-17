@@ -1,8 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { Log } from './log';
 
-type Scope = {
+type State = {
   log: Log;
+  layers: HTMLDivElement;
 };
 
-export { Scope };
+export { State };

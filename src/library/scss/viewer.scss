@@ -1,7 +1,95 @@
-.viewer {
-  background-color: red;
+@mixin fill-parent {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+}
 
-  .test {
-    width: 10cm;
+:host {
+  @include fill-parent;
+  outline: 6px solid darkmagenta;
+}
+
+.main {
+  @include fill-parent;
+  background-color: red;
+  outline: 5px solid black;
+
+  .layers {
+    @include fill-parent;
+    outline: 4px solid red;
+  }
+}
+
+.transition {
+  @include fill-parent;
+  outline: 3px solid blue;
+}
+
+.animation {
+  @include fill-parent;
+  outline: 2px solid yellow;
+}
+
+.content {
+  @include fill-parent;
+  outline: 1px solid black;
+
+  &.fit-contain {
+    object-fit: contain;
+  }
+  &.fit-cover {
+    object-fit: cover;
+  }
+}
+
+/**
+ * TODO: move styling of transitions and animations into separate file each
+ */
+@keyframes transition-fade-out {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes transition-fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.transition {
+  &.fade {
+    &.fade-out {
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--fade-transition-background);
+        animation: transition-fade-out var(--fade-transition-duration)
+          ease-in-out;
+      }
+    }
+
+    &.fade-in {
+      & * {
+        animation: transition-fade-in var(--fade-transition-duration)
+          ease-in-out;
+      }
+    }
   }
 }

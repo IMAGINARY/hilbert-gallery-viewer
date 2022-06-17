@@ -1,11 +1,11 @@
 import { Action } from './action';
-import { Scope } from '../util/types';
+import { State } from '../util/types';
 
 export default abstract class Base<A, R> implements Action<A, R> {
-  protected readonly scope: Scope;
+  protected readonly state: State;
 
-  protected constructor(scope: Scope) {
-    this.scope = scope;
+  protected constructor(state: State) {
+    this.state = state;
   }
 
   abstract execute(arg: A): R;

@@ -63,7 +63,13 @@ async function main() {
   ) as HilbertGalleryViewer;
   // eslint-disable-next-line @typescript-eslint/unbound-method
   console.log(hGViewer.execute);
-  hGViewer.execute('preload', 'a');
+  hGViewer.execute('show', {
+    mimetype: 'image/jpeg',
+    url: 'https://placekitten.com/300/300',
+    transition: {
+      type: 'none',
+    },
+  });
 }
 
 function uncaughtErrorHandler(error: Error) {

@@ -1,6 +1,6 @@
 import { Base } from './base';
 import { Preloader } from '../util/preloader';
-import { Scope } from '../util/types';
+import { State } from '../util/types';
 
 type PreloadItem = {
   mimetype: string;
@@ -10,8 +10,8 @@ type PreloadItem = {
 export default class PreloadAction extends Base<PreloadItem[], void> {
   protected preloader: Preloader;
 
-  constructor(scope: Scope) {
-    super(scope);
+  constructor(state: State) {
+    super(state);
     this.preloader = new Preloader();
   }
 

@@ -5,22 +5,19 @@ import cssText from 'bundle-text:../scss/viewer.scss';
 import { Action } from './action/action';
 import { PreloadAction } from './action/preload';
 import { Log, LogLevel } from './util/log';
-import { Scope } from './util/types';
+import { State } from './util/types';
 import { ReloadAction } from './action/reload';
+import { ShowAction } from './action/show';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
 export default class HilbertGalleryViewer extends HTMLElement {
   protected actionRegistry: ActionRegistry;
 
-  protected scope: Scope = {
-    log: new Log(LogLevel.WARN),
-  };
+  protected state: State;
 
   constructor() {
     super();
-
-    this.actionRegistry = this.createActionRegistry();
 
     const shadow = this.attachShadow({ mode: 'open' });
 
@@ -28,15 +25,34 @@ export default class HilbertGalleryViewer extends HTMLElement {
     style.textContent = cssText as string;
     shadow.appendChild(style);
 
-    const info = document.createElement('span');
-    info.textContent = this.getAttribute('label');
-    shadow.appendChild(info);
+    const main = document.createElement('div');
+    main.classList.add('main');
+    shadow.appendChild(main);
+
+    const layers = document.createElement('div');
+    layers.classList.add('layers');
+    main.appendChild(layers);
+    /*
+    const img = document.createElement('img');
+    img.classList.add('replaceable-content');
+    img.src = 'https://placekitten.com/600/400';
+
+    const layer = this.createLayer(img);
+    layers.appendChild(layer);
+*/
+    this.state = {
+      log: new Log(LogLevel.WARN),
+      layers,
+    };
+
+    this.actionRegistry = this.createActionRegistry();
   }
 
   protected createActionRegistry(): ActionRegistry {
     const registry = new Map<string, Action<unknown, unknown>>();
-    registry.set('reload', new ReloadAction(this.scope));
-    registry.set('preload', new PreloadAction(this.scope));
+    registry.set('reload', new ReloadAction(this.state));
+    registry.set('preload', new PreloadAction(this.state));
+    registry.set('show', new ShowAction(this.state));
     return registry;
   }
 
