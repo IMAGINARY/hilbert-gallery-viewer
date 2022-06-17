@@ -6,6 +6,7 @@ import { Action } from './action/action';
 import { PreloadAction } from './action/preload';
 import { Log, LogLevel } from './util/log';
 import { Scope } from './util/types';
+import { ReloadAction } from './action/reload';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -34,6 +35,7 @@ export default class HilbertGalleryViewer extends HTMLElement {
 
   protected createActionRegistry(): ActionRegistry {
     const registry = new Map<string, Action<unknown, unknown>>();
+    registry.set('reload', new ReloadAction(this.scope));
     registry.set('preload', new PreloadAction(this.scope));
     return registry;
   }
