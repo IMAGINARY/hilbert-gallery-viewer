@@ -1,8 +1,7 @@
 @mixin fill-parent {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  position: relative;
   width: 100%;
+  height: 100%;
 }
 
 :host {
@@ -23,6 +22,7 @@
 
 .transition {
   @include fill-parent;
+  position: absolute;
   outline: 3px solid blue;
 }
 
@@ -33,6 +33,8 @@
 
 .content {
   @include fill-parent;
+  width: 100%;
+  height: 100%;
   outline: 1px solid black;
 
   &.fit-contain {

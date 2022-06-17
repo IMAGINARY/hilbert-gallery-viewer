@@ -44,5 +44,7 @@ export default class FadeTransition extends BaseTransition<
     );
     transitionWrapper.classList.add('fade');
     transitionWrapper.classList.add('fade-in');
+
+    setTimeout(() => this.done(), duration * 1000);
   }
 }

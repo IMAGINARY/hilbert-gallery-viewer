@@ -27,7 +27,7 @@ export default class Preloader {
 
   preloadVideo(url: URL | string) {
     const { href } = new URL(url);
-    const video = new HTMLVideoElement();
+    const video = document.createElement('video');
     video.preload = 'auto';
     video.src = href;
     this.refs.set(href, video);

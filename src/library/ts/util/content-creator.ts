@@ -42,6 +42,7 @@ export default class ContentCreator {
     const video = document.createElement('video');
     video.preload = 'auto';
     video.src = url;
+    video.autoplay = true;
     return video;
   }
 }

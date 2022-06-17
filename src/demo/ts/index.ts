@@ -52,6 +52,18 @@ function createActionButtons() {
   });
 }
 
+function randomKittenUrl() {
+  return `https://placekitten.com/${300 + Math.floor(Math.random() * 100)}/${
+    300 + Math.floor(Math.random() * 100)
+  }`;
+}
+
+async function sleep(seconds: number) {
+  await new Promise((resolve) => {
+    setTimeout(resolve, seconds * 1000);
+  });
+}
+
 async function main() {
   await new Promise<void>(ready);
   createActionButtons();
@@ -65,11 +77,34 @@ async function main() {
   console.log(hGViewer.execute);
   hGViewer.execute('show', {
     mimetype: 'image/jpeg',
-    url: 'https://placekitten.com/300/300',
+    url: randomKittenUrl(),
     transition: {
       type: 'none',
     },
   });
+
+  const images = Array.from({ length: 2 }, () => ({
+    mimetype: 'image/jpeg',
+    url: randomKittenUrl(),
+  }));
+  const videos = [
+    {
+      mimetype: 'video/mp4',
+      url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    },
+  ];
+  const content = [...images, ...videos];
+
+  hGViewer.execute('preload', content);
+
+  while (true) {
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(10);
+    hGViewer.execute(
+      'show',
+      content[Math.floor(Math.random() * content.length)],
+    );
+  }
 }
 
 function uncaughtErrorHandler(error: Error) {

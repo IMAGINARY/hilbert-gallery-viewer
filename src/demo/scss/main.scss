@@ -15,9 +15,6 @@ body {
   height: 500px;
   resize: both;
   overflow: hidden;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
 }
 
 .resizable > div {
