@@ -25,6 +25,29 @@ export default abstract class BaseTransition<TransitionOptions>
     return transitionWrapper;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  protected async awaitLoad<T extends HTMLElement>(content: T): Promise<T> {
+    return new Promise((resolve) => {
+      if (content.tagName === 'IMG') {
+        const image = content as unknown as HTMLImageElement;
+        if (image.complete) {
+          resolve(content);
+        } else {
+          const handler = () => {
+            image.removeEventListener('load', handler);
+            image.removeEventListener('error', handler);
+            requestAnimationFrame(() => resolve(content));
+          };
+          image.addEventListener('load', handler);
+          image.addEventListener('error', handler);
+        }
+      } else {
+        // consider the transition done after a grace period of 1s
+        setTimeout(() => resolve(content), 1000);
+      }
+    });
+  }
+
   protected removeAllButLastLayer() {
     const { layers } = this.state;
     while (layers.children.length > 1) {
