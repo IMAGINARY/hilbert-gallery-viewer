@@ -19,7 +19,7 @@
   "browserslist": [
     "> 0.2%",
     "not dead",
-    "Chrome 57"
+    "Chrome 56"
   ],
   "source": "src/library/ts/index.ts",
   "main": "dist/library/hilbert-gallery-viewer.cjs",
