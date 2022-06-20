@@ -32,7 +32,13 @@
       "distDir": "dist/demo",
       "isLibrary": false,
       "context": "browser",
-      "engines": {}
+      "engines": {
+        "browsers": [
+          "> 0.2%",
+          "not dead",
+          "Chrome 56"
+        ]
+      }
     },
     "main": {},
     "browser": {},
