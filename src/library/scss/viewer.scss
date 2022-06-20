@@ -76,20 +76,17 @@
   &.fade {
     &.fade-out {
       &:before {
+        @include fill-parent;
         content: '';
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: var(--fade-transition-background);
-        animation: transition-fade-out var(--fade-transition-duration)
-          ease-in-out;
+        background: var(--transition-fade-background);
       }
+
+      animation: transition-fade-out var(--transition-fade-duration) ease-in-out;
     }
 
     &.fade-in {
       & * {
-        animation: transition-fade-in var(--fade-transition-duration)
+        animation: transition-fade-in var(--transition-fade-duration)
           ease-in-out;
       }
     }

@@ -64,6 +64,17 @@ async function sleep(seconds: number) {
   });
 }
 
+function shuffle<T>(a: T[]): T[] {
+  const result = [...a];
+  for (let i = result.length; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * i);
+    const tmp = result[i - 1];
+    result[i - 1] = result[j];
+    result[j] = tmp;
+  }
+  return result;
+}
+
 async function main() {
   await new Promise<void>(ready);
   createActionButtons();
@@ -73,37 +84,50 @@ async function main() {
   const hGViewer = document.querySelector(
     'hilbert-gallery-viewer',
   ) as HilbertGalleryViewer;
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  console.log(hGViewer.execute);
-  hGViewer.execute('show', {
-    mimetype: 'image/jpeg',
-    url: randomKittenUrl(),
-    transition: {
-      type: 'none',
-    },
-  });
 
   const images = Array.from({ length: 2 }, () => ({
     mimetype: 'image/jpeg',
     url: randomKittenUrl(),
   }));
+  const otherPngImages = [
+    new URL('../img/red.png', import.meta.url).href,
+    new URL('../img/green.png', import.meta.url).href,
+    new URL('../img/yellow.png', import.meta.url).href,
+  ].map((url) => ({ mimetype: 'image/png', url }));
   const videos = [
     {
       mimetype: 'video/mp4',
       url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     },
   ];
-  const content = [...images, ...videos];
+  const content = [
+    // ...images,
+    ...otherPngImages,
+    // ...videos,
+  ];
 
   hGViewer.execute('preload', content);
 
-  while (true) {
+  const shuffledContent = shuffle(content);
+  let delay = 0;
+  for (
+    let i = 0;
+    i < shuffledContent.length;
+    i = (i + 1) % shuffledContent.length
+  ) {
+    hGViewer.execute('show', {
+      ...content[i],
+      transition: {
+        type: 'fade',
+        options: {
+          duration: 10,
+          background: 'black',
+        },
+      },
+    });
     // eslint-disable-next-line no-await-in-loop
-    await sleep(10);
-    hGViewer.execute(
-      'show',
-      content[Math.floor(Math.random() * content.length)],
-    );
+    await sleep(delay);
+    delay = 13;
   }
 }
 

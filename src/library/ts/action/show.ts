@@ -1,7 +1,8 @@
 import { Base } from './base';
 import { State } from '../util/types';
 import { ContentCreator } from '../util/content-creator';
-import { NoneTransition } from '../transition/none';
+import { NoneTransition, NoneTransitionOptions } from '../transition/none';
+import { FadeTransition, FadeTransitionOptions } from '../transition/fade';
 
 type NoneTransitionConfig = {
   type: 'none';
@@ -60,8 +61,25 @@ export default class ShowAction extends Base<ShowArg, void> {
     const { transition: transitionConfig } = arg;
     const { animation: animationConfig } = arg;
     const content = ContentCreator.create(mimetype, url, fit);
-    const transition = new NoneTransition(this.state);
-    transition.to(content);
+
+    switch (transitionConfig.type) {
+      case 'none': {
+        const transition = new NoneTransition(this.state);
+        const trsnsitionOptions =
+          transitionConfig.options as NoneTransitionOptions;
+        transition.to(content, trsnsitionOptions);
+        break;
+      }
+      case 'fade': {
+        const transition = new FadeTransition(this.state);
+        const transitionOptions =
+          transitionConfig.options as unknown as FadeTransitionOptions;
+        transition.to(content, transitionOptions);
+        break;
+      }
+      default:
+        throw new TypeError('unknown transition type');
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this

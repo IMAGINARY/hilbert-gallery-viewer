@@ -18,4 +18,4 @@ export default class NoneTransition extends BaseTransition<NoneTransitionOptions
   }
 }
 
-export { NoneTransition };
+export { NoneTransition, NoneTransitionOptions };
