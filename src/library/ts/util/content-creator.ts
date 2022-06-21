@@ -1,4 +1,4 @@
-export default class ContentCreator {
+class ContentCreator {
   static create(
     mimetype: string,
     url: string,
@@ -42,8 +42,37 @@ export default class ContentCreator {
     const video = document.createElement('video');
     video.preload = 'auto';
     video.src = url;
-    video.autoplay = true;
+    video.autoplay = false;
     return video;
+  }
+
+  public static async awaitLoad<T extends HTMLElement>(content: T): Promise<T> {
+    return new Promise((resolve) => {
+      if (content.tagName === 'IMG') {
+        const image = content as unknown as HTMLImageElement;
+        if (image.complete) {
+          resolve(content);
+        } else {
+          const handler = () => {
+            image.removeEventListener('load', handler);
+            image.removeEventListener('error', handler);
+            requestAnimationFrame(() => resolve(content));
+          };
+          image.addEventListener('load', handler);
+          image.addEventListener('error', handler);
+        }
+      } else {
+        // consider the transition-ol done after a grace period of 1s
+        setTimeout(() => resolve(content), 1000);
+      }
+    });
+  }
+
+  public static play<T extends HTMLElement>(content: T) {
+    if (content.tagName === 'VIDEO') {
+      const video = content as unknown as HTMLVideoElement;
+      video.play().finally(() => {});
+    }
   }
 }
 

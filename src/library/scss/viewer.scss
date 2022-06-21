@@ -14,7 +14,7 @@
   background-color: red;
   outline: 5px solid black;
 
-  .layers {
+  .container {
     @include fill-parent;
     outline: 4px solid red;
   }
@@ -42,53 +42,5 @@
   }
   &.fit-cover {
     object-fit: cover;
-  }
-}
-
-/**
- * TODO: move styling of transitions and animations into separate file each
- */
-@keyframes transition-fade-out {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes transition-fade-in {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.transition {
-  &.fade {
-    &.fade-out {
-      &:before {
-        @include fill-parent;
-        content: '';
-        background: var(--transition-fade-background);
-      }
-
-      animation: transition-fade-out var(--transition-fade-duration) ease-in-out;
-    }
-
-    &.fade-in {
-      & * {
-        animation: transition-fade-in var(--transition-fade-duration)
-          ease-in-out;
-      }
-    }
   }
 }

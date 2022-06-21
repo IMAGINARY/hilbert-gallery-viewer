@@ -15,9 +15,10 @@ export default class PreloadAction extends Base<PreloadItem[], void> {
     this.preloader = new Preloader();
   }
 
-  execute(items: PreloadItem[]): void {
+  async execute(items: PreloadItem[]): Promise<void> {
     this.preloader.unref();
     items.forEach(({ mimetype, url }) => this.preloader.preload(mimetype, url));
+    return Promise.resolve();
   }
 
   // eslint-disable-next-line class-methods-use-this

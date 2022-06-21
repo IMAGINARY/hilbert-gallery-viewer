@@ -5,14 +5,14 @@ import { HilbertGalleryViewer } from '../../library/ts/hilbert-gallery-viewer';
 function zoom(zoomFactor: number, duration = 10) {
   const wrapper = document.querySelector('div.wrapper') as HTMLDivElement;
   wrapper.style.setProperty('--zoom-factor', `${zoomFactor}`);
-  wrapper.style.setProperty('--transition-duration', `${duration}s`);
+  wrapper.style.setProperty('--transition-ol-duration', `${duration}s`);
 }
 
 function pan(panTarget: { x: number; y: number }, duration = 10) {
   const wrapper = document.querySelector('div.wrapper') as HTMLDivElement;
   wrapper.style.setProperty('--pan-target-x', `${panTarget.x}`);
   wrapper.style.setProperty('--pan-target-y', `${panTarget.y}`);
-  wrapper.style.setProperty('--transition-duration', `${duration}s`);
+  wrapper.style.setProperty('--transition-ol-duration', `${duration}s`);
 }
 
 function zoomPan(
@@ -109,7 +109,15 @@ async function main() {
   hGViewer.execute('preload', content);
 
   const shuffledContent = shuffle(content);
-  let delay = 0;
+  const transitionDuration = 3;
+  hGViewer.execute('show', {
+    ...content[content.length - 1],
+    transition: {
+      type: 'none',
+      options: {},
+    },
+  });
+  await sleep(1);
   for (
     let i = 0;
     i < shuffledContent.length;
@@ -118,16 +126,15 @@ async function main() {
     hGViewer.execute('show', {
       ...content[i],
       transition: {
-        type: 'fade',
+        type: 'cross-fade',
         options: {
-          duration: 10,
-          background: 'black',
+          duration: transitionDuration,
+          background: 'url("https://placekitten.com/100/100") cover',
         },
       },
     });
     // eslint-disable-next-line no-await-in-loop
-    await sleep(delay);
-    delay = 13;
+    await sleep(transitionDuration + 3);
   }
 }
 

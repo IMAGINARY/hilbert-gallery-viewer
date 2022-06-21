@@ -1,21 +1,46 @@
 import { BaseTransition } from './base';
-import { State } from '../util/types';
+import { TransitionStatic } from './transition';
+import { staticImplements } from '../util/types';
 
-type NoneTransitionOptions = Record<string, never>;
-
-export default class NoneTransition extends BaseTransition<NoneTransitionOptions> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(state: State) {
-    super(state);
+// @staticImplements<TransitionStatic<NoneTransition, void>>()
+export default class NoneTransition extends BaseTransition {
+  constructor(
+    container: HTMLDivElement = document.createElement('div'),
+    from: HTMLElement = document.createElement('div'),
+    to: HTMLElement = document.createElement('div'),
+  ) {
+    super(container, from, to);
+    this._isCancelled = false;
+    this._isDone = true;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  to(content: HTMLElement, options: NoneTransitionOptions = {}): void {
-    this.addLayer(content);
-    this.awaitLoad(content)
-      .then(() => this.done())
-      .catch(() => {});
+  // eslint-disable-next-line class-methods-use-this
+  cancel(): void {}
+
+  // eslint-disable-next-line class-methods-use-this
+  targetVisible(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  done(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  static unpack(): void {}
+
+  static prepare(): (
+    container: HTMLDivElement,
+    from: HTMLElement,
+    to: HTMLElement,
+  ) => NoneTransition {
+    return (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) =>
+      new NoneTransition(container, from, to);
+  }
+
+  static getStyleSheetAsString(): string {
+    return '';
   }
 }
 
-export { NoneTransition, NoneTransitionOptions };
+export { NoneTransition };

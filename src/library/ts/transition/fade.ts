@@ -1,66 +1,125 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import cssText from 'bundle-text:../../scss/transition/fade.scss';
+
 import { BaseTransition } from './base';
-import { State } from '../util/types';
+import { TransitionStatic } from './transition';
+import { staticImplements } from '../util/types';
 
 type FadeTransitionOptions = {
   duration: number;
   color: string;
 };
 
-const defaultOptions = {
+const defaultOptions: FadeTransitionOptions = {
   duration: 500,
-  background: '#000',
+  color: '#000',
 };
 
-export default class FadeTransition extends BaseTransition<
-  Partial<FadeTransitionOptions>
-> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(state: State) {
-    super(state);
+// @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
+export default class FadeTransition extends BaseTransition {
+  protected fromEndCancelHandler: (event: AnimationEvent) => void;
+
+  protected toEndHandler: (event: AnimationEvent) => void;
+
+  protected toCancelHandler: (event: AnimationEvent) => void;
+
+  constructor(
+    container: HTMLDivElement,
+    from: HTMLElement,
+    to: HTMLElement,
+    options: FadeTransitionOptions,
+  ) {
+    super(container, from, to);
+
+    const { duration, color } = { ...defaultOptions, ...(options ?? {}) };
+
+    const { style } = container;
+    style.setProperty('--transition-fade-duration', `${duration}s`);
+    style.setProperty('--transition-fade-color', `${color}`);
+
+    from.classList.add('fade');
+    from.classList.add('fade-out');
+
+    this.fromEndCancelHandler = ({ animationName }: AnimationEvent) => {
+      if (animationName === 'transition-fade-out') {
+        this.targetVisiblePEC.resolve();
+      }
+    };
+    from.addEventListener('animationend', this.fromEndCancelHandler);
+    from.addEventListener('animationcancel', this.fromEndCancelHandler);
+
+    to.classList.add('fade');
+    to.classList.add('fade-in');
+
+    this.toEndHandler = ({ animationName }: AnimationEvent) => {
+      if (animationName === 'transition-fade-in') {
+        this.end();
+      }
+    };
+    this.toCancelHandler = ({ animationName }: AnimationEvent) => {
+      if (animationName === 'transition-fade-in') {
+        this.cancel();
+      }
+    };
+    to.addEventListener('animationend', this.toEndHandler);
+    to.addEventListener('animationcancel', this.toCancelHandler);
   }
 
-  to(content: HTMLElement, options?: Partial<FadeTransitionOptions>): void {
-    const { duration, background } = { ...defaultOptions, ...(options ?? {}) };
-
-    const { children } = this.state.layers;
-    for (let i = 0; i < children.length; i += 1) {
-      const prevTransitionWrapper = children[i] as HTMLDivElement;
-      prevTransitionWrapper.style.setProperty(
-        '--transition-fade-duration',
-        `${duration}s`,
-      );
-      prevTransitionWrapper.style.setProperty(
-        '--transition-fade-background',
-        `${background}`,
-      );
-      prevTransitionWrapper.classList.add('fade');
-      prevTransitionWrapper.classList.add('fade-out');
+  protected end(): void {
+    if (!this.isCancelled() && !this.isDone()) {
+      this.cleanup();
+      this._isDone = true;
+      this.targetVisiblePEC.resolve();
+      this.donePEC.resolve();
     }
-
-    const transitionWrapper = this.addLayer(content);
-    transitionWrapper.style.setProperty(
-      '--transition-fade-duration',
-      `${duration}s`,
-    );
-    transitionWrapper.classList.add('fade');
-    transitionWrapper.classList.add('fade-in');
-
-    setTimeout(() => this.done(), duration * 1000);
   }
 
-  done() {
-    const { children } = this.state.layers;
-    for (let i = 0; i < children.length; i += 1) {
-      const prevTransitionWrapper = children[i] as HTMLDivElement;
-      prevTransitionWrapper.classList.remove('fade-out');
-      prevTransitionWrapper.classList.remove('fade-in');
-      prevTransitionWrapper.classList.remove('fade');
-      prevTransitionWrapper.style.removeProperty('--transition-fade-duration');
-      prevTransitionWrapper.style.removeProperty(
-        '--transition-fade-background',
-      );
+  cancel(): void {
+    if (!this.isCancelled() && !this.isDone()) {
+      this.cleanup();
+      this._isCancelled = true;
+      this.targetVisiblePEC.resolve();
+      this.donePEC.reject();
     }
-    super.done();
+  }
+
+  protected cleanup() {
+    this.from.removeEventListener('animationend', this.fromEndCancelHandler);
+    this.from.removeEventListener('animationcancel', this.fromEndCancelHandler);
+
+    this.to.removeEventListener('animationend', this.toEndHandler);
+    this.to.removeEventListener('animationcancel', this.toCancelHandler);
+
+    const { style } = this.container;
+    style.removeProperty('--transition-fade-duration');
+    style.removeProperty('--transition-fade-color');
+
+    this.from.classList.remove('fade');
+    this.from.classList.remove('fade-out');
+
+    this.to.classList.remove('fade');
+    this.to.classList.remove('fade-in');
+  }
+
+  static unpack(options: unknown): FadeTransitionOptions {
+    return options as FadeTransitionOptions;
+  }
+
+  static prepare(
+    options: unknown,
+  ): (
+    container: HTMLDivElement,
+    from: HTMLElement,
+    to: HTMLElement,
+  ) => FadeTransition {
+    const unpackedOptions = FadeTransition.unpack(options);
+    return (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) =>
+      new FadeTransition(container, from, to, unpackedOptions);
+  }
+
+  static getStyleSheetAsString(): string {
+    return cssText as string;
   }
 }
 

@@ -1,64 +1,54 @@
 import { Transition } from './transition';
-import { State } from '../util/types';
+import { PromiseExecutorCallbacks } from '../util/promise';
 
-export default abstract class BaseTransition<TransitionOptions>
-  implements Transition<TransitionOptions>
-{
-  protected readonly state: State;
+export default abstract class BaseTransition implements Transition {
+  protected container: HTMLDivElement;
 
-  protected constructor(state: State) {
-    this.state = state;
+  protected from: HTMLElement;
+
+  protected to: HTMLElement;
+
+  protected _isCancelled = false;
+
+  protected _isDone = false;
+
+  protected targetVisiblePEC: PromiseExecutorCallbacks<void>;
+
+  protected donePEC: PromiseExecutorCallbacks<void>;
+
+  protected constructor(
+    container: HTMLDivElement,
+    from: HTMLElement,
+    to: HTMLElement,
+  ) {
+    this.container = container;
+    this.from = from;
+    this.to = to;
+
+    this.targetVisiblePEC = new PromiseExecutorCallbacks<void>();
+    this.donePEC = new PromiseExecutorCallbacks<void>();
+
+    // prevent uncaught exceptions in promise
+    this.targetVisiblePEC.promise().catch(() => {});
+    this.donePEC.promise().catch(() => {});
   }
 
-  protected addLayer(content: HTMLElement): HTMLDivElement {
-    const transitionWrapper = document.createElement('div');
-    transitionWrapper.classList.add('transition');
+  abstract cancel(): void;
 
-    const animationWrapper = document.createElement('div');
-    animationWrapper.classList.add('animation');
-    transitionWrapper.appendChild(animationWrapper);
-
-    animationWrapper.appendChild(content);
-
-    this.state.layers.appendChild(transitionWrapper);
-
-    return transitionWrapper;
+  isCancelled(): boolean {
+    return this._isCancelled;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  protected async awaitLoad<T extends HTMLElement>(content: T): Promise<T> {
-    return new Promise((resolve) => {
-      if (content.tagName === 'IMG') {
-        const image = content as unknown as HTMLImageElement;
-        if (image.complete) {
-          resolve(content);
-        } else {
-          const handler = () => {
-            image.removeEventListener('load', handler);
-            image.removeEventListener('error', handler);
-            requestAnimationFrame(() => resolve(content));
-          };
-          image.addEventListener('load', handler);
-          image.addEventListener('error', handler);
-        }
-      } else {
-        // consider the transition done after a grace period of 1s
-        setTimeout(() => resolve(content), 1000);
-      }
-    });
+  targetVisible(): Promise<void> {
+    return this.targetVisiblePEC.promise();
   }
 
-  protected removeAllButLastLayer() {
-    const { layers } = this.state;
-    while (layers.children.length > 1) {
-      layers.children[0].remove();
-    }
+  done(): Promise<void> {
+    return this.donePEC.promise();
   }
 
-  abstract to(content: HTMLElement, options?: TransitionOptions): void;
-
-  done() {
-    this.removeAllButLastLayer();
+  isDone(): boolean {
+    return this._isDone;
   }
 }
 

@@ -8,8 +8,9 @@ export default class ReloadAction extends Base<void, void> {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  execute(): void {
+  async execute(): Promise<void> {
     window.location.reload();
+    return Promise.resolve();
   }
 
   // eslint-disable-next-line class-methods-use-this

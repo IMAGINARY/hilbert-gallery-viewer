@@ -8,6 +8,8 @@ import { Log, LogLevel } from './util/log';
 import { State } from './util/types';
 import { ReloadAction } from './action/reload';
 import { ShowAction } from './action/show';
+import assert from 'assert';
+import { appendStyle } from './util/style';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -19,30 +21,22 @@ export default class HilbertGalleryViewer extends HTMLElement {
   constructor() {
     super();
 
-    const shadow = this.attachShadow({ mode: 'open' });
+    const shadowRoot = this.attachShadow({ mode: 'open' });
 
-    const style = document.createElement('style');
-    style.textContent = cssText as string;
-    shadow.appendChild(style);
+    appendStyle(shadowRoot, cssText as string);
 
     const main = document.createElement('div');
     main.classList.add('main');
-    shadow.appendChild(main);
+    shadowRoot.appendChild(main);
 
-    const layers = document.createElement('div');
-    layers.classList.add('layers');
-    main.appendChild(layers);
-    /*
-    const img = document.createElement('img');
-    img.classList.add('replaceable-content');
-    img.src = 'https://placekitten.com/600/400';
+    const container = document.createElement('div');
+    container.classList.add('container');
+    main.appendChild(container);
 
-    const layer = this.createLayer(img);
-    layers.appendChild(layer);
-*/
     this.state = {
       log: new Log(LogLevel.WARN),
-      layers,
+      shadowRoot,
+      container,
     };
 
     this.actionRegistry = this.createActionRegistry();

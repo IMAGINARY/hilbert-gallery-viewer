@@ -1,0 +1,40 @@
+@keyframes transition-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes transition-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.container {
+  --transition-fade-color: black;
+  --transition-fade-duration: 1s;
+  --transition-fade-duration-half: calc(var(--transition-fade-duration) / 2);
+  background-color: var(--transition-fade-color);
+  & > .transition {
+    &.fade {
+      animation-duration: var(--transition-fade-duration-half);
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+
+      &.fade-out {
+        animation-name: transition-fade-out;
+      }
+
+      &.fade-in {
+        animation-name: transition-fade-in;
+        animation-delay: var(--transition-fade-duration-half);
+      }
+    }
+  }
+}

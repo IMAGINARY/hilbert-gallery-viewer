@@ -1,13 +1,9 @@
 import { Base } from './base';
 import { State } from '../util/types';
 import { ContentCreator } from '../util/content-creator';
-import { NoneTransition, NoneTransitionOptions } from '../transition/none';
-import { FadeTransition, FadeTransitionOptions } from '../transition/fade';
-
-type NoneTransitionConfig = {
-  type: 'none';
-  options: Record<string, never>; // empty object: {}
-};
+import { TransitionFactory } from '../transition/factory';
+import { Transition } from '../transition/transition';
+import { NoneTransition } from '../transition/none';
 
 type FadeTransitionConfig = {
   type: 'fade';
@@ -24,10 +20,6 @@ type CrossFadeTransitionConfig = {
   };
 };
 
-type NoneAnimationConfig = {
-  type: 'none';
-};
-
 type PanAndZoomState = { x: number; y: number; scale: number };
 
 type PanAndZoomAnimationConfig = {
@@ -39,47 +31,103 @@ type PanAndZoomAnimationConfig = {
   };
 };
 
+type TransitionConfig = FadeTransitionConfig | CrossFadeTransitionConfig;
+
+type AnimationConfig = PanAndZoomAnimationConfig;
+
 type ShowArg = {
   mimetype: string;
   url: string;
   fit: 'cover' | 'contain';
-  transition:
-    | NoneTransitionConfig
-    | FadeTransitionConfig
-    | CrossFadeTransitionConfig;
-  animation: NoneAnimationConfig | PanAndZoomAnimationConfig;
+  transition: TransitionConfig;
+  animation: AnimationConfig;
 };
 
 export default class ShowAction extends Base<ShowArg, void> {
+  protected transition: Transition;
+
+  protected transitionFactory: TransitionFactory;
+
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(state: State) {
     super(state);
+    this.transitionFactory = new TransitionFactory(state.shadowRoot);
+    this.transition = new NoneTransition();
   }
 
-  execute(arg: ShowArg): void {
+  cleanup(): void {
+    this.transition.cancel();
+
+    // keep only current content
+    const { container } = this.state;
+    while (container.children.length > 1) {
+      container.children[0].remove();
+    }
+  }
+
+  appendCurrentContent(content: HTMLElement): void {
+    const transitionWrapper = document.createElement('div');
+    transitionWrapper.classList.add('transition');
+
+    const animationWrapper = document.createElement('div');
+    animationWrapper.classList.add('animation');
+    transitionWrapper.appendChild(animationWrapper);
+
+    animationWrapper.appendChild(content);
+
+    this.state.container.appendChild(transitionWrapper);
+  }
+
+  async execute(arg: ShowArg): Promise<void> {
     const { mimetype, url, fit } = arg;
     const { transition: transitionConfig } = arg;
-    const { animation: animationConfig } = arg;
-    const content = ContentCreator.create(mimetype, url, fit);
+    const { type: transitionType, options: transitionOptions } =
+      transitionConfig;
 
-    switch (transitionConfig.type) {
-      case 'none': {
-        const transition = new NoneTransition(this.state);
-        const trsnsitionOptions =
-          transitionConfig.options as NoneTransitionOptions;
-        transition.to(content, trsnsitionOptions);
-        break;
-      }
-      case 'fade': {
-        const transition = new FadeTransition(this.state);
-        const transitionOptions =
-          transitionConfig.options as unknown as FadeTransitionOptions;
-        transition.to(content, transitionOptions);
-        break;
-      }
-      default:
-        throw new TypeError('unknown transition type');
+    // first prepare transitions and animations
+    const transitionPreparer = this.transitionFactory.prepare(
+      transitionType,
+      transitionOptions,
+    );
+
+    // now that arguments are parsed: instantiate everything
+    const content = ContentCreator.create(mimetype, url, fit);
+    try {
+      await ContentCreator.awaitLoad(content);
+    } catch (e) {
+      this.state.log.warn(
+        'Waiting for content to load failed. Proceeding anyway.',
+      );
     }
+
+    this.cleanup();
+    this.appendCurrentContent(content);
+    const { container } = this.state;
+    const from = this.state.container.children[0] as HTMLElement;
+    const to = this.state.container.children[1] as HTMLElement;
+
+    this.transition = transitionPreparer(container, from, to);
+    try {
+      await this.transition.targetVisible();
+    } catch (e) {
+      this.state.log.warn(
+        'Waiting for target to become visible failed. Proceeding anyway.',
+      );
+    }
+    ContentCreator.play(content);
+
+    try {
+      await this.transition.done();
+    } catch (e) {
+      const msg = 'Waiting for transition to end failed. Proceeding anyway';
+      if (e) {
+        this.state.log.warn(msg, e);
+      } else {
+        this.state.log.warn(msg);
+      }
+    }
+
+    this.cleanup();
   }
 
   // eslint-disable-next-line class-methods-use-this
