@@ -8,42 +8,13 @@ import { AnimationFactory } from '../animation/factory';
 import { Animation } from '../animation/animation';
 import { NoneAnimation } from '../animation/none';
 
-type FadeTransitionConfig = {
-  type: 'fade';
-  options: {
-    duration: number;
-    background: string;
-  };
-};
-
-type CrossFadeTransitionConfig = {
-  type: 'cross-fade';
-  options: {
-    duration: number;
-  };
-};
-
-type PanAndZoomState = { x: number; y: number; scale: number };
-
-type PanAndZoomAnimationConfig = {
-  type: 'pan-and-zoom';
-  options: {
-    duration: number;
-    start: PanAndZoomState;
-    end: PanAndZoomState;
-  };
-};
-
-type TransitionConfig = FadeTransitionConfig | CrossFadeTransitionConfig;
-
-type AnimationConfig = PanAndZoomAnimationConfig;
-
 type ShowArg = {
   mimetype: string;
   url: string;
   fit: 'cover' | 'contain';
-  transition: TransitionConfig;
-  animation: AnimationConfig;
+  color: string;
+  transition: { type: string; options: unknown };
+  animation: { type: string; options: unknown };
 };
 
 type DOMStructure = {
@@ -71,7 +42,7 @@ export default class ShowAction extends Base<ShowArg, void> {
     this.transition = new NoneTransition();
     this.animation = new NoneAnimation();
     const dummy = document.createElement('div');
-    this.current = this.appendCurrentContent(dummy);
+    this.current = this.appendCurrentContent(dummy, 'black');
   }
 
   removePrevious(): void {
@@ -88,13 +59,14 @@ export default class ShowAction extends Base<ShowArg, void> {
     this.removePrevious();
   }
 
-  appendCurrentContent(content: HTMLElement): DOMStructure {
+  appendCurrentContent(content: HTMLElement, color: string): DOMStructure {
     const animation = document.createElement('div');
     animation.classList.add('animation');
     animation.appendChild(content);
 
     const transition = document.createElement('div');
     transition.classList.add('transition');
+    transition.style.setProperty('--transition-background-color', color);
     transition.appendChild(animation);
 
     const { container } = this.state;
@@ -108,7 +80,7 @@ export default class ShowAction extends Base<ShowArg, void> {
   }
 
   async execute(arg: ShowArg): Promise<void> {
-    const { mimetype, url, fit } = arg;
+    const { mimetype, url, fit, color } = arg;
 
     // first parse args and prepare transition and animation
     const transitionCreator = this.prepareTransition(arg);
@@ -126,7 +98,7 @@ export default class ShowAction extends Base<ShowArg, void> {
 
     this.cleanup();
     const previous = this.current;
-    this.current = this.appendCurrentContent(content);
+    this.current = this.appendCurrentContent(content, color ?? 'cyan');
     this.transition = this.createTransition(transitionCreator, previous);
     try {
       await this.transition.targetVisible();

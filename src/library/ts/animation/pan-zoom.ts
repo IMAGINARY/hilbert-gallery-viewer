@@ -88,7 +88,6 @@ export default class PanZoomAnimation extends BaseAnimation {
   ) {
     const { wrapper: w } = this;
     const s = setCSSPropertyIfDefined;
-    console.log(duration, x, y, scale);
     s(w, '--animation-pan-zoom-duration', (v) => `${v}s`, duration);
     s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, x);
     s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, y);
