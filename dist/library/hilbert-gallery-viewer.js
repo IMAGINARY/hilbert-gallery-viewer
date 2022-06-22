@@ -4684,7 +4684,7 @@ var $e884c555a19b5150$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Base) {
                             case 12:
                                 _this.cleanup();
                                 previous = _this.current;
-                                _this.current = _this.appendCurrentContent(content, color !== null && color !== void 0 ? color : 'cyan');
+                                _this.current = _this.appendCurrentContent(content, color !== null && color !== void 0 ? color : 'black');
                                 _this.transition = _this.createTransition(transitionCreator, previous);
                                 _ctx.prev = 16;
                                 _ctx.next = 19;

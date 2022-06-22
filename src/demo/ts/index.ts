@@ -73,6 +73,7 @@ function randomShowCommand(content: Content) {
     args: {
       ...content,
       fit: randomFit(),
+      color: 'black',
       transition: randomTransition(),
       animation: randomAnimation(),
     },

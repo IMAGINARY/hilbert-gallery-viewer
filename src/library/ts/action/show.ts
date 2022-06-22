@@ -98,7 +98,7 @@ export default class ShowAction extends Base<ShowArg, void> {
 
     this.cleanup();
     const previous = this.current;
-    this.current = this.appendCurrentContent(content, color ?? 'cyan');
+    this.current = this.appendCurrentContent(content, color ?? 'black');
     this.transition = this.createTransition(transitionCreator, previous);
     try {
       await this.transition.targetVisible();

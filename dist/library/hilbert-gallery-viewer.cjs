@@ -713,7 +713,7 @@ class $5e3ac286dcde3535$export$2e2bcd8739ae039 extends $d6c88cc4f341a928$export$
         }
         this.cleanup();
         const previous = this.current;
-        this.current = this.appendCurrentContent(content, color ?? 'cyan');
+        this.current = this.appendCurrentContent(content, color ?? 'black');
         this.transition = this.createTransition(transitionCreator, previous);
         try {
             await this.transition.targetVisible();

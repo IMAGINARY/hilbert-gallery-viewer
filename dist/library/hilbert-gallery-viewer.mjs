@@ -698,7 +698,7 @@ class $ba433ce4422f5858$export$2e2bcd8739ae039 extends $142b3925b03aaffd$export$
         }
         this.cleanup();
         const previous = this.current;
-        this.current = this.appendCurrentContent(content, color !== null && color !== void 0 ? color : 'cyan');
+        this.current = this.appendCurrentContent(content, color !== null && color !== void 0 ? color : 'black');
         this.transition = this.createTransition(transitionCreator, previous);
         try {
             await this.transition.targetVisible();
