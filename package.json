@@ -41,7 +41,9 @@
       }
     },
     "main": {},
-    "browser": {},
+    "browser": {
+      "includeNodeModules": true
+    },
     "module": {},
     "types": {}
   },
@@ -72,7 +74,8 @@
     "@types/assert": "^1.5.6",
     "@types/document-ready": "^2.0.0",
     "core-js": "^3.23.2",
-    "document-ready": "^2.0.2"
+    "document-ready": "^2.0.2",
+    "regenerator-runtime": "^0.13.9"
   },
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target demo",
