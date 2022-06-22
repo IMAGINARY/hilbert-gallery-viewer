@@ -128,6 +128,11 @@ async function main() {
     'hilbert-gallery-viewer',
   ) as HilbertGalleryViewer;
 
+  Object.assign(window, { viewer: hGViewer });
+  console.info(
+    'Call viewer.execute(action, args) to execute your own actions.',
+  );
+
   const playlist = createPlaylist();
   console.log(JSON.stringify(playlist, null, 2), playlist);
 
