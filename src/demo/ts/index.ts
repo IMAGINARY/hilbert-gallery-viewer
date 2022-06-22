@@ -112,6 +112,15 @@ function createPlaylist() {
   };
 }
 
+let shouldStop = false;
+function stopPlayback() {
+  shouldStop = true;
+}
+Object.assign(window, { stopPlayback });
+console.info(
+  'Call stopPlayback() to stop the default playlist (will finish the current playlist item).',
+);
+
 async function main() {
   await new Promise<void>(ready);
 
@@ -129,7 +138,7 @@ async function main() {
 
   for (
     let i = 0;
-    i < playlist.loop.length;
+    i < playlist.loop.length && !shouldStop;
     i = (i + 1) % playlist.loop.length
   ) {
     const { action, args } = playlist.loop[i];
