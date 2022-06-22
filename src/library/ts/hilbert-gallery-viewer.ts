@@ -2,6 +2,8 @@
 // @ts-ignore
 import cssText from 'bundle-text:../scss/viewer.scss';
 
+import 'core-js/actual/promise';
+
 import { Action } from './action/action';
 import { PreloadAction } from './action/preload';
 import { Log, LogLevel } from './util/log';
