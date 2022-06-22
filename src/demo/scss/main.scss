@@ -1,50 +1,15 @@
 body {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
   min-width: 100vw;
-}
-
-.resizable {
-  outline: 2px solid red;
-  min-width: 40px;
-  min-height: 40px;
-  width: 500px;
-  height: 500px;
-  resize: both;
   overflow: hidden;
 }
 
-.resizable > div {
-  --zoom-factor: 1;
-  --pan-target-x: 0.5;
-  --pan-target-y: 0.5;
-  --transition-duration: 10s;
-
-  position: relative;
+#viewer {
+  position: absolute;
   width: 100%;
   height: 100%;
-  top: calc(50% - 50% * var(--zoom-factor));
-  left: calc(50% - 50% * var(--zoom-factor));
-  z-index: -1;
-
-  &,
-  & * {
-    transition-duration: var(--transition-duration);
-  }
-  transition-property: top, left, width, height;
-
-  img {
-    left: calc(100% * var(--zoom-factor) * (0.5 - var(--pan-target-x)));
-    top: calc(100% * var(--zoom-factor) * (0.5 - var(--pan-target-y)));
-    position: relative;
-    width: calc(100% * var(--zoom-factor));
-    height: calc(100% * var(--zoom-factor));
-    object-fit: cover;
-    object-position: calc(100% * var(--pan-target-x))
-      calc(100% * var(--pan-target-y));
-    transition-property: top, left, width, height, object-position;
-  }
+  overflow: hidden;
 }
