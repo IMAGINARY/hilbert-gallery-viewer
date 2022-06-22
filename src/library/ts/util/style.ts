@@ -7,7 +7,7 @@ function appendStyle(
 ) {
   const style: HTMLStyleElement = document.createElement('style');
   if (typeof id !== 'undefined') {
-    style.id = `transition-${id}`;
+    style.id = id;
   }
   style.textContent = stylesheetText;
   const selector =

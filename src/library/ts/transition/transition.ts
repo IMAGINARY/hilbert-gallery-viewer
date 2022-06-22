@@ -1,4 +1,4 @@
-export default interface Transition {
+interface Transition {
   cancel(): void;
   isCancelled(): boolean;
   targetVisible(): Promise<void>;

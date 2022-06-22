@@ -100,18 +100,16 @@ async function main() {
       url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     },
   ];
-  const content = [
-    // ...images,
-    ...otherPngImages,
-    // ...videos,
-  ];
+  const content = [...images, ...otherPngImages, ...videos];
 
-  hGViewer.execute('preload', content);
+  await hGViewer.execute('preload', content);
 
   const shuffledContent = shuffle(content);
+  const animationDuration = 5;
   const transitionDuration = 3;
-  hGViewer.execute('show', {
-    ...content[content.length - 1],
+  const delay = 3;
+  await hGViewer.execute('show', {
+    ...shuffledContent[shuffledContent.length - 1],
     transition: {
       type: 'none',
       options: {},
@@ -123,18 +121,30 @@ async function main() {
     i < shuffledContent.length;
     i = (i + 1) % shuffledContent.length
   ) {
-    hGViewer.execute('show', {
+    const x = 0.25 + Math.random() * 0.5;
+    const y = 0.25 + Math.random() * 0.5;
+    const minDistance = Math.min(x, 1 - x, y, 1 - y);
+    const scale = 1 / minDistance;
+    // eslint-disable-next-line no-await-in-loop
+    await hGViewer.execute('show', {
       ...content[i],
+      fit: 'cover',
       transition: {
-        type: 'cross-fade',
+        type: 'fade',
         options: {
           duration: transitionDuration,
-          background: 'url("https://placekitten.com/100/100") cover',
+        },
+      },
+      animation: {
+        type: 'pan-zoom',
+        options: {
+          duration: animationDuration,
+          to: { x, y, scale },
         },
       },
     });
     // eslint-disable-next-line no-await-in-loop
-    await sleep(transitionDuration + 3);
+    await sleep(animationDuration + delay);
   }
 }
 

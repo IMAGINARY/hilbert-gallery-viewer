@@ -28,7 +28,11 @@ export default class TransitionFactory {
     if (this.transitionRegistry.has(id)) {
       throw new Error('Transition type already registered');
     }
-    appendStyle(this.root, transitionClass.getStyleSheetAsString(), id);
+    appendStyle(
+      this.root,
+      transitionClass.getStyleSheetAsString(),
+      `transition-${id}`,
+    );
     this.transitionRegistry.set(id, transitionClass);
   }
 

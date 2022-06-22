@@ -50,19 +50,19 @@ export default class HilbertGalleryViewer extends HTMLElement {
     return registry;
   }
 
-  execute(action: string, arg: unknown): void {
+  async execute(action: string, arg: unknown): Promise<void> {
     // executeImpl only exists for the purpose of renaming the parameters
-    return this.executeImpl(action, arg);
+    await this.executeImpl(action, arg);
   }
 
-  private executeImpl(actionName: string, arg: unknown): void {
+  private async executeImpl(actionName: string, arg: unknown): Promise<void> {
     const action = this.actionRegistry.get(actionName);
     if (action) {
       // this may throw an exception if arg has invalid type
       const executor = action.buildExecutor(arg);
       // the executor encapsulates the preprocessed arg
       // and allows type-safe execution
-      executor();
+      await executor();
     } else {
       throw new TypeError('HilbertGalleryViewer.execute(): unknown action');
     }
