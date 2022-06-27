@@ -22,10 +22,13 @@
     "Chrome 56"
   ],
   "source": "src/library/ts/index.ts",
-  "main": "dist/library/hilbert-gallery-viewer.cjs",
-  "browser": "dist/library/hilbert-gallery-viewer.js",
-  "module": "dist/library/hilbert-gallery-viewer.mjs",
-  "types": "dist/library/hilbert-gallery-viewer.d.ts",
+  "main": "dist/library/index.cjs",
+  "module": "dist/library/index.mjs",
+  "target-script-tag": "dist/library/hilbert-gallery-viewer.js",
+  "target-script-tag-min": "dist/library/hilbert-gallery-viewer.min.js",
+  "target-script-tag-module": "dist/library/hilbert-gallery-viewer.mjs",
+  "target-script-tag-module-min": "dist/library/hilbert-gallery-viewer.min.mjs",
+  "types": "dist/library/index.d.ts",
   "targets": {
     "demo": {
       "source": "/src/demo/html/index.html",
@@ -41,10 +44,35 @@
       }
     },
     "main": {},
-    "browser": {
-      "includeNodeModules": true
-    },
     "module": {},
+    "target-script-tag": {
+      "context": "browser",
+      "includeNodeModules": true,
+      "isLibrary": false,
+      "outputFormat": "global",
+      "optimize": false
+    },
+    "target-script-tag-min": {
+      "context": "browser",
+      "includeNodeModules": true,
+      "isLibrary": false,
+      "outputFormat": "global",
+      "optimize": true
+    },
+    "target-script-tag-module": {
+      "context": "browser",
+      "includeNodeModules": true,
+      "isLibrary": false,
+      "outputFormat": "esmodule",
+      "optimize": false
+    },
+    "target-script-tag-module-min": {
+      "context": "browser",
+      "includeNodeModules": true,
+      "isLibrary": false,
+      "outputFormat": "esmodule",
+      "optimize": true
+    },
     "types": {}
   },
   "devDependencies": {
@@ -81,7 +109,7 @@
     "serve": "parcel serve --dist-dir dist-dev --target demo",
     "watch": "parcel watch",
     "build": "rm -r dist; parcel build --public-url .",
-    "build:library": "rm -r dist/library; parcel build --public-url . --target main --target browser --target module --target types",
+    "build:library": "rm -r dist/library; parcel build --public-url . --target main --target module --target target-script-tag --target target-script-tag-min --target target-script-tag-module --target target-script-tag-module-min --target types",
     "build:demo": "rm -r dist/demo; parcel build --public-url . --target demo",
     "format": "prettier --write '.'",
     "doc": "typedoc",
