@@ -33,7 +33,8 @@
     "demo": {
       "source": [
         "/src/demo/html/index.html",
-        "/src/demo/html/index-dist.html"
+        "/src/demo/html/index-dist.html",
+        "/src/demo/html/index-single.html"
       ],
       "distDir": "dist/demo",
       "isLibrary": false,
