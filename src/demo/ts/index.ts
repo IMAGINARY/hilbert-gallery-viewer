@@ -149,6 +149,7 @@ async function main() {
   ) {
     const { action, args } = playlist.loop[i];
     // eslint-disable-next-line no-console,no-await-in-loop
+    console.log({ action, args });
     await hGViewer.execute(action, args).catch((e) => console.error(e));
 
     if (action === 'show') {
