@@ -89,7 +89,6 @@
     "@parcel/transformer-typescript-types": "2.5.0",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
-    "assert": "^2.0.0",
     "electron": "~1.6.18",
     "eslint": "^8.11.0",
     "eslint-config-airbnb-typescript": "^16.1.2",
