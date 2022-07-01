@@ -10,10 +10,10 @@
     @include fill-parent-absolute;
     & > .transition {
       --transition-background-color: black;
-      background-color: var(--transition-background-color);
       @include fill-parent-absolute;
       & > .animation {
         @include fill-parent-absolute;
+        background-color: var(--transition-background-color);
         & > .content {
           position: absolute;
           width: auto;

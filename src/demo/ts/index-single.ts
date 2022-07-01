@@ -12,7 +12,21 @@ async function main() {
   ) as HilbertGalleryViewer;
 
   const action = 'show';
-  const args = {
+  const args0 = {
+    mimetype: 'image/jpeg',
+    url: 'https://placekitten.com/349/321',
+    fit: 'cover',
+    color: 'black',
+    transition: {
+      type: 'none',
+      options: {},
+    },
+    animation: {
+      type: 'none',
+      options: {},
+    },
+  };
+  const args1 = {
     mimetype: 'image/jpeg',
     url: 'https://placekitten.com/349/326',
     fit: 'cover',
@@ -20,7 +34,7 @@ async function main() {
     transition: {
       type: 'fade',
       options: {
-        duration: 2,
+        duration: 5,
         color: 'cyan',
       },
     },
@@ -29,11 +43,14 @@ async function main() {
       options: {},
     },
   };
-  const executeDefault = () => hGViewer.execute(action, args);
+  const executeDefault = async () => {
+    await hGViewer.execute(action, args0);
+    await hGViewer.execute(action, args1);
+  };
   Object.assign(window, { viewer: hGViewer, executeDefault });
   console.info('Call executeDefault() to execute the default action:', {
     action,
-    args,
+    args1,
   });
   console.info(
     'Call viewer.execute(action, args) to execute your own actions.',
