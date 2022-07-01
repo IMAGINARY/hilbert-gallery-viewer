@@ -18,8 +18,6 @@ const defaultOptions: FadeTransitionOptions = {
 
 // @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
 export default class FadeTransition extends BaseTransition {
-  protected fromEndCancelHandler: (event: AnimationEvent) => void;
-
   protected toEndHandler: (event: AnimationEvent) => void;
 
   protected toCancelHandler: (event: AnimationEvent) => void;
@@ -38,23 +36,15 @@ export default class FadeTransition extends BaseTransition {
     style.setProperty('--transition-fade-duration', `${duration}s`);
     style.setProperty('--transition-fade-color', `${color}`);
 
-    from.classList.add('fade');
-    from.classList.add('fade-out');
-
-    this.fromEndCancelHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-fade-out') {
-        this.targetVisiblePEC.resolve();
-      }
-    };
-    from.addEventListener('animationend', this.fromEndCancelHandler);
-    from.addEventListener('animationcancel', this.fromEndCancelHandler);
-
     to.classList.add('fade');
-    to.classList.add('fade-in');
 
-    this.toEndHandler = ({ animationName }: AnimationEvent) => {
+    this.toEndHandler = ({ animationName, pseudoElement }: AnimationEvent) => {
       if (animationName === 'transition-fade-in') {
-        this.end();
+        if (pseudoElement === '::before') {
+          this.targetVisiblePEC.resolve();
+        } else {
+          this.end();
+        }
       }
     };
     this.toCancelHandler = ({ animationName }: AnimationEvent) => {
@@ -85,9 +75,6 @@ export default class FadeTransition extends BaseTransition {
   }
 
   protected cleanup() {
-    this.from.removeEventListener('animationend', this.fromEndCancelHandler);
-    this.from.removeEventListener('animationcancel', this.fromEndCancelHandler);
-
     this.to.removeEventListener('animationend', this.toEndHandler);
     this.to.removeEventListener('animationcancel', this.toCancelHandler);
 
@@ -96,10 +83,8 @@ export default class FadeTransition extends BaseTransition {
     style.removeProperty('--transition-fade-color');
 
     this.from.classList.remove('fade');
-    this.from.classList.remove('fade-out');
 
     this.to.classList.remove('fade');
-    this.to.classList.remove('fade-in');
   }
 
   static unpack(options: unknown): FadeTransitionOptions {

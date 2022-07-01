@@ -18,19 +18,15 @@ async function main() {
     fit: 'cover',
     color: 'black',
     transition: {
-      type: 'none',
-      options: {},
+      type: 'fade',
+      options: {
+        duration: 2,
+        color: 'cyan',
+      },
     },
     animation: {
-      type: 'pan-zoom',
-      options: {
-        duration: 10,
-        to: {
-          x: 0.25,
-          y: 0.25,
-          scale: 2,
-        },
-      },
+      type: 'none',
+      options: {},
     },
   };
   const executeDefault = () => hGViewer.execute(action, args);
