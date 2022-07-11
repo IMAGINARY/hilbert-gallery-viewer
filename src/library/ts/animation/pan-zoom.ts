@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import cssText from 'bundle-text:../../scss/animation/pan-zoom.scss';
 
 import { BaseAnimation } from './base';
@@ -135,7 +133,7 @@ export default class PanZoomAnimation extends BaseAnimation {
   }
 
   static getStyleSheetAsString(): string {
-    return cssText as string;
+    return cssText;
   }
 }
 

@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import cssText from 'bundle-text:../../scss/transition/fade.scss';
 
 import { BaseTransition } from './base';
@@ -104,7 +102,7 @@ export default class FadeTransition extends BaseTransition {
   }
 
   static getStyleSheetAsString(): string {
-    return cssText as string;
+    return cssText;
   }
 }
 

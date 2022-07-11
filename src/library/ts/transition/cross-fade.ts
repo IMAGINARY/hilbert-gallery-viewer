@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import cssText from 'bundle-text:../../scss/transition/cross-fade.scss';
 
 import { BaseTransition } from './base';
@@ -102,7 +100,7 @@ export default class CrossFadeTransition extends BaseTransition {
   }
 
   static getStyleSheetAsString(): string {
-    return cssText as string;
+    return cssText;
   }
 }
 
