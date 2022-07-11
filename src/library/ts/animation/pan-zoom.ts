@@ -4,7 +4,7 @@ import { BaseAnimation } from './base';
 import { AnimationStatic } from './animation';
 import { RequireOnlyOne, staticImplements } from '../util/types';
 
-type Target = {
+type View = {
   x: number;
   y: number;
   scale: number;
@@ -12,8 +12,8 @@ type Target = {
 
 type PanZoomAnimationOptions = {
   duration: number;
-  from?: RequireOnlyOne<Target>;
-  to: RequireOnlyOne<Target>;
+  from?: Partial<View>;
+  to?: Partial<View>;
 };
 
 function setCSSPropertyIfDefined<T>(
@@ -40,56 +40,41 @@ export default class PanZoomAnimation extends BaseAnimation {
     super(wrapper, content);
     this.endHandler = () => {};
     this.cancelHandler = () => {};
-    this.asyncInit(options).finally(() => {});
-  }
 
-  async asyncInit(options: PanZoomAnimationOptions) {
     this.wrapper.classList.add('animation-pan-zoom');
 
-    if (typeof options.from !== 'undefined') {
-      try {
-        const { from } = options;
-        this.setDefinedCssProperties(0, from);
+    const { duration, from, to } = options;
+    this.setDefinedCssProperties(duration, from ?? {}, to ?? {});
 
-        // let the values settle on the next frame
-        await new Promise((resolve) => {
-          requestAnimationFrame(resolve);
-        });
-      } catch (e) {
-        // eslint-disable-next-line no-empty
+    this.endHandler = ({ animationName }) => {
+      if (animationName === 'animation-pan-zoom-animation') {
+        this.end();
       }
-    }
+    };
+    this.cancelHandler = ({ animationName }) => {
+      if (animationName === 'animation-pan-zoom-animation') {
+        this.cancel();
+      }
+    };
 
-    if (!this.isCancelled()) {
-      const { duration, to } = options;
-      this.setDefinedCssProperties(duration, to);
-
-      this.endHandler = ({ animationName }) => {
-        if (animationName === 'animation-pan-zoom-animation') {
-          this.end();
-        }
-      };
-      this.cancelHandler = ({ animationName }) => {
-        if (animationName === 'animation-pan-zoom-animation') {
-          this.cancel();
-        }
-      };
-
-      this.wrapper.addEventListener('animationend', this.endHandler);
-      this.wrapper.addEventListener('animationcancel', this.cancelHandler);
-    }
+    this.wrapper.addEventListener('animationend', this.endHandler);
+    this.wrapper.addEventListener('animationcancel', this.cancelHandler);
   }
 
   protected setDefinedCssProperties(
     duration: number,
-    { x, y, scale }: RequireOnlyOne<Target>,
+    origin: Partial<View>,
+    target: Partial<View>,
   ) {
     const { wrapper: w } = this;
     const s = setCSSPropertyIfDefined;
     s(w, '--animation-pan-zoom-duration', (v) => `${v}s`, duration);
-    s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, x);
-    s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, y);
-    s(w, '--animation-pan-zoom-target-scale', (v) => `${v}`, scale);
+    s(w, '--animation-pan-zoom-origin-x', (v) => `${v}`, origin.x);
+    s(w, '--animation-pan-zoom-origin-y', (v) => `${v}`, origin.y);
+    s(w, '--animation-pan-zoom-origin-scale', (v) => `${v}`, origin.scale);
+    s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, target.x);
+    s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, target.y);
+    s(w, '--animation-pan-zoom-target-scale', (v) => `${v}`, target.scale);
   }
 
   protected end(): void {
