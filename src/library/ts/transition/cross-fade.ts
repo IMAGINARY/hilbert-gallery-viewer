@@ -26,15 +26,14 @@ export default class CrossFadeTransition extends BaseTransition {
     this.setDefinedCssProperties(options);
 
     to.classList.add('cross-fade');
-    to.classList.add('cross-fade-in');
 
     this.toEndHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-cross-fade-in') {
+      if (animationName === 'transition-cross-fade') {
         this.end();
       }
     };
     this.toCancelHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-cross-fade-in') {
+      if (animationName === 'transition-cross-fade') {
         this.cancel();
       }
     };
@@ -75,7 +74,6 @@ export default class CrossFadeTransition extends BaseTransition {
     style.removeProperty('--transition-cross-fade-duration');
 
     this.to.classList.remove('cross-fade');
-    this.to.classList.remove('cross-fade-in');
   }
 
   static unpack(options: unknown): CrossFadeTransitionOptions {

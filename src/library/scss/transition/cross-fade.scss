@@ -1,4 +1,4 @@
-@keyframes transition-cross-fade-in {
+@keyframes transition-cross-fade {
   0% {
     opacity: 0;
   }
@@ -19,7 +19,7 @@
         animation-duration: var(--transition-cross-fade-duration);
         animation-timing-function: ease-in-out;
         animation-fill-mode: both;
-        animation-name: transition-cross-fade-in;
+        animation-name: transition-cross-fade;
       }
     }
   }
