@@ -9,7 +9,7 @@ interface FadeTransitionOptions extends TransitionOptions {
   color?: string;
 }
 
-//@staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
+@staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
 export default class FadeTransition extends BaseTransition {
   protected toEndHandler: (event: AnimationEvent) => void;
 

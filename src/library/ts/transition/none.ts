@@ -8,7 +8,7 @@ import { CrossFadeTransitionOptions } from './cross-fade';
 
 type NoneTransitionOptions = TransitionOptions;
 
-// @staticImplements<TransitionStatic<NoneTransition, NoneTransitionOptions>>()
+@staticImplements<TransitionStatic<NoneTransition, NoneTransitionOptions>>()
 export default class NoneTransition extends BaseTransition {
   protected toEndHandler: (event: AnimationEvent) => void;
 

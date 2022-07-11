@@ -7,7 +7,7 @@ import { setCSSPropertyIfDefined } from '../util/style';
 
 type NoneAnimationOptions = AnimationOptions;
 
-// @staticImplements<AnimationStatic<NoneAnimation, NoneAnimationOptions>>()
+@staticImplements<AnimationStatic<NoneAnimation, NoneAnimationOptions>>()
 class NoneAnimation extends BaseAnimation {
   protected endHandler: (event: AnimationEvent) => void;
 

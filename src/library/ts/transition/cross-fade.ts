@@ -7,7 +7,9 @@ import { setCSSPropertyIfDefined } from '../util/style';
 
 type CrossFadeTransitionOptions = TransitionOptions;
 
-// @staticImplements<TransitionStatic<CrossFadeTransition, CrossFadeTransitionOptions>>()
+@staticImplements<
+  TransitionStatic<CrossFadeTransition, CrossFadeTransitionOptions>
+>()
 export default class CrossFadeTransition extends BaseTransition {
   protected toEndHandler: (event: AnimationEvent) => void;
 

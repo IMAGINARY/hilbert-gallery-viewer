@@ -16,7 +16,7 @@ interface PanZoomAnimationOptions extends AnimationOptions {
   to?: Partial<View>;
 }
 
-// @staticImplements<AnimationStatic<PanZoomAnimation, PanZoomAnimationOptions>>()
+@staticImplements<AnimationStatic<PanZoomAnimation, PanZoomAnimationOptions>>()
 export default class PanZoomAnimation extends BaseAnimation {
   protected endHandler: (event: AnimationEvent) => void;
 
