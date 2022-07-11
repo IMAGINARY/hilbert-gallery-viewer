@@ -21,4 +21,21 @@ type State = {
   container: HTMLDivElement;
 };
 
-export { staticImplements, RequireOnlyOne, State };
+type RequiredKeys<T> = {
+  [K in keyof T]-?: Record<string, never> extends Pick<T, K> ? never : K;
+}[keyof T];
+
+type OptionalKeys<T> = {
+  [K in keyof T]-?: Record<string, never> extends Pick<T, K> ? K : never;
+}[keyof T];
+
+type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+
+export {
+  staticImplements,
+  RequireOnlyOne,
+  State,
+  RequiredKeys,
+  OptionalKeys,
+  AtLeast,
+};

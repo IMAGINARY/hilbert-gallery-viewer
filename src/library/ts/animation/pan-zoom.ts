@@ -1,8 +1,9 @@
 import cssText from 'bundle-text:../../scss/animation/pan-zoom.scss';
 
+import { AnimationOptions, AnimationStatic } from './animation';
+import { staticImplements } from '../util/types';
 import { BaseAnimation } from './base';
-import { AnimationStatic } from './animation';
-import { RequireOnlyOne, staticImplements } from '../util/types';
+import { setCSSPropertyIfDefined } from '../util/style';
 
 type View = {
   x: number;
@@ -10,20 +11,9 @@ type View = {
   scale: number;
 };
 
-type PanZoomAnimationOptions = {
-  duration: number;
+interface PanZoomAnimationOptions extends AnimationOptions {
   from?: Partial<View>;
   to?: Partial<View>;
-};
-
-function setCSSPropertyIfDefined<T>(
-  elem: HTMLElement,
-  property: string,
-  formatter: (v: Exclude<T, undefined>) => string,
-  value: T,
-) {
-  if (typeof value !== 'undefined')
-    elem.style.setProperty(property, formatter(value as Exclude<T, undefined>));
 }
 
 // @staticImplements<AnimationStatic<PanZoomAnimation, PanZoomAnimationOptions>>()
@@ -38,21 +28,18 @@ export default class PanZoomAnimation extends BaseAnimation {
     options: PanZoomAnimationOptions,
   ) {
     super(wrapper, content);
-    this.endHandler = () => {};
-    this.cancelHandler = () => {};
 
     this.wrapper.classList.add('animation-pan-zoom');
 
-    const { duration, from, to } = options;
-    this.setDefinedCssProperties(duration, from ?? {}, to ?? {});
+    this.setDefinedCssProperties(options);
 
     this.endHandler = ({ animationName }) => {
-      if (animationName === 'animation-pan-zoom-animation') {
+      if (animationName === 'animation-pan-zoom') {
         this.end();
       }
     };
     this.cancelHandler = ({ animationName }) => {
-      if (animationName === 'animation-pan-zoom-animation') {
+      if (animationName === 'animation-pan-zoom') {
         this.cancel();
       }
     };
@@ -61,20 +48,19 @@ export default class PanZoomAnimation extends BaseAnimation {
     this.wrapper.addEventListener('animationcancel', this.cancelHandler);
   }
 
-  protected setDefinedCssProperties(
-    duration: number,
-    origin: Partial<View>,
-    target: Partial<View>,
-  ) {
+  protected setDefinedCssProperties(options: PanZoomAnimationOptions) {
+    const { delay, duration, from, to } = options;
+
     const { wrapper: w } = this;
     const s = setCSSPropertyIfDefined;
+    s(w, '--animation-pan-zoom-delay', (v) => `${v}s`, delay);
     s(w, '--animation-pan-zoom-duration', (v) => `${v}s`, duration);
-    s(w, '--animation-pan-zoom-origin-x', (v) => `${v}`, origin.x);
-    s(w, '--animation-pan-zoom-origin-y', (v) => `${v}`, origin.y);
-    s(w, '--animation-pan-zoom-origin-scale', (v) => `${v}`, origin.scale);
-    s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, target.x);
-    s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, target.y);
-    s(w, '--animation-pan-zoom-target-scale', (v) => `${v}`, target.scale);
+    s(w, '--animation-pan-zoom-origin-x', (v) => `${v}`, from?.x);
+    s(w, '--animation-pan-zoom-origin-y', (v) => `${v}`, from?.y);
+    s(w, '--animation-pan-zoom-origin-scale', (v) => `${v}`, from?.scale);
+    s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, to?.x);
+    s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, to?.y);
+    s(w, '--animation-pan-zoom-target-scale', (v) => `${v}`, to?.scale);
   }
 
   protected end(): void {
@@ -96,8 +82,8 @@ export default class PanZoomAnimation extends BaseAnimation {
   protected cleanup() {
     const { wrapper } = this;
 
-    wrapper.addEventListener('animationend', this.endHandler);
-    wrapper.addEventListener('animationcancel', this.cancelHandler);
+    wrapper.removeEventListener('animationend', this.endHandler);
+    wrapper.removeEventListener('animationcancel', this.cancelHandler);
 
     /**
      * We do not remove the CSS classes and custom properties to keep the

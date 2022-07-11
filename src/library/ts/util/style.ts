@@ -21,3 +21,13 @@ function appendStyle(
 }
 
 export { appendStyle };
+
+export function setCSSPropertyIfDefined<T>(
+  elem: HTMLElement,
+  property: string,
+  formatter: (v: Exclude<T, undefined>) => string,
+  value: T,
+) {
+  if (typeof value !== 'undefined')
+    elem.style.setProperty(property, formatter(value as Exclude<T, undefined>));
+}

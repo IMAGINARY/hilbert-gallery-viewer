@@ -5,13 +5,18 @@ interface Animation {
   isDone(): boolean;
 }
 
-interface AnimationStatic<A extends Animation, P> {
-  new (wrapper: HTMLDivElement, content: HTMLElement, options: P): A;
-  unpack(options: unknown): P;
+interface AnimationOptions {
+  duration?: number;
+  delay?: number;
+}
+
+interface AnimationStatic<A extends Animation, O extends AnimationOptions> {
+  new (wrapper: HTMLDivElement, content: HTMLElement, options: O): A;
+  unpack(options: unknown): O;
   prepare(
     options: unknown,
   ): (wrapper: HTMLDivElement, content: HTMLElement) => A;
   getStyleSheetAsString(): string;
 }
 
-export { Animation, AnimationStatic };
+export { Animation, AnimationOptions, AnimationStatic };

@@ -1,16 +1,11 @@
 import cssText from 'bundle-text:../../scss/transition/cross-fade.scss';
 
 import { BaseTransition } from './base';
-import { TransitionStatic } from './transition';
+import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
+import { setCSSPropertyIfDefined } from '../util/style';
 
-type CrossFadeTransitionOptions = {
-  duration: number;
-};
-
-const defaultOptions: CrossFadeTransitionOptions = {
-  duration: 500,
-};
+type CrossFadeTransitionOptions = TransitionOptions;
 
 // @staticImplements<TransitionStatic<CrossFadeTransition, CrossFadeTransitionOptions>>()
 export default class CrossFadeTransition extends BaseTransition {
@@ -26,13 +21,7 @@ export default class CrossFadeTransition extends BaseTransition {
   ) {
     super(container, from, to);
 
-    const { duration } = { ...defaultOptions, ...(options ?? {}) };
-
-    const { style } = container;
-    style.setProperty('--transition-cross-fade-duration', `${duration}s`);
-
-    from.classList.add('cross-fade');
-    from.classList.add('cross-fade-out');
+    this.setDefinedCssProperties(options);
 
     to.classList.add('cross-fade');
     to.classList.add('cross-fade-in');
@@ -49,8 +38,14 @@ export default class CrossFadeTransition extends BaseTransition {
     };
     to.addEventListener('animationend', this.toEndHandler);
     to.addEventListener('animationcancel', this.toCancelHandler);
+  }
 
-    this.targetVisiblePEC.resolve();
+  protected setDefinedCssProperties(options: CrossFadeTransitionOptions) {
+    const { delay, duration } = options;
+    const { container: c } = this;
+    const s = setCSSPropertyIfDefined;
+    s(c, '--transition-cross-fade-delay', (v) => `${v}s`, delay);
+    s(c, '--transition-cross-fade-duration', (v) => `${v}s`, duration);
   }
 
   protected end(): void {
@@ -74,10 +69,8 @@ export default class CrossFadeTransition extends BaseTransition {
     this.to.removeEventListener('animationcancel', this.toCancelHandler);
 
     const { style } = this.container;
+    style.removeProperty('--transition-cross-fade-delay');
     style.removeProperty('--transition-cross-fade-duration');
-
-    this.from.classList.remove('cross-fade');
-    this.from.classList.remove('cross-fade-out');
 
     this.to.classList.remove('cross-fade');
     this.to.classList.remove('cross-fade-in');

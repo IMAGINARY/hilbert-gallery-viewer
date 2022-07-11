@@ -1,5 +1,5 @@
 import { Base } from './base';
-import { State } from '../util/types';
+import { OptionalKeys, State } from '../util/types';
 import { ContentCreator } from '../util/content-creator';
 import { TransitionFactory } from '../transition/factory';
 import { Transition } from '../transition/transition';
@@ -11,11 +11,23 @@ import { NoneAnimation } from '../animation/none';
 type ShowArg = {
   mimetype: string;
   url: string;
-  fit: 'cover' | 'contain';
-  color: string;
-  transition: { type: string; options: unknown };
-  animation: { type: string; options: unknown };
+  fit?: 'cover' | 'contain';
+  color?: string;
+  delay?: number;
+  startDelay?: number;
+  transition?: { type: string; options: unknown };
+  animation?: { type: string; options: unknown };
 };
+
+const defaultOptionalShowArgs: Required<Pick<ShowArg, OptionalKeys<ShowArg>>> =
+  {
+    fit: 'cover',
+    color: 'black',
+    delay: 0,
+    startDelay: 0,
+    transition: { type: 'none', options: {} },
+    animation: { type: 'none', options: {} },
+  };
 
 type DOMStructure = {
   transition: HTMLDivElement;
@@ -39,10 +51,25 @@ export default class ShowAction extends Base<ShowArg, void> {
     super(state);
     this.transitionFactory = new TransitionFactory(state.shadowRoot);
     this.animationFactory = new AnimationFactory(state.shadowRoot);
-    this.transition = new NoneTransition();
-    this.animation = new NoneAnimation();
-    const dummy = document.createElement('div');
-    this.current = this.appendCurrentContent(dummy, 'black');
+
+    const dummyContent = ContentCreator.create(
+      'image/gif',
+      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+    );
+    const previous = this.appendCurrentContent(dummyContent, 'transparent');
+    this.current = this.appendCurrentContent(dummyContent, 'transparent');
+
+    this.transition = new NoneTransition(
+      this.state.container,
+      previous.transition,
+      this.current.transition,
+      {},
+    );
+    this.animation = new NoneAnimation(
+      this.current.animation,
+      this.current.content,
+      {},
+    );
   }
 
   removePrevious(): void {
@@ -80,7 +107,10 @@ export default class ShowAction extends Base<ShowArg, void> {
   }
 
   async execute(arg: ShowArg): Promise<void> {
-    const { mimetype, url, fit, color } = arg;
+    const { mimetype, url, fit, color, startDelay } = {
+      ...defaultOptionalShowArgs,
+      ...arg,
+    };
 
     // first parse args and prepare transition and animation
     const transitionCreator = this.prepareTransition(arg);
@@ -88,30 +118,18 @@ export default class ShowAction extends Base<ShowArg, void> {
 
     // now that arguments are parsed: instantiate everything
     const content = ContentCreator.create(mimetype, url, fit);
-    try {
-      await ContentCreator.awaitLoad(content);
-    } catch (e) {
-      this.state.log.warn(
-        'Waiting for content to load failed. Proceeding anyway.',
-      );
-    }
 
     this.cleanup();
     const previous = this.current;
     this.current = this.appendCurrentContent(content, color ?? 'black');
     this.transition = this.createTransition(transitionCreator, previous);
-    try {
-      await this.transition.targetVisible();
-    } catch (e) {
-      this.state.log.warn(
-        'Waiting for target to become visible failed. Proceeding anyway.',
-      );
-    }
-    ContentCreator.play(content);
     this.animation = this.createAnimation(animationCreator);
 
+    setTimeout(() => ContentCreator.play(content), startDelay * 1000);
+
     try {
-      await this.transition.done();
+      if (!this.transition.isDone()) await this.transition.done();
+      this.removePrevious();
     } catch (e) {
       const msg = 'Waiting for transition to end failed. Proceeding anyway';
       if (e) {
@@ -120,8 +138,6 @@ export default class ShowAction extends Base<ShowArg, void> {
         this.state.log.warn(msg);
       }
     }
-
-    this.removePrevious();
   }
 
   protected prepareTransition(

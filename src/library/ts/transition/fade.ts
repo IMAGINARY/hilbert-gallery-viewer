@@ -1,20 +1,15 @@
 import cssText from 'bundle-text:../../scss/transition/fade.scss';
 
 import { BaseTransition } from './base';
-import { TransitionStatic } from './transition';
+import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
+import { setCSSPropertyIfDefined } from '../util/style';
 
-type FadeTransitionOptions = {
-  duration: number;
-  color: string;
-};
+interface FadeTransitionOptions extends TransitionOptions {
+  color?: string;
+}
 
-const defaultOptions: FadeTransitionOptions = {
-  duration: 500,
-  color: '#000',
-};
-
-// @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
+//@staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
 export default class FadeTransition extends BaseTransition {
   protected toEndHandler: (event: AnimationEvent) => void;
 
@@ -28,16 +23,12 @@ export default class FadeTransition extends BaseTransition {
   ) {
     super(container, from, to);
 
-    const { duration, color } = { ...defaultOptions, ...(options ?? {}) };
-
-    const { style } = container;
-    style.setProperty('--transition-fade-duration', `${duration}s`);
-    style.setProperty('--transition-fade-color', `${color}`);
+    this.setDefinedCssProperties(options);
 
     to.classList.add('fade');
 
     this.toEndHandler = ({ animationName, pseudoElement }: AnimationEvent) => {
-      if (animationName === 'transition-fade-in') {
+      if (animationName === 'transition-fade') {
         if (pseudoElement === '::before') {
           this.targetVisiblePEC.resolve();
         } else {
@@ -46,12 +37,20 @@ export default class FadeTransition extends BaseTransition {
       }
     };
     this.toCancelHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-fade-in') {
+      if (animationName === 'transition-fade') {
         this.cancel();
       }
     };
     to.addEventListener('animationend', this.toEndHandler);
     to.addEventListener('animationcancel', this.toCancelHandler);
+  }
+
+  protected setDefinedCssProperties(options: FadeTransitionOptions) {
+    const { delay, duration } = options;
+    const { container: c } = this;
+    const s = setCSSPropertyIfDefined;
+    s(c, '--transition-fade-delay', (v) => `${v}s`, delay);
+    s(c, '--transition-fade-duration', (v) => `${v}s`, duration);
   }
 
   protected end(): void {

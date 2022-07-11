@@ -6,18 +6,23 @@ interface Transition {
   isDone(): boolean;
 }
 
-interface TransitionStatic<T extends Transition, P> {
+interface TransitionOptions {
+  delay?: number;
+  duration?: number;
+}
+
+interface TransitionStatic<T extends Transition, O extends TransitionOptions> {
   new (
     container: HTMLDivElement,
     from: HTMLElement,
     to: HTMLElement,
-    options: P,
+    options: O,
   ): T;
-  unpack(options: unknown): P;
+  unpack(options: unknown): O;
   prepare(
     options: unknown,
   ): (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) => T;
   getStyleSheetAsString(): string;
 }
 
-export { Transition, TransitionStatic };
+export { Transition, TransitionOptions, TransitionStatic };
