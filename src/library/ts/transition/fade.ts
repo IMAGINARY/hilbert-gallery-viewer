@@ -1,6 +1,6 @@
 import cssText from 'bundle-text:../../scss/transition/fade.scss';
 
-import { BaseTransition } from './base';
+import CssBasedTransition, { CssBasedTransitionOptions } from './css-based';
 import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
@@ -10,94 +10,59 @@ interface FadeTransitionOptions extends TransitionOptions {
 }
 
 @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
-export default class FadeTransition extends BaseTransition {
-  protected toEndHandler: (event: AnimationEvent) => void;
+export default class FadeTransition extends CssBasedTransition {
+  constructor(element: HTMLElement, options: FadeTransitionOptions) {
+    super(element, FadeTransition.createCssBasedTransitionOptions(options));
+  }
 
-  protected toCancelHandler: (event: AnimationEvent) => void;
-
-  constructor(
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
+  static createCssBasedTransitionOptions(
     options: FadeTransitionOptions,
-  ) {
-    super(container, from, to);
-
-    this.setDefinedCssProperties(options);
-
-    to.classList.add('fade');
-
-    this.toEndHandler = ({ animationName, pseudoElement }: AnimationEvent) => {
-      if (animationName === 'transition-fade') {
-        if (pseudoElement === '::before') {
-          this.targetVisiblePEC.resolve();
-        } else {
-          this.end();
-        }
-      }
+  ): CssBasedTransitionOptions {
+    /*    const animationEventFilter = ({
+      animationName,
+      pseudoElement,
+    }: AnimationEvent) =>
+      animationName === 'transition-fade' && pseudoElement === '';
+    */
+    const animationEventFilter = (ae: AnimationEvent) => {
+      const { animationName, pseudoElement } = ae;
+      console.log(ae);
+      return animationName === 'transition-fade' && pseudoElement === '';
     };
-    this.toCancelHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-fade') {
-        this.cancel();
-      }
+    const cssPropertySetter = (e: HTMLElement) => {
+      const { delay, duration } = options;
+      const s = setCSSPropertyIfDefined;
+      s(e, '--transition-fade-delay', (v) => `${v}s`, delay);
+      s(e, '--transition-fade-duration', (v) => `${v}s`, duration);
     };
-    to.addEventListener('animationend', this.toEndHandler);
-    to.addEventListener('animationcancel', this.toCancelHandler);
-  }
 
-  protected setDefinedCssProperties(options: FadeTransitionOptions) {
-    const { delay, duration } = options;
-    const { container: c } = this;
-    const s = setCSSPropertyIfDefined;
-    s(c, '--transition-fade-delay', (v) => `${v}s`, delay);
-    s(c, '--transition-fade-duration', (v) => `${v}s`, duration);
-  }
+    const cssPropertyRemover = (e: HTMLElement) => {
+      const propertyNames = [
+        '--transition-fade-delay',
+        '--transition-fade-duration',
+      ];
+      propertyNames.forEach((n) => e.style.removeProperty(n));
+    };
 
-  protected end(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isDone = true;
-      this.targetVisiblePEC.resolve();
-      this.donePEC.resolve();
-    }
-  }
-
-  cancel(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isCancelled = true;
-      this.targetVisiblePEC.resolve();
-      this.donePEC.reject();
-    }
-  }
-
-  protected cleanup() {
-    this.to.removeEventListener('animationend', this.toEndHandler);
-    this.to.removeEventListener('animationcancel', this.toCancelHandler);
-
-    const { style } = this.container;
-    style.removeProperty('--transition-fade-duration');
-    style.removeProperty('--transition-fade-color');
-
-    this.from.classList.remove('fade');
-
-    this.to.classList.remove('fade');
+    return {
+      classList: ['transition', 'transition-fade'],
+      endEventFilter: animationEventFilter,
+      cancelEventFilter: animationEventFilter,
+      cssPropertySetter,
+      cssPropertyRemover,
+      removeAtEnd: true,
+      removeOnCancel: true,
+    };
   }
 
   static unpack(options: unknown): FadeTransitionOptions {
     return options as FadeTransitionOptions;
   }
 
-  static prepare(
-    options: unknown,
-  ): (
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
-  ) => FadeTransition {
+  static prepare(options: unknown): (element: HTMLElement) => FadeTransition {
     const unpackedOptions = FadeTransition.unpack(options);
-    return (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) =>
-      new FadeTransition(container, from, to, unpackedOptions);
+    return (element: HTMLElement) =>
+      new FadeTransition(element, unpackedOptions);
   }
 
   static getStyleSheetAsString(): string {

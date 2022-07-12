@@ -1,8 +1,8 @@
 import cssText from 'bundle-text:../../scss/animation/pan-zoom.scss';
 
 import { AnimationOptions, AnimationStatic } from './animation';
+import CssBasedAnimation, { CssBasedAnimationOptions } from './css-based';
 import { staticImplements } from '../util/types';
-import { BaseAnimation } from './base';
 import { setCSSPropertyIfDefined } from '../util/style';
 
 type View = {
@@ -17,90 +17,63 @@ interface PanZoomAnimationOptions extends AnimationOptions {
 }
 
 @staticImplements<AnimationStatic<PanZoomAnimation, PanZoomAnimationOptions>>()
-export default class PanZoomAnimation extends BaseAnimation {
-  protected endHandler: (event: AnimationEvent) => void;
+export default class PanZoomAnimation extends CssBasedAnimation {
+  constructor(content: HTMLElement, options: PanZoomAnimationOptions) {
+    super(content, PanZoomAnimation.createCssBasedAnimationOptions(options));
+  }
 
-  protected cancelHandler: (event: AnimationEvent) => void;
-
-  constructor(
-    wrapper: HTMLDivElement,
-    content: HTMLElement,
+  static createCssBasedAnimationOptions(
     options: PanZoomAnimationOptions,
-  ) {
-    super(wrapper, content);
+  ): CssBasedAnimationOptions {
+    const animationEventFilter = ({ animationName }: AnimationEvent) =>
+      animationName === 'animation-pan-zoom';
 
-    this.wrapper.classList.add('animation-pan-zoom');
-
-    this.setDefinedCssProperties(options);
-
-    this.endHandler = ({ animationName }) => {
-      if (animationName === 'animation-pan-zoom') {
-        this.end();
-      }
+    const cssPropertySetter = (e: HTMLElement) => {
+      const { delay, duration, from, to } = options;
+      const s = setCSSPropertyIfDefined;
+      s(e, '--animation-pan-zoom-delay', (v) => `${v}s`, delay);
+      s(e, '--animation-pan-zoom-duration', (v) => `${v}s`, duration);
+      s(e, '--animation-pan-zoom-origin-x', (v) => `${v}`, from?.x);
+      s(e, '--animation-pan-zoom-origin-y', (v) => `${v}`, from?.y);
+      s(e, '--animation-pan-zoom-origin-scale', (v) => `${v}`, from?.scale);
+      s(e, '--animation-pan-zoom-target-x', (v) => `${v}`, to?.x);
+      s(e, '--animation-pan-zoom-target-y', (v) => `${v}`, to?.y);
+      s(e, '--animation-pan-zoom-target-scale', (v) => `${v}`, to?.scale);
     };
-    this.cancelHandler = ({ animationName }) => {
-      if (animationName === 'animation-pan-zoom') {
-        this.cancel();
-      }
+
+    const cssPropertyRemover = (e: HTMLElement) => {
+      const propertyNames = [
+        '--animation-pan-zoom-delay',
+        '--animation-pan-zoom-duration',
+        '--animation-pan-zoom-origin-x',
+        '--animation-pan-zoom-origin-y',
+        '--animation-pan-zoom-origin-scale',
+        '--animation-pan-zoom-target-x',
+        '--animation-pan-zoom-target-y',
+        '--animation-pan-zoom-target-scale',
+      ];
+      propertyNames.forEach((n) => e.style.removeProperty(n));
     };
 
-    this.wrapper.addEventListener('animationend', this.endHandler);
-    this.wrapper.addEventListener('animationcancel', this.cancelHandler);
-  }
-
-  protected setDefinedCssProperties(options: PanZoomAnimationOptions) {
-    const { delay, duration, from, to } = options;
-
-    const { wrapper: w } = this;
-    const s = setCSSPropertyIfDefined;
-    s(w, '--animation-pan-zoom-delay', (v) => `${v}s`, delay);
-    s(w, '--animation-pan-zoom-duration', (v) => `${v}s`, duration);
-    s(w, '--animation-pan-zoom-origin-x', (v) => `${v}`, from?.x);
-    s(w, '--animation-pan-zoom-origin-y', (v) => `${v}`, from?.y);
-    s(w, '--animation-pan-zoom-origin-scale', (v) => `${v}`, from?.scale);
-    s(w, '--animation-pan-zoom-target-x', (v) => `${v}`, to?.x);
-    s(w, '--animation-pan-zoom-target-y', (v) => `${v}`, to?.y);
-    s(w, '--animation-pan-zoom-target-scale', (v) => `${v}`, to?.scale);
-  }
-
-  protected end(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isDone = true;
-      this.donePEC.resolve();
-    }
-  }
-
-  cancel(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isCancelled = true;
-      this.donePEC.reject();
-    }
-  }
-
-  protected cleanup() {
-    const { wrapper } = this;
-
-    wrapper.removeEventListener('animationend', this.endHandler);
-    wrapper.removeEventListener('animationcancel', this.cancelHandler);
-
-    /**
-     * We do not remove the CSS classes and custom properties to keep the
-     * forwards fill-mode of the animation (target state).
-     */
+    return {
+      classList: ['animation', 'animation-pan-zoom'],
+      endEventFilter: animationEventFilter,
+      cancelEventFilter: animationEventFilter,
+      cssPropertySetter,
+      cssPropertyRemover,
+      removeAtEnd: false,
+      removeOnCancel: false,
+    };
   }
 
   static unpack(options: unknown): PanZoomAnimationOptions {
     return options as PanZoomAnimationOptions;
   }
 
-  static prepare(
-    options: unknown,
-  ): (wrapper: HTMLDivElement, content: HTMLElement) => PanZoomAnimation {
+  static prepare(options: unknown): (content: HTMLElement) => PanZoomAnimation {
     const unpackedOptions = PanZoomAnimation.unpack(options);
-    return (wrapper: HTMLDivElement, content: HTMLElement) =>
-      new PanZoomAnimation(wrapper, content, unpackedOptions);
+    return (content: HTMLElement) =>
+      new PanZoomAnimation(content, unpackedOptions);
   }
 
   static getStyleSheetAsString(): string {

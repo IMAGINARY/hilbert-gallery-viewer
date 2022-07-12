@@ -1,6 +1,6 @@
 import cssText from 'bundle-text:../../scss/transition/cross-fade.scss';
 
-import { BaseTransition } from './base';
+import CssBasedTransition, { CssBasedTransitionOptions } from './css-based';
 import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
@@ -10,70 +10,44 @@ type CrossFadeTransitionOptions = TransitionOptions;
 @staticImplements<
   TransitionStatic<CrossFadeTransition, CrossFadeTransitionOptions>
 >()
-export default class CrossFadeTransition extends BaseTransition {
-  protected toEndHandler: (event: AnimationEvent) => void;
+export default class CrossFadeTransition extends CssBasedTransition {
+  constructor(element: HTMLElement, options: CrossFadeTransitionOptions) {
+    super(
+      element,
+      CrossFadeTransition.createCssBasedTransitionOptions(options),
+    );
+  }
 
-  protected toCancelHandler: (event: AnimationEvent) => void;
-
-  constructor(
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
+  static createCssBasedTransitionOptions(
     options: CrossFadeTransitionOptions,
-  ) {
-    super(container, from, to);
+  ): CssBasedTransitionOptions {
+    const animationEventFilter = ({ animationName }: AnimationEvent) =>
+      animationName === 'transition-cross-fade';
 
-    this.setDefinedCssProperties(options);
-
-    to.classList.add('cross-fade');
-
-    this.toEndHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-cross-fade') {
-        this.end();
-      }
+    const cssPropertySetter = (e: HTMLElement) => {
+      const { delay, duration } = options;
+      const s = setCSSPropertyIfDefined;
+      s(e, '--transition-cross-fade-delay', (v) => `${v}s`, delay);
+      s(e, '--transition-cross-fade-duration', (v) => `${v}s`, duration);
     };
-    this.toCancelHandler = ({ animationName }: AnimationEvent) => {
-      if (animationName === 'transition-cross-fade') {
-        this.cancel();
-      }
+
+    const cssPropertyRemover = (e: HTMLElement) => {
+      const propertyNames = [
+        '--transition-cross-fade-delay',
+        '--transition-cross-fade-duration',
+      ];
+      propertyNames.forEach((n) => e.style.removeProperty(n));
     };
-    to.addEventListener('animationend', this.toEndHandler);
-    to.addEventListener('animationcancel', this.toCancelHandler);
-  }
 
-  protected setDefinedCssProperties(options: CrossFadeTransitionOptions) {
-    const { delay, duration } = options;
-    const { container: c } = this;
-    const s = setCSSPropertyIfDefined;
-    s(c, '--transition-cross-fade-delay', (v) => `${v}s`, delay);
-    s(c, '--transition-cross-fade-duration', (v) => `${v}s`, duration);
-  }
-
-  protected end(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isDone = true;
-      this.donePEC.resolve();
-    }
-  }
-
-  cancel(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isCancelled = true;
-      this.donePEC.reject();
-    }
-  }
-
-  protected cleanup() {
-    this.to.removeEventListener('animationend', this.toEndHandler);
-    this.to.removeEventListener('animationcancel', this.toCancelHandler);
-
-    const { style } = this.container;
-    style.removeProperty('--transition-cross-fade-delay');
-    style.removeProperty('--transition-cross-fade-duration');
-
-    this.to.classList.remove('cross-fade');
+    return {
+      classList: ['transition', 'transition-cross-fade'],
+      endEventFilter: animationEventFilter,
+      cancelEventFilter: animationEventFilter,
+      cssPropertySetter,
+      cssPropertyRemover,
+      removeAtEnd: true,
+      removeOnCancel: true,
+    };
   }
 
   static unpack(options: unknown): CrossFadeTransitionOptions {
@@ -82,14 +56,10 @@ export default class CrossFadeTransition extends BaseTransition {
 
   static prepare(
     options: unknown,
-  ): (
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
-  ) => CrossFadeTransition {
+  ): (element: HTMLElement) => CrossFadeTransition {
     const unpackedOptions = CrossFadeTransition.unpack(options);
-    return (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) =>
-      new CrossFadeTransition(container, from, to, unpackedOptions);
+    return (element: HTMLElement) =>
+      new CrossFadeTransition(element, unpackedOptions);
   }
 
   static getStyleSheetAsString(): string {

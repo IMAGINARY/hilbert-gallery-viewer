@@ -1,27 +1,13 @@
-interface Transition {
-  cancel(): void;
-  isCancelled(): boolean;
-  targetVisible(): Promise<void>;
-  done(): Promise<void>;
-  isDone(): boolean;
-}
+import { Animation, AnimationOptions } from '../animation/animation';
 
-interface TransitionOptions {
-  delay?: number;
-  duration?: number;
-}
+type Transition = Animation;
+
+type TransitionOptions = AnimationOptions;
 
 interface TransitionStatic<T extends Transition, O extends TransitionOptions> {
-  new (
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
-    options: O,
-  ): T;
+  new (element: HTMLElement, options: O): T;
   unpack(options: unknown): O;
-  prepare(
-    options: unknown,
-  ): (container: HTMLDivElement, from: HTMLElement, to: HTMLElement) => T;
+  prepare(options: unknown): (element: HTMLElement) => T;
   getStyleSheetAsString(): string;
 }
 

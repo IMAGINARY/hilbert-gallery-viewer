@@ -5,18 +5,16 @@
   }
 }
 
-.container {
+.transition-none {
   --transition-none-delay: 0s;
   --transition-none-duration: 0s;
 
-  & > .transition {
-    &.none {
-      opacity: 0;
-      animation-delay: var(--transition-none-delay);
-      animation-duration: var(--transition-none-duration);
-      animation-timing-function: ease-in-out;
-      animation-fill-mode: forwards;
-      animation-name: transition-none;
-    }
+  & > *:last-child {
+    opacity: 0;
+    animation-delay: var(--transition-none-delay);
+    animation-duration: var(--transition-none-duration);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    animation-name: transition-none;
   }
 }

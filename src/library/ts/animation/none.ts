@@ -1,91 +1,58 @@
 import cssText from 'bundle-text:../../scss/animation/none.scss';
 
-import { BaseAnimation } from './base';
 import { AnimationOptions, AnimationStatic } from './animation';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
+import CssBasedAnimation, { CssBasedAnimationOptions } from './css-based';
 
 type NoneAnimationOptions = AnimationOptions;
 
 @staticImplements<AnimationStatic<NoneAnimation, NoneAnimationOptions>>()
-class NoneAnimation extends BaseAnimation {
-  protected endHandler: (event: AnimationEvent) => void;
+class NoneAnimation extends CssBasedAnimation {
+  constructor(element: HTMLElement, options: NoneAnimationOptions) {
+    super(element, NoneAnimation.createCssBasedAnimationOptions(options));
+  }
 
-  protected cancelHandler: (event: AnimationEvent) => void;
-
-  constructor(
-    wrapper: HTMLDivElement,
-    content: HTMLElement,
+  static createCssBasedAnimationOptions(
     options: NoneAnimationOptions,
-  ) {
-    super(wrapper, content);
+  ): CssBasedAnimationOptions {
+    const animationEventFilter = ({ animationName }: AnimationEvent) =>
+      animationName === 'animation-none';
 
-    this.wrapper.classList.add('animation-none');
-
-    this.setDefinedCssProperties(options);
-
-    this.endHandler = ({ animationName }) => {
-      if (animationName === 'animation-none') {
-        this.end();
-      }
-    };
-    this.cancelHandler = ({ animationName }) => {
-      if (animationName === 'animation-none') {
-        this.cancel();
-      }
+    const cssPropertySetter = (e: HTMLElement) => {
+      const { delay, duration } = options;
+      const s = setCSSPropertyIfDefined;
+      s(e, '--animation-none-delay', (v) => `${v}s`, delay);
+      s(e, '--animation-none-duration', (v) => `${v}s`, duration);
     };
 
-    this.wrapper.addEventListener('animationend', this.endHandler);
-    this.wrapper.addEventListener('animationcancel', this.cancelHandler);
-  }
+    const cssPropertyRemover = (e: HTMLElement) => {
+      const propertyNames = [
+        '--animation-none-delay',
+        '--animation-none-duration',
+      ];
+      propertyNames.forEach((n) => e.style.removeProperty(n));
+    };
 
-  protected setDefinedCssProperties(options: NoneAnimationOptions) {
-    const { delay, duration } = options;
-
-    const { wrapper: w } = this;
-    const s = setCSSPropertyIfDefined;
-    s(w, '--animation-none', (v) => `${v}s`, delay);
-    s(w, '--animation-none', (v) => `${v}s`, duration);
-  }
-
-  protected end(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isDone = true;
-      this.donePEC.resolve();
-    }
-  }
-
-  cancel(): void {
-    if (!this.isCancelled() && !this.isDone()) {
-      this.cleanup();
-      this._isCancelled = true;
-      this.donePEC.reject();
-    }
-  }
-
-  protected cleanup() {
-    const { wrapper } = this;
-
-    wrapper.removeEventListener('animationend', this.endHandler);
-    wrapper.removeEventListener('animationcancel', this.cancelHandler);
-
-    /**
-     * We do not remove the CSS classes and custom properties to keep the
-     * forwards fill-mode of the animation (target state).
-     */
+    return {
+      classList: ['animation', 'animation-none'],
+      endEventFilter: animationEventFilter,
+      cancelEventFilter: animationEventFilter,
+      cssPropertySetter,
+      cssPropertyRemover,
+      removeAtEnd: false,
+      removeOnCancel: false,
+    };
   }
 
   static unpack(options: unknown): NoneAnimationOptions {
     return options as NoneAnimationOptions;
   }
 
-  static prepare(
-    options: unknown,
-  ): (wrapper: HTMLDivElement, content: HTMLElement) => NoneAnimation {
+  static prepare(options: unknown): (element: HTMLElement) => NoneAnimation {
     const unpackedOptions = NoneAnimation.unpack(options);
-    return (wrapper: HTMLDivElement, content: HTMLElement) =>
-      new NoneAnimation(wrapper, content, unpackedOptions);
+    return (element: HTMLElement) =>
+      new NoneAnimation(element, unpackedOptions);
   }
 
   static getStyleSheetAsString(): string {

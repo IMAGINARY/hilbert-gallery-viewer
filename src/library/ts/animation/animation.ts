@@ -11,11 +11,9 @@ interface AnimationOptions {
 }
 
 interface AnimationStatic<A extends Animation, O extends AnimationOptions> {
-  new (wrapper: HTMLDivElement, content: HTMLElement, options: O): A;
+  new (element: HTMLDivElement, options: O): A;
   unpack(options: unknown): O;
-  prepare(
-    options: unknown,
-  ): (wrapper: HTMLDivElement, content: HTMLElement) => A;
+  prepare(options: unknown): (element: HTMLElement) => A;
   getStyleSheetAsString(): string;
 }
 

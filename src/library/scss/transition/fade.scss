@@ -8,39 +8,37 @@
   }
 }
 
-.container {
+.transition-fade {
   --transition-fade-delay: 0s;
   --transition-fade-duration: 1s;
   --transition-fade-duration-half: calc(var(--transition-fade-duration) / 2);
   --transition-fade-color: black;
 
-  & > .transition {
-    &.fade {
-      &::before,
-      & > * {
-        animation-name: transition-fade;
-        animation-delay: var(--transition-fade-delay);
-        animation-duration: var(--transition-fade-duration-half);
-        animation-timing-function: ease-in-out;
-        animation-fill-mode: both;
-      }
+  & > *:last-child {
+    &::before,
+    & > * {
+      animation-name: transition-fade;
+      animation-delay: var(--transition-fade-delay);
+      animation-duration: var(--transition-fade-duration-half);
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: both;
+    }
 
-      &::before {
-        content: '';
-        position: absolute;
-        background-color: var(--transition-fade-color);
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        animation-delay: var(--transition-fade-delay);
-      }
+    &::before {
+      content: '';
+      position: absolute;
+      background-color: var(--transition-fade-color);
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      animation-delay: var(--transition-fade-delay);
+    }
 
-      & > * {
-        animation-delay: calc(
-          var(--transition-fade-delay) + var(--transition-fade-duration-half)
-        );
-      }
+    & > * {
+      animation-delay: calc(
+        var(--transition-fade-delay) + var(--transition-fade-duration-half)
+      );
     }
   }
 }

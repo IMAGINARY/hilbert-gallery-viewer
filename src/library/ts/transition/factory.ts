@@ -39,11 +39,7 @@ export default class TransitionFactory {
   public prepare(
     type = 'none',
     options: unknown = {},
-  ): (
-    container: HTMLDivElement,
-    from: HTMLElement,
-    to: HTMLElement,
-  ) => Transition {
+  ): (element: HTMLDivElement) => Transition {
     const TransitionClass = this.transitionRegistry.get(type);
     if (!TransitionClass) {
       throw new Error(`Unknown transition type: ${type}`);

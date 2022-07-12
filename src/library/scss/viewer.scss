@@ -10,31 +10,35 @@
   & > .container {
     @include fill-parent-absolute;
 
-    & > .transition {
-      --transition-background-color: black;
+    & > .slide-outer-wrapper {
       @include fill-parent-absolute;
 
-      & > .animation {
+      & > .slide-inner-wrapper {
         @include fill-parent-absolute;
 
-        background-color: var(--transition-background-color);
+        & > .slide {
+          --slide-background-color: black;
+          @include fill-parent-absolute;
 
-        & > .content {
-          position: absolute;
-          width: auto;
-          height: auto;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
+          background-color: var(--slide-background-color);
 
-          &.fit-cover {
-            min-width: 100%;
-            min-height: 100%;
-          }
+          & > .content {
+            position: absolute;
+            width: auto;
+            height: auto;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
 
-          &.fit-contain {
-            max-width: 100%;
-            max-height: 100%;
+            &.fit-cover {
+              min-width: 100%;
+              min-height: 100%;
+            }
+
+            &.fit-contain {
+              max-width: 100%;
+              max-height: 100%;
+            }
           }
         }
       }

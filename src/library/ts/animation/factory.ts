@@ -34,7 +34,7 @@ class AnimationFactory {
   public prepare(
     type = 'none',
     options: unknown = {},
-  ): (wrapper: HTMLDivElement, content: HTMLElement) => Animation {
+  ): (element: HTMLDivElement) => Animation {
     const AnimationClass = this.animationRegistry.get(type);
     if (!AnimationClass) {
       throw new Error(`Unknown animation type: ${type}`);

@@ -5,16 +5,14 @@
   }
 }
 
-.container {
+.animation-none {
   --animation-none-delay: 0s;
   --animation-none-duration: 0s;
 
-  & > .animation {
-    &.none {
-      animation-delay: var(--animation-none-delay);
-      animation-duration: var(--animation-none-duration);
-      animation-fill-mode: both;
-      animation-name: animation-none;
-    }
+  & > .content {
+    animation-delay: var(--animation-none-delay);
+    animation-duration: var(--animation-none-duration);
+    animation-fill-mode: both;
+    animation-name: animation-none;
   }
 }

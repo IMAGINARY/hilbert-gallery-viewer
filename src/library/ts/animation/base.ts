@@ -1,10 +1,8 @@
-import { Animation } from './animation';
+import { Animation, AnimationOptions } from './animation';
 import { PromiseExecutorCallbacks } from '../util/promise';
 
 export default abstract class BaseAnimation implements Animation {
-  protected wrapper: HTMLDivElement;
-
-  protected content: HTMLElement;
+  public readonly element: HTMLElement;
 
   protected _isCancelled = false;
 
@@ -12,9 +10,8 @@ export default abstract class BaseAnimation implements Animation {
 
   protected donePEC: PromiseExecutorCallbacks<void>;
 
-  protected constructor(wrapper: HTMLDivElement, content: HTMLElement) {
-    this.wrapper = wrapper;
-    this.content = content;
+  protected constructor(element: HTMLElement) {
+    this.element = element;
 
     this.donePEC = new PromiseExecutorCallbacks<void>();
 

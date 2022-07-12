@@ -8,19 +8,15 @@
   }
 }
 
-.container {
+.transition-cross-fade {
   --transition-cross-fade-delay: 0s;
   --transition-cross-fade-duration: 1s;
 
-  & > .transition {
-    &.cross-fade {
-      &.cross-fade-in {
-        animation-delay: var(--transition-cross-fade-delay);
-        animation-duration: var(--transition-cross-fade-duration);
-        animation-timing-function: ease-in-out;
-        animation-fill-mode: both;
-        animation-name: transition-cross-fade;
-      }
-    }
+  & > *:last-child {
+    animation-delay: var(--transition-cross-fade-delay);
+    animation-duration: var(--transition-cross-fade-duration);
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: both;
+    animation-name: transition-cross-fade;
   }
 }
