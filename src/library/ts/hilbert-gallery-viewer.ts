@@ -4,13 +4,13 @@ import cssText from 'bundle-text:../scss/viewer.scss';
 
 import 'core-js/actual/promise';
 
+import assert from 'assert';
 import { Action } from './action/action';
 import { PreloadAction } from './action/preload';
 import { Log, LogLevel } from './util/log';
 import { State } from './util/types';
 import { ReloadAction } from './action/reload';
 import { ShowAction } from './action/show';
-import assert from 'assert';
 import { appendStyle } from './util/style';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
@@ -25,7 +25,7 @@ export default class HilbertGalleryViewer extends HTMLElement {
 
     const shadowRoot = this.attachShadow({ mode: 'open' });
 
-    appendStyle(shadowRoot, cssText as string);
+    appendStyle(shadowRoot, cssText );
 
     const container = document.createElement('div');
     container.classList.add('container');
