@@ -25,7 +25,7 @@ export default class HilbertGalleryViewer extends HTMLElement {
 
     const shadowRoot = this.attachShadow({ mode: 'open' });
 
-    appendStyle(shadowRoot, cssText );
+    appendStyle(shadowRoot, cssText);
 
     const container = document.createElement('div');
     container.classList.add('container');
