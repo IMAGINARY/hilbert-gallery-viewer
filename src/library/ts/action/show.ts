@@ -138,7 +138,9 @@ export default class ShowAction extends Base<ShowArg, void> {
         content,
         color ?? 'black',
       );
-      const transition = transitionCreator(container);
+      const transition = transitionCreator(
+        currentDomStructure.slideOuterWrapperElement,
+      );
       const animation = animationCreator(currentDomStructure.slideElement);
       const contentPlayTimeoutId = setTimeout(
         () => ContentCreator.play(content),
