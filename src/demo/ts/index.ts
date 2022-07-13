@@ -31,11 +31,12 @@ type Content = {
   url: string;
 };
 
-function randomFit() {
-  return ['contain', 'cover'][Math.floor(Math.random() * 2)];
+function randomFit(): 'contain' | 'cover' {
+  const fits: ('contain' | 'cover')[] = ['contain', 'cover'];
+  return fits[Math.floor(Math.random() * 2)];
 }
 
-function randomTransition() {
+function randomTransition(): { type: string; options: unknown } {
   const types = [
     () => ({ type: 'none', options: {} }),
     () => ({
@@ -50,7 +51,7 @@ function randomTransition() {
   return types[Math.floor(Math.random() * types.length)]();
 }
 
-function randomAnimation() {
+function randomAnimation(): { type: string; options: unknown } {
   const types = [
     () => ({ type: 'none', options: {} }),
     () => {
@@ -155,8 +156,7 @@ async function main() {
     if (action === 'show') {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const animationDuration =
-        (args?.animationElement?.duration as number) ?? 0;
+      const animationDuration = (args?.animation?.duration as number) ?? 0;
       const delay = animationDuration > 5 ? 1 : 1 + Math.random() * 5;
 
       // eslint-disable-next-line no-await-in-loop
