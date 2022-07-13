@@ -1,11 +1,25 @@
 import cssText from 'bundle-text:../../scss/transition/none.scss';
 
+import { JSONSchemaType } from 'ajv';
+
 import CssBasedTransition, { CssBasedTransitionOptions } from './css-based';
 import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
+import { ajvCompile } from '../util/validate';
 
 type NoneTransitionOptions = TransitionOptions;
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const noneTransitionOptionsSchema = {
+  type: 'object',
+  properties: {
+    delay: { type: 'number', minimum: 0 },
+    duration: { type: 'number', minimum: 0 },
+  },
+} as JSONSchemaType<NoneTransitionOptions>;
+
+const validateNoneTransitionOptions = ajvCompile(noneTransitionOptionsSchema);
 
 @staticImplements<TransitionStatic<NoneTransition, NoneTransitionOptions>>()
 export default class NoneTransition extends CssBasedTransition {
@@ -46,7 +60,7 @@ export default class NoneTransition extends CssBasedTransition {
   }
 
   static unpack(options: unknown): NoneTransitionOptions {
-    return options as NoneTransitionOptions;
+    return validateNoneTransitionOptions(options);
   }
 
   static prepare(options: unknown): (element: HTMLElement) => NoneTransition {

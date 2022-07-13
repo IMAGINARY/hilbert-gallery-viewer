@@ -1,13 +1,28 @@
 import cssText from 'bundle-text:../../scss/transition/fade.scss';
 
+import { JSONSchemaType } from 'ajv';
+
 import CssBasedTransition, { CssBasedTransitionOptions } from './css-based';
 import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
+import { ajvCompile } from '../util/validate';
 
 interface FadeTransitionOptions extends TransitionOptions {
   color?: string;
 }
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const fadeTransitionOptionsSchema = {
+  type: 'object',
+  properties: {
+    delay: { type: 'number', minimum: 0 },
+    duration: { type: 'number', minimum: 0 },
+    color: { type: 'string' },
+  },
+} as JSONSchemaType<FadeTransitionOptions>;
+
+const validateFadeTransitionOptions = ajvCompile(fadeTransitionOptionsSchema);
 
 @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
 export default class FadeTransition extends CssBasedTransition {
@@ -56,7 +71,7 @@ export default class FadeTransition extends CssBasedTransition {
   }
 
   static unpack(options: unknown): FadeTransitionOptions {
-    return options as FadeTransitionOptions;
+    return validateFadeTransitionOptions(options);
   }
 
   static prepare(options: unknown): (element: HTMLElement) => FadeTransition {

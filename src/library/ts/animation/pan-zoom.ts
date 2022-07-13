@@ -4,6 +4,7 @@ import { AnimationOptions, AnimationStatic } from './animation';
 import CssBasedAnimation, { CssBasedAnimationOptions } from './css-based';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
+import { ajvCompile, JSONSchemaType } from '../util/validate';
 
 type View = {
   x: number;
@@ -15,6 +16,31 @@ interface PanZoomAnimationOptions extends AnimationOptions {
   from?: Partial<View>;
   to?: Partial<View>;
 }
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const partialViewSchema = {
+  type: 'object',
+  properties: {
+    x: { type: 'number' },
+    y: { type: 'number' },
+    scale: { type: 'number', minimum: 0 },
+  },
+} as JSONSchemaType<PanZoomAnimationOptions['from']>;
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const panZoomAnimationOptionsSchema = {
+  type: 'object',
+  properties: {
+    delay: { type: 'number', minimum: 0 },
+    duration: { type: 'number', minimum: 0 },
+    from: partialViewSchema,
+    to: partialViewSchema,
+  },
+} as JSONSchemaType<PanZoomAnimationOptions>;
+
+const validatePanZoomAnimationOptions = ajvCompile(
+  panZoomAnimationOptionsSchema,
+);
 
 @staticImplements<AnimationStatic<PanZoomAnimation, PanZoomAnimationOptions>>()
 export default class PanZoomAnimation extends CssBasedAnimation {
@@ -67,7 +93,7 @@ export default class PanZoomAnimation extends CssBasedAnimation {
   }
 
   static unpack(options: unknown): PanZoomAnimationOptions {
-    return options as PanZoomAnimationOptions;
+    return validatePanZoomAnimationOptions(options);
   }
 
   static prepare(options: unknown): (content: HTMLElement) => PanZoomAnimation {

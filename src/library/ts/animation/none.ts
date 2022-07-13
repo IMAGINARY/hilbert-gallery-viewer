@@ -4,8 +4,20 @@ import { AnimationOptions, AnimationStatic } from './animation';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
 import CssBasedAnimation, { CssBasedAnimationOptions } from './css-based';
+import { JSONSchemaType, ajvCompile } from '../util/validate';
 
 type NoneAnimationOptions = AnimationOptions;
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const noneAnimationOptionsSchema = {
+  type: 'object',
+  properties: {
+    delay: { type: 'number', minimum: 0 },
+    duration: { type: 'number', minimum: 0 },
+  },
+} as JSONSchemaType<NoneAnimationOptions>;
+
+const validateNoneAnimationOptions = ajvCompile(noneAnimationOptionsSchema);
 
 @staticImplements<AnimationStatic<NoneAnimation, NoneAnimationOptions>>()
 class NoneAnimation extends CssBasedAnimation {
@@ -46,7 +58,7 @@ class NoneAnimation extends CssBasedAnimation {
   }
 
   static unpack(options: unknown): NoneAnimationOptions {
-    return options as NoneAnimationOptions;
+    return validateNoneAnimationOptions(options);
   }
 
   static prepare(options: unknown): (element: HTMLElement) => NoneAnimation {

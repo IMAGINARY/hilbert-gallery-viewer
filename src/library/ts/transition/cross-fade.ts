@@ -1,11 +1,27 @@
 import cssText from 'bundle-text:../../scss/transition/cross-fade.scss';
 
+import { JSONSchemaType } from 'ajv';
+
 import CssBasedTransition, { CssBasedTransitionOptions } from './css-based';
 import { TransitionOptions, TransitionStatic } from './transition';
 import { staticImplements } from '../util/types';
 import { setCSSPropertyIfDefined } from '../util/style';
+import { ajvCompile } from '../util/validate';
 
 type CrossFadeTransitionOptions = TransitionOptions;
+
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const crossFadeTransitionOptionsSchema = {
+  type: 'object',
+  properties: {
+    delay: { type: 'number', minimum: 0 },
+    duration: { type: 'number', minimum: 0 },
+  },
+} as JSONSchemaType<CrossFadeTransitionOptions>;
+
+const validateCrossFadeTransitionOptions = ajvCompile(
+  crossFadeTransitionOptionsSchema,
+);
 
 @staticImplements<
   TransitionStatic<CrossFadeTransition, CrossFadeTransitionOptions>
@@ -51,7 +67,7 @@ export default class CrossFadeTransition extends CssBasedTransition {
   }
 
   static unpack(options: unknown): CrossFadeTransitionOptions {
-    return options as CrossFadeTransitionOptions;
+    return validateCrossFadeTransitionOptions(options);
   }
 
   static prepare(

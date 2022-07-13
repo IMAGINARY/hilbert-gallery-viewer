@@ -38,7 +38,7 @@ export default class TransitionFactory {
 
   public prepare(
     type = 'none',
-    options: unknown = {},
+    options: Record<string, unknown> = {},
   ): (element: HTMLDivElement) => Transition {
     const TransitionClass = this.transitionRegistry.get(type);
     if (!TransitionClass) {

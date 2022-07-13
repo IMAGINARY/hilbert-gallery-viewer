@@ -5,27 +5,61 @@ import { TransitionFactory } from '../transition/factory';
 import { Transition } from '../transition/transition';
 import { AnimationFactory } from '../animation/factory';
 import { Animation } from '../animation/animation';
+import { ajvCompile, JSONSchemaType } from '../util/validate';
 
-type ShowArg = {
+interface ShowActionOptions {
   mimetype: string;
   url: string;
   fit?: 'cover' | 'contain';
   color?: string;
   delay?: number;
   startDelay?: number;
-  transition?: { type: string; options: unknown };
-  animation?: { type: string; options: unknown };
-};
+  transition?: { type: string; options?: Record<string, unknown> };
+  animation?: { type: string; options?: Record<string, unknown> };
+}
 
-const defaultOptionalShowArgs: Required<Pick<ShowArg, OptionalKeys<ShowArg>>> =
-  {
-    fit: 'cover',
-    color: 'black',
-    delay: 0,
-    startDelay: 0,
-    transition: { type: 'none', options: {} },
-    animation: { type: 'none', options: {} },
-  };
+// TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
+const showActionOptionsSchema = {
+  type: 'object',
+  properties: {
+    mimetype: { type: 'string' },
+    url: { type: 'string' },
+    fit: { type: 'string', enum: ['cover', 'contain'] },
+    color: { type: 'string' },
+    delay: { type: 'number', minimum: 0 },
+    startDelay: { type: 'number', minimum: 0 },
+    transition: {
+      type: 'object',
+      properties: {
+        type: { type: 'string' },
+        options: { type: 'object' },
+      },
+      required: ['type'],
+    },
+    animation: {
+      type: 'object',
+      properties: {
+        type: { type: 'string' },
+        options: { type: 'object' },
+      },
+      required: ['type'],
+    },
+  },
+  required: ['mimetype', 'url'],
+} as unknown as JSONSchemaType<ShowActionOptions>;
+
+const validateShowActionOptions = ajvCompile(showActionOptionsSchema);
+
+const defaultOptionalShowArgs: Required<
+  Pick<ShowActionOptions, OptionalKeys<ShowActionOptions>>
+> = {
+  fit: 'cover',
+  color: 'black',
+  delay: 0,
+  startDelay: 0,
+  transition: { type: 'none', options: {} },
+  animation: { type: 'none', options: {} },
+};
 
 type DOMStructure = {
   slideOuterWrapperElement: HTMLDivElement;
@@ -40,7 +74,7 @@ type SlideData = DOMStructure & {
   contentPlayTimeoutId: ReturnType<typeof setTimeout>;
 };
 
-export default class ShowAction extends Base<ShowArg, void> {
+export default class ShowAction extends Base<ShowActionOptions, void> {
   protected readonly transitionFactory: TransitionFactory;
 
   protected readonly animationFactory: AnimationFactory;
@@ -100,7 +134,7 @@ export default class ShowAction extends Base<ShowArg, void> {
     }
   }
 
-  async execute(arg: ShowArg): Promise<void> {
+  async execute(arg: ShowActionOptions): Promise<void> {
     // first parse args and prepare transition and animation
     const transitionCreator = this.prepareTransition(arg);
     const animationCreator = this.prepareAnimation(arg);
@@ -146,31 +180,23 @@ export default class ShowAction extends Base<ShowArg, void> {
     this.removePreviousSlides(slideData);
   }
 
-  protected prepareTransition(
-    arg: ShowArg,
-  ): ReturnType<TransitionFactory['prepare']> {
-    const { transition } = arg;
+  protected prepareTransition({
+    transition,
+  }: ShowActionOptions): ReturnType<TransitionFactory['prepare']> {
     const { type, options } = transition ?? { type: 'none', options: {} };
-
     return this.transitionFactory.prepare(type, options);
   }
 
-  protected prepareAnimation(
-    arg: ShowArg,
-  ): ReturnType<AnimationFactory['prepare']> {
-    const { animation } = arg;
+  protected prepareAnimation({
+    animation,
+  }: ShowActionOptions): ReturnType<AnimationFactory['prepare']> {
     const { type, options } = animation ?? { type: 'none', options: {} };
-
     return this.animationFactory.prepare(type, options);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  unpack(arg: unknown): ShowArg {
-    if (typeof arg !== 'object') {
-      throw new TypeError('ShowAction.unpack(arg): arg must be an object');
-    }
-    // TODO: further type checking
-    return arg as ShowArg;
+  unpack(options: unknown): ShowActionOptions {
+    return validateShowActionOptions(options);
   }
 }
 
