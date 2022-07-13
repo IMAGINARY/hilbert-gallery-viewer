@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import ready from 'document-ready';
 
-import '../../library/ts/hilbert-gallery-viewer';
+import './side-effects';
 import { HilbertGalleryViewer } from '../../library/ts/hilbert-gallery-viewer';
 
 async function main() {
