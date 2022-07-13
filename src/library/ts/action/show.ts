@@ -1,14 +1,10 @@
 import { Base } from './base';
 import { OptionalKeys, State } from '../util/types';
-import { removePreviousSiblings } from '../util/dom';
-import { PromiseExecutorCallbacks } from '../util/promise';
 import { ContentCreator } from '../util/content-creator';
 import { TransitionFactory } from '../transition/factory';
 import { Transition } from '../transition/transition';
-import { NoneTransition } from '../transition/none';
 import { AnimationFactory } from '../animation/factory';
 import { Animation } from '../animation/animation';
-import { NoneAnimation } from '../animation/none';
 
 type ShowArg = {
   mimetype: string;
@@ -45,40 +41,19 @@ type SlideData = DOMStructure & {
 };
 
 export default class ShowAction extends Base<ShowArg, void> {
-  protected transitionFactory: TransitionFactory;
+  protected readonly transitionFactory: TransitionFactory;
 
-  protected animationFactory: AnimationFactory;
+  protected readonly animationFactory: AnimationFactory;
 
-  protected current: SlideData;
+  protected readonly activeSlides: SlideData[];
 
-  protected executeLock: PromiseExecutorCallbacks<void>;
-
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(state: State) {
     super(state);
-
-    this.executeLock = new PromiseExecutorCallbacks<void>();
-    this.executeLock.resolve();
 
     this.transitionFactory = new TransitionFactory(state.shadowRoot);
     this.animationFactory = new AnimationFactory(state.shadowRoot);
 
-    const dummyContent = ContentCreator.create(
-      'image/gif',
-      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-    );
-    this.appendCurrentContent(dummyContent, 'transparent');
-    const domStructure = this.appendCurrentContent(dummyContent, 'transparent');
-    const transition = new NoneTransition(this.state.container, {});
-    const animation = new NoneAnimation(domStructure.slideElement, {});
-    const contentPlayTimeoutId = setTimeout(() => {}, 0);
-
-    this.current = {
-      ...domStructure,
-      transition,
-      animation,
-      contentPlayTimeoutId,
-    };
+    this.activeSlides = [];
   }
 
   appendCurrentContent(
@@ -109,68 +84,66 @@ export default class ShowAction extends Base<ShowArg, void> {
     };
   }
 
-  async execute(arg: ShowArg): Promise<void> {
-    const { executeLock } = this;
-    const myExecuteLock = new PromiseExecutorCallbacks<void>();
-    this.executeLock = myExecuteLock;
-    try {
-      // first parse args and prepare transition and animation
-      const transitionCreator = this.prepareTransition(arg);
-      const animationCreator = this.prepareAnimation(arg);
-
-      // args are parsed and considered OK
-      const previous = this.current;
-      previous.transition.cancel();
-
-      // wait for previous execution to finish
-      await executeLock.promise();
-
-      const { mimetype, url, fit, color, startDelay } = {
-        ...defaultOptionalShowArgs,
-        ...arg,
-      };
-
-      const content = ContentCreator.create(mimetype, url, fit);
-
-      const { container } = this.state;
-
-      const currentDomStructure = this.appendCurrentContent(
-        content,
-        color ?? 'black',
-      );
-      const transition = transitionCreator(
-        currentDomStructure.slideOuterWrapperElement,
-      );
-      const animation = animationCreator(currentDomStructure.slideElement);
-      const contentPlayTimeoutId = setTimeout(
-        () => ContentCreator.play(content),
-        startDelay * 1000,
-      );
-
-      const current = {
-        ...currentDomStructure,
-        transition,
-        animation,
-        contentPlayTimeoutId,
-      };
-      this.current = current;
-
-      try {
-        await transition.done();
-      } catch (e) {
-        const msg = 'Waiting for transition to end failed. Proceeding anyway';
-        if (e) {
-          this.state.log.warn(msg, e);
-        } else {
-          this.state.log.warn(msg);
+  protected removePreviousSlides(s: SlideData) {
+    const index = this.activeSlides.indexOf(s);
+    if (index !== -1) {
+      const previousSlides = this.activeSlides.slice(0, index);
+      this.activeSlides.splice(0, index);
+      previousSlides.forEach((ps) => {
+        const { parentNode } = ps.slideOuterWrapperElement;
+        if (parentNode !== null) {
+          parentNode.removeChild(ps.slideOuterWrapperElement);
         }
-      }
-      previous.animation.cancel();
-      clearTimeout(previous.contentPlayTimeoutId);
-      removePreviousSiblings(current.slideOuterWrapperElement);
-    } finally {
-      myExecuteLock.resolve();
+        ps.transition.cancel();
+        ps.animation.cancel();
+      });
     }
+  }
+
+  async execute(arg: ShowArg): Promise<void> {
+    // first parse args and prepare transition and animation
+    const transitionCreator = this.prepareTransition(arg);
+    const animationCreator = this.prepareAnimation(arg);
+
+    // args are parsed and considered OK
+    const { mimetype, url, fit, color, startDelay } = {
+      ...defaultOptionalShowArgs,
+      ...arg,
+    };
+
+    const content = ContentCreator.create(mimetype, url, fit);
+    const currentDomStructure = this.appendCurrentContent(
+      content,
+      color ?? 'black',
+    );
+    const transition = transitionCreator(
+      currentDomStructure.slideOuterWrapperElement,
+    );
+    const animation = animationCreator(currentDomStructure.slideElement);
+    const contentPlayTimeoutId = setTimeout(
+      () => ContentCreator.play(content),
+      startDelay * 1000,
+    );
+
+    const slideData = {
+      ...currentDomStructure,
+      transition,
+      animation,
+      contentPlayTimeoutId,
+    };
+    this.activeSlides.push(slideData);
+
+    try {
+      await transition.done();
+    } catch (e) {
+      const msg = 'Waiting for transition to end failed. Proceeding anyway';
+      if (e) {
+        this.state.log.warn(msg, e);
+      } else {
+        this.state.log.warn(msg);
+      }
+    }
+    this.removePreviousSlides(slideData);
   }
 
   protected prepareTransition(
