@@ -8,8 +8,10 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "module": "es2022",
+    "target": "es2022",
     "moduleResolution": "node",
-    "lib": ["ES2021", "dom", "dom.iterable"]
+    "lib": ["ES2021", "dom", "dom.iterable"],
+    "typeRoots": ["./library/ts", "../node_modules/@types"],
   },
   "include": ["./library/ts/**/*.ts", "./demo/ts/**/*.ts"]
 }

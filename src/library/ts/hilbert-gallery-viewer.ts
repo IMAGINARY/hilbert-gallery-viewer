@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import cssText from 'bundle-text:../scss/viewer.scss';
 
 import 'core-js/actual/promise';
