@@ -12,6 +12,7 @@
     "moduleResolution": "node",
     "lib": ["ES2021", "dom", "dom.iterable"],
     "typeRoots": ["./library/ts", "../node_modules/@types"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
   },
   "include": ["./library/ts/**/*.ts", "./demo/ts/**/*.ts"]
 }
