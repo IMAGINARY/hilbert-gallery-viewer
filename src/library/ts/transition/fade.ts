@@ -36,15 +36,8 @@ export default class FadeTransition extends CssBasedTransition {
   static createCssBasedTransitionOptions(
     options: FadeTransitionOptions,
   ): CssBasedTransitionOptions {
-    /*    const animationEventFilter = ({
-      animationName,
-      pseudoElement,
-    }: AnimationEvent) =>
-      animationName === 'transition-fade' && pseudoElement === '';
-    */
     const animationEventFilter = (ae: AnimationEvent) => {
       const { animationName, pseudoElement } = ae;
-      console.log(ae);
       return animationName === 'transition-fade' && pseudoElement === '';
     };
 
