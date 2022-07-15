@@ -6,6 +6,7 @@ import { Transition } from '../transition/transition';
 import { AnimationFactory } from '../animation/factory';
 import { Animation } from '../animation/animation';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
+import FitUpdater from '../util/fit-updater';
 
 interface ShowActionOptions {
   mimetype: string;
@@ -109,6 +110,12 @@ export default class ShowAction extends Base<ShowActionOptions, void> {
 
     const { container } = this.state;
     container.appendChild(slideOuterWrapperElement);
+
+    /**
+     * TODO: Refactor such that this class does not have any knowledge of the
+     *       existence of FitUpdater.
+     */
+    FitUpdater.register(slideElement, contentElement);
 
     return {
       slideOuterWrapperElement,

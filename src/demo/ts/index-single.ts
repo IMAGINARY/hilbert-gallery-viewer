@@ -15,8 +15,8 @@ async function main() {
   const args0 = {
     mimetype: 'image/jpeg',
     url: 'https://placekitten.com/349/321',
-    fit: 'cover',
-    color: 'black',
+    fit: 'contain',
+    color: 'yellow',
     transition: {
       type: 'none',
       options: {},
@@ -29,8 +29,8 @@ async function main() {
   const args1 = {
     mimetype: 'image/jpeg',
     url: 'https://placekitten.com/349/326',
-    fit: 'cover',
-    color: 'black',
+    fit: 'contain',
+    color: 'pink',
     transition: {
       type: 'fade',
       options: {

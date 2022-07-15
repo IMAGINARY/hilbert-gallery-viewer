@@ -1,6 +1,7 @@
 import cssText from 'bundle-text:../scss/viewer.scss';
 
 import 'core-js/actual/promise';
+import 'resize-observer-polyfill';
 
 import assert from 'assert';
 import { Action } from './action/action';
