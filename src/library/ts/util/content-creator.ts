@@ -1,9 +1,5 @@
 class ContentCreator {
-  static create(
-    mimetype: string,
-    url: string,
-    objectFit: 'contain' | 'cover' = 'cover',
-  ): HTMLElement {
+  static create(mimetype: string, url: string): HTMLElement {
     const type = mimetype.split('/', 1)[0];
     let content: HTMLElement;
     switch (type) {
@@ -18,7 +14,6 @@ class ContentCreator {
         break;
     }
     content.classList.add('content');
-    content.classList.add(`fit-${objectFit}`);
     return content;
   }
 

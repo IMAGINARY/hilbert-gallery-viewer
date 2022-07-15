@@ -6,11 +6,12 @@ import { Transition } from '../transition/transition';
 import { AnimationFactory } from '../animation/factory';
 import { Animation } from '../animation/animation';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
+import fitObject, { FitType } from '../util/object-fit';
 
 interface ShowActionOptions {
   mimetype: string;
   url: string;
-  fit?: 'cover' | 'contain';
+  fit?: FitType;
   color?: string;
   delay?: number;
   startDelay?: number;
@@ -94,6 +95,8 @@ export default class ShowAction extends Base<ShowActionOptions, void> {
     contentElement: HTMLElement,
     color = 'black',
   ): DOMStructure {
+    contentElement.classList.add('content');
+
     const slideElement = document.createElement('div');
     slideElement.style.setProperty('--slide-background-color', color);
     slideElement.classList.add('slide');
@@ -145,11 +148,12 @@ export default class ShowAction extends Base<ShowActionOptions, void> {
       ...arg,
     };
 
-    const content = ContentCreator.create(mimetype, url, fit);
+    const content = ContentCreator.create(mimetype, url);
     const currentDomStructure = this.appendCurrentContent(
       content,
       color ?? 'black',
     );
+    fitObject(currentDomStructure.slideElement, content, fit);
     const transition = transitionCreator(
       currentDomStructure.slideOuterWrapperElement,
     );
