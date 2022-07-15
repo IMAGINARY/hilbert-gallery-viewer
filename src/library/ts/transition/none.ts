@@ -23,6 +23,8 @@ const validateNoneTransitionOptions = ajvCompile(noneTransitionOptionsSchema);
 
 @staticImplements<TransitionStatic<NoneTransition, NoneTransitionOptions>>()
 export default class NoneTransition extends CssBasedTransition {
+  readonly targetShowUpDelay: number = 0;
+
   constructor(element: HTMLElement, options: NoneTransitionOptions) {
     super(element, NoneTransition.createCssBasedTransitionOptions(options));
   }
@@ -33,8 +35,9 @@ export default class NoneTransition extends CssBasedTransition {
     const animationEventFilter = ({ animationName }: AnimationEvent) =>
       animationName === 'transition-none';
 
+    const { delay, duration } = options;
+
     const cssPropertySetter = (e: HTMLElement) => {
-      const { delay, duration } = options;
       const s = setCSSPropertyIfDefined;
       s(e, '--transition-none-delay', (v) => `${v}s`, delay);
       s(e, '--transition-none-duration', (v) => `${v}s`, duration);
@@ -56,6 +59,7 @@ export default class NoneTransition extends CssBasedTransition {
       cssPropertyRemover,
       removeAtEnd: true,
       removeOnCancel: true,
+      targetShowUpDelay: delay ?? 0,
     };
   }
 

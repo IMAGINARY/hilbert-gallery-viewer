@@ -1,5 +1,5 @@
 import { Base } from './base';
-import { OptionalKeys, State } from '../util/types';
+import { Optional, OptionalKeys, State } from '../util/types';
 import { ContentCreator } from '../util/content-creator';
 import { TransitionFactory } from '../transition/factory';
 import { Transition } from '../transition/transition';
@@ -50,13 +50,13 @@ const showActionOptionsSchema = {
 
 const validateShowActionOptions = ajvCompile(showActionOptionsSchema);
 
-const defaultOptionalShowArgs: Required<
-  Pick<ShowActionOptions, OptionalKeys<ShowActionOptions>>
+const defaultOptionalShowArgs: Optional<
+  Required<Pick<ShowActionOptions, OptionalKeys<ShowActionOptions>>>,
+  'startDelay' // is optional, but will be derived from the transition if not present
 > = {
   fit: 'cover',
   color: 'black',
   delay: 0,
-  startDelay: 0,
   transition: { type: 'none', options: {} },
   animation: { type: 'none', options: {} },
 };
@@ -154,9 +154,13 @@ export default class ShowAction extends Base<ShowActionOptions, void> {
       currentDomStructure.slideOuterWrapperElement,
     );
     const animation = animationCreator(currentDomStructure.slideElement);
+
+    const { targetShowUpDelay } = transition;
+    const contentPlayDelay = startDelay ?? targetShowUpDelay;
+
     const contentPlayTimeoutId = setTimeout(
       () => ContentCreator.play(content),
-      startDelay * 1000,
+      contentPlayDelay * 1000,
     );
 
     const slideData = {

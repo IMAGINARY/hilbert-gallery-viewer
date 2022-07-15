@@ -1,6 +1,8 @@
 import { Animation, AnimationOptions } from '../animation/animation';
 
-type Transition = Animation;
+interface Transition extends Animation {
+  readonly targetShowUpDelay: number;
+}
 
 type TransitionOptions = AnimationOptions;
 

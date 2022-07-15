@@ -24,6 +24,9 @@ const fadeTransitionOptionsSchema = {
 
 const validateFadeTransitionOptions = ajvCompile(fadeTransitionOptionsSchema);
 
+// overwrites the (invalid) value set as default in the SCSS file
+const defaultDuration = 2;
+
 @staticImplements<TransitionStatic<FadeTransition, FadeTransitionOptions>>()
 export default class FadeTransition extends CssBasedTransition {
   constructor(element: HTMLElement, options: FadeTransitionOptions) {
@@ -44,8 +47,10 @@ export default class FadeTransition extends CssBasedTransition {
       console.log(ae);
       return animationName === 'transition-fade' && pseudoElement === '';
     };
+
+    const { delay, duration } = { duration: defaultDuration, ...options };
+
     const cssPropertySetter = (e: HTMLElement) => {
-      const { delay, duration } = options;
       const s = setCSSPropertyIfDefined;
       s(e, '--transition-fade-delay', (v) => `${v}s`, delay);
       s(e, '--transition-fade-duration', (v) => `${v}s`, duration);
@@ -67,6 +72,7 @@ export default class FadeTransition extends CssBasedTransition {
       cssPropertyRemover,
       removeAtEnd: true,
       removeOnCancel: true,
+      targetShowUpDelay: (delay ?? 0) + duration / 2,
     };
   }
 

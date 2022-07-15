@@ -40,8 +40,9 @@ export default class CrossFadeTransition extends CssBasedTransition {
     const animationEventFilter = ({ animationName }: AnimationEvent) =>
       animationName === 'transition-cross-fade';
 
+    const { delay, duration } = options;
+
     const cssPropertySetter = (e: HTMLElement) => {
-      const { delay, duration } = options;
       const s = setCSSPropertyIfDefined;
       s(e, '--transition-cross-fade-delay', (v) => `${v}s`, delay);
       s(e, '--transition-cross-fade-duration', (v) => `${v}s`, duration);
@@ -63,6 +64,7 @@ export default class CrossFadeTransition extends CssBasedTransition {
       cssPropertyRemover,
       removeAtEnd: true,
       removeOnCancel: true,
+      targetShowUpDelay: delay ?? 0,
     };
   }
 

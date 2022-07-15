@@ -15,6 +15,8 @@ type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
       Partial<Record<Exclude<Keys, K>, undefined>>;
   }[Keys];
 
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
 type State = {
   log: Log;
   shadowRoot: ShadowRoot;
@@ -34,6 +36,7 @@ type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 export {
   staticImplements,
   RequireOnlyOne,
+  Optional,
   State,
   RequiredKeys,
   OptionalKeys,
