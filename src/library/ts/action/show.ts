@@ -13,7 +13,6 @@ interface ShowActionOptions {
   url: string;
   fit?: FitType;
   color?: string;
-  delay?: number;
   startDelay?: number;
   transition?: { type: string; options?: Record<string, unknown> };
   animation?: { type: string; options?: Record<string, unknown> };
@@ -27,7 +26,6 @@ const showActionOptionsSchema = {
     url: { type: 'string' },
     fit: { type: 'string', enum: ['cover', 'contain'] },
     color: { type: 'string' },
-    delay: { type: 'number', minimum: 0 },
     startDelay: { type: 'number', minimum: 0 },
     transition: {
       type: 'object',
@@ -57,7 +55,6 @@ const defaultOptionalShowArgs: Optional<
 > = {
   fit: 'cover',
   color: 'black',
-  delay: 0,
   transition: { type: 'none', options: {} },
   animation: { type: 'none', options: {} },
 };
