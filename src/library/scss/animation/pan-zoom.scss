@@ -2,16 +2,16 @@
   0% {
     transform: scale(var(--animation-pan-zoom-origin-scale))
       translate(
-        calc(-100% * var(--animation-pan-zoom-origin-x)),
-        calc(-100% * var(--animation-pan-zoom-origin-y))
+        calc(50% - 100% * var(--animation-pan-zoom-origin-x)),
+        calc(50% - 100% * var(--animation-pan-zoom-origin-y))
       );
   }
 
   100% {
     transform: scale(var(--animation-pan-zoom-target-scale))
       translate(
-        calc(-100% * var(--animation-pan-zoom-target-x)),
-        calc(-100% * var(--animation-pan-zoom-target-y))
+        calc(50% - 100% * var(--animation-pan-zoom-target-x)),
+        calc(50% - 100% * var(--animation-pan-zoom-target-y))
       );
   }
 }
@@ -28,7 +28,7 @@
 
   & .content {
     animation-name: animation-pan-zoom;
-    transform-origin: 0 0;
+    transform-origin: center;
     animation-delay: var(--animation-pan-zoom-delay);
     animation-duration: var(--animation-pan-zoom-duration);
     animation-timing-function: ease-in-out;

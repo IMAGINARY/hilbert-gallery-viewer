@@ -22,6 +22,9 @@
           --slide-background-color: black;
           @include fill-parent-absolute;
 
+          display: flex;
+          align-items: center;
+          justify-content: center;
           background-color: var(--slide-background-color);
 
           --fit-cover-max-width: auto;
@@ -31,9 +34,6 @@
 
           & > .content {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
 
             &.fit-cover {
               max-width: var(--fit-contain-max-width);
