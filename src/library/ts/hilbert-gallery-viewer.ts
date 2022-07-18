@@ -16,6 +16,7 @@ import AnimationFactory from './animation/factory';
 import TransitionFactory from './transition/factory';
 import MuteAction from './action/mute';
 import UnmuteAction from './action/unmute';
+import SetVolumeAction from './action/set-volume';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -62,6 +63,7 @@ class HilbertGalleryViewer extends HTMLElement {
     registry.set('clear', new ClearAction(state));
     registry.set('mute', new MuteAction(state));
     registry.set('unmute', new UnmuteAction(state));
+    registry.set('set-volume', new SetVolumeAction(state));
     return registry;
   }
 
