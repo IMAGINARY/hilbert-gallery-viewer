@@ -1,7 +1,7 @@
-import { Base } from './base';
+import Base from './base';
 import { State } from '../util/types';
 
-export default class ReloadAction extends Base<void, void> {
+class ReloadAction extends Base<void, void> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(state: State) {
     super(state);
@@ -17,4 +17,4 @@ export default class ReloadAction extends Base<void, void> {
   unpack(): void {}
 }
 
-export { ReloadAction };
+export default ReloadAction;

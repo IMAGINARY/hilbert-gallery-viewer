@@ -1,7 +1,7 @@
-import { Action } from './action';
+import Action from './action';
 import { State } from '../util/types';
 
-export default abstract class Base<A, R> implements Action<A, R> {
+abstract class Base<A, R> implements Action<A, R> {
   protected readonly state: State;
 
   protected constructor(state: State) {
@@ -18,4 +18,4 @@ export default abstract class Base<A, R> implements Action<A, R> {
   }
 }
 
-export { Base };
+export default Base;

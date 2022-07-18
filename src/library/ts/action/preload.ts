@@ -1,4 +1,4 @@
-import { Base } from './base';
+import Base from './base';
 import { Preloader } from '../util/preloader';
 import { State } from '../util/types';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
@@ -24,7 +24,7 @@ const preloadActionOptionsSchema: JSONSchemaType<PreloadActionOptions> = {
 
 const validatePreloadActionOptions = ajvCompile(preloadActionOptionsSchema);
 
-export default class PreloadAction extends Base<PreloadItem[], void> {
+class PreloadAction extends Base<PreloadItem[], void> {
   protected preloader: Preloader;
 
   constructor(state: State) {
@@ -44,4 +44,5 @@ export default class PreloadAction extends Base<PreloadItem[], void> {
   }
 }
 
-export { PreloadAction, PreloadItem };
+export default PreloadAction;
+export { PreloadItem };

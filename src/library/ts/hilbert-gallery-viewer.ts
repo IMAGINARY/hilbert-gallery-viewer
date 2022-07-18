@@ -4,12 +4,12 @@ import 'core-js/actual/promise';
 import 'resize-observer-polyfill';
 
 import assert from 'assert';
-import { Action } from './action/action';
-import { PreloadAction } from './action/preload';
+import Action from './action/action';
+import PreloadAction from './action/preload';
 import { Log, LogLevel } from './util/log';
 import { State } from './util/types';
-import { ReloadAction } from './action/reload';
-import { ShowAction } from './action/show';
+import ReloadAction from './action/reload';
+import ShowAction from './action/show';
 import { appendStyle } from './util/style';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;

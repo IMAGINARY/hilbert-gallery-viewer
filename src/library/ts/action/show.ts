@@ -1,4 +1,4 @@
-import { Base } from './base';
+import Base from './base';
 import { Optional, OptionalKeys, State } from '../util/types';
 import ContentCreator from '../util/content-creator';
 import { TransitionFactory } from '../transition/factory';
@@ -72,7 +72,7 @@ type SlideData = DOMStructure & {
   contentPlayTimeoutId: ReturnType<typeof setTimeout>;
 };
 
-export default class ShowAction extends Base<ShowActionOptions, void> {
+class ShowAction extends Base<ShowActionOptions, void> {
   protected readonly transitionFactory: TransitionFactory;
 
   protected readonly animationFactory: AnimationFactory;
@@ -205,4 +205,5 @@ export default class ShowAction extends Base<ShowActionOptions, void> {
   }
 }
 
-export { ShowAction };
+export default ShowAction;
+export { ShowActionOptions };
