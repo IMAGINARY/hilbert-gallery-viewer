@@ -94,11 +94,11 @@ class ContentCreator {
       switch (mode) {
         case 'absolute':
           // eslint-disable-next-line no-param-reassign
-          content.volume = volume;
+          content.volume = Math.min(1, Math.max(volume, 0));
           break;
         case 'relative':
           // eslint-disable-next-line no-param-reassign
-          content.volume *= volume;
+          content.volume = Math.min(1, Math.max(content.volume * volume, 0));
           break;
         default:
           exhaustiveTypeCheck<T>(mode);

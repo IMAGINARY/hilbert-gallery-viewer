@@ -10,11 +10,24 @@ interface SetVolumeActionOptions {
 
 // TODO: avoid JSONSchemaType cast; needs at least Ajv v9 to support optional properties
 const setVolumeActionOptionsSchema = {
-  type: 'object',
-  properties: {
-    volume: { type: 'number', minimum: 0 },
-  },
-  required: ['volume'],
+  oneOf: [
+    {
+      type: 'object',
+      properties: {
+        volume: { type: 'number', minimum: 0, maximum: 1 },
+        mode: { type: 'string', const: 'absolute' },
+      },
+      required: ['volume'],
+    },
+    {
+      type: 'object',
+      properties: {
+        volume: { type: 'number', minimum: 0 },
+        mode: { type: 'string', const: 'relative' },
+      },
+      required: ['volume', 'mode'],
+    },
+  ],
 } as unknown as JSONSchemaType<SetVolumeActionOptions>;
 
 const validateSetVolumeActionOptions = ajvCompile(setVolumeActionOptionsSchema);
