@@ -7,11 +7,13 @@ import assert from 'assert';
 import Action from './action/action';
 import PreloadAction from './action/preload';
 import { Log, LogLevel } from './util/log';
-import { State } from './util/types';
+import { SlideData, State } from './util/types';
 import ReloadAction from './action/reload';
 import ShowAction from './action/show';
 import ClearAction from './action/clear';
 import { appendStyle } from './util/style';
+import AnimationFactory from './animation/factory';
+import TransitionFactory from './transition/factory';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -31,22 +33,30 @@ class HilbertGalleryViewer extends HTMLElement {
     container.classList.add('container');
     shadowRoot.appendChild(container);
 
+    const transitionFactory = new TransitionFactory(shadowRoot);
+    const animationFactory = new AnimationFactory(shadowRoot);
+
+    const activeSlides: SlideData[] = [];
+
     this.state = {
       viewer: this,
       log: new Log(LogLevel.WARN),
       shadowRoot,
       container,
+      transitionFactory,
+      animationFactory,
+      activeSlides,
     };
 
-    this.actionRegistry = this.createActionRegistry();
+    this.actionRegistry = HilbertGalleryViewer.createActionRegistry(this.state);
   }
 
-  protected createActionRegistry(): ActionRegistry {
+  protected static createActionRegistry(state: State): ActionRegistry {
     const registry = new Map<string, Action<unknown, unknown>>();
-    registry.set('reload', new ReloadAction(this.state));
-    registry.set('preload', new PreloadAction(this.state));
-    registry.set('show', new ShowAction(this.state));
-    registry.set('clear', new ClearAction(this.state));
+    registry.set('reload', new ReloadAction(state));
+    registry.set('preload', new PreloadAction(state));
+    registry.set('show', new ShowAction(state));
+    registry.set('clear', new ClearAction(state));
     return registry;
   }
 

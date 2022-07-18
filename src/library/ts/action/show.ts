@@ -1,9 +1,15 @@
 import Base from './base';
-import { Optional, OptionalKeys, State } from '../util/types';
+import {
+  Optional,
+  OptionalKeys,
+  State,
+  DOMStructure,
+  SlideData,
+} from '../util/types';
 import ContentCreator from '../util/content-creator';
-import { TransitionFactory } from '../transition/factory';
+import TransitionFactory from '../transition/factory';
 import { Transition } from '../transition/transition';
-import { AnimationFactory } from '../animation/factory';
+import AnimationFactory from '../animation/factory';
 import { Animation } from '../animation/animation';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
 import fitObject, { FitType } from '../util/object-fit';
@@ -59,33 +65,10 @@ const defaultOptionalShowArgs: Optional<
   animation: { type: 'none', options: {} },
 };
 
-type DOMStructure = {
-  slideOuterWrapperElement: HTMLDivElement;
-  slideInnerWrapperElement: HTMLDivElement;
-  slideElement: HTMLDivElement;
-  contentElement: HTMLElement;
-};
-
-type SlideData = DOMStructure & {
-  transition: Transition;
-  animation: Animation;
-  contentPlayTimeoutId: ReturnType<typeof setTimeout>;
-};
-
 class ShowAction extends Base<ShowActionOptions, void> {
-  protected readonly transitionFactory: TransitionFactory;
-
-  protected readonly animationFactory: AnimationFactory;
-
-  protected readonly activeSlides: SlideData[];
-
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(state: State) {
     super(state);
-
-    this.transitionFactory = new TransitionFactory(state.shadowRoot);
-    this.animationFactory = new AnimationFactory(state.shadowRoot);
-
-    this.activeSlides = [];
   }
 
   appendCurrentContent(
@@ -119,10 +102,11 @@ class ShowAction extends Base<ShowActionOptions, void> {
   }
 
   protected removePreviousSlides(s: SlideData) {
-    const index = this.activeSlides.indexOf(s);
+    const { activeSlides } = this.state;
+    const index = activeSlides.indexOf(s);
     if (index !== -1) {
-      const previousSlides = this.activeSlides.slice(0, index);
-      this.activeSlides.splice(0, index);
+      const previousSlides = activeSlides.slice(0, index);
+      activeSlides.splice(0, index);
       previousSlides.forEach((ps) => {
         const { parentNode } = ps.slideOuterWrapperElement;
         if (parentNode !== null) {
@@ -170,7 +154,8 @@ class ShowAction extends Base<ShowActionOptions, void> {
       animation,
       contentPlayTimeoutId,
     };
-    this.activeSlides.push(slideData);
+    const { activeSlides } = this.state;
+    activeSlides.push(slideData);
 
     try {
       await transition.done();
@@ -189,14 +174,16 @@ class ShowAction extends Base<ShowActionOptions, void> {
     transition,
   }: ShowActionOptions): ReturnType<TransitionFactory['prepare']> {
     const { type, options } = transition ?? { type: 'none', options: {} };
-    return this.transitionFactory.prepare(type, options);
+    const { transitionFactory } = this.state;
+    return transitionFactory.prepare(type, options);
   }
 
   protected prepareAnimation({
     animation,
   }: ShowActionOptions): ReturnType<AnimationFactory['prepare']> {
     const { type, options } = animation ?? { type: 'none', options: {} };
-    return this.animationFactory.prepare(type, options);
+    const { animationFactory } = this.state;
+    return animationFactory.prepare(type, options);
   }
 
   // eslint-disable-next-line class-methods-use-this
