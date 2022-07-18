@@ -1,7 +1,12 @@
+import { exhaustiveTypeCheck } from './types';
+
+type SupportedContentElement = HTMLImageElement | HTMLVideoElement;
+type Size = { width: number; height: number };
+
 class ContentCreator {
-  static create(mimetype: string, url: string): HTMLElement {
+  static create(mimetype: string, url: string): SupportedContentElement {
     const type = mimetype.split('/', 1)[0];
-    let content: HTMLElement;
+    let content: SupportedContentElement;
     switch (type) {
       case 'image':
         content = ContentCreator.createImage(url);
@@ -10,21 +15,10 @@ class ContentCreator {
         content = ContentCreator.createVideo(url);
         break;
       default:
-        content = ContentCreator.createObject(mimetype, url);
-        break;
+        throw new TypeError(`Unsupported MIME type: ${type} (${mimetype})`);
     }
     content.classList.add('content');
     return content;
-  }
-
-  protected static createObject(
-    mimetype: string,
-    url: string,
-  ): HTMLObjectElement {
-    const object = document.createElement('object');
-    object.type = mimetype;
-    object.data = url;
-    return object;
   }
 
   protected static createImage(url: string): HTMLImageElement {
@@ -41,34 +35,127 @@ class ContentCreator {
     return video;
   }
 
-  public static async awaitLoad<T extends HTMLElement>(content: T): Promise<T> {
-    return new Promise((resolve) => {
-      if (content.tagName === 'IMG') {
-        const image = content as unknown as HTMLImageElement;
-        if (image.complete) {
-          resolve(content);
-        } else {
-          const handler = () => {
-            image.removeEventListener('load', handler);
-            image.removeEventListener('error', handler);
-            requestAnimationFrame(() => resolve(content));
-          };
-          image.addEventListener('load', handler);
-          image.addEventListener('error', handler);
-        }
-      } else {
-        // consider the transition-ol done after a grace period of 1s
-        setTimeout(() => resolve(content), 1000);
-      }
+  public static async readyForDisplay<T extends SupportedContentElement>(
+    content: T,
+  ): Promise<T> {
+    if (ContentCreator.isImage(content)) {
+      await ContentCreator.readyForDisplayImage(content);
+    } else if (ContentCreator.isVideo(content)) {
+      await ContentCreator.readyForDisplayVideo(content);
+    } else {
+      exhaustiveTypeCheck(content);
+    }
+    return content;
+  }
+
+  protected static async readyForDisplayImage<T extends HTMLImageElement>(
+    image: T,
+  ): Promise<T> {
+    if (!image.complete)
+      await ContentCreator.waitForEvents(image, ['load'], ['abort', 'error']);
+    return image;
+  }
+
+  protected static async readyForDisplayVideo<T extends HTMLVideoElement>(
+    video: T,
+  ): Promise<T> {
+    if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) {
+      await ContentCreator.waitForEvents(
+        video,
+        ['canplaythrough'],
+        ['abort', 'error'],
+      );
+    }
+    return video;
+  }
+
+  public static play<T extends SupportedContentElement>(content: T): T {
+    if (ContentCreator.isImage(content)) {
+      return content;
+    }
+    if (ContentCreator.isVideo(content)) {
+      content.play().finally(() => {});
+      return content;
+    }
+    return exhaustiveTypeCheck<T>(content);
+  }
+
+  public static async getDimensions<T extends SupportedContentElement>(
+    content: T,
+  ): Promise<Size> {
+    if (ContentCreator.isImage(content)) {
+      return ContentCreator.getDimensionsImage(content);
+    }
+    if (ContentCreator.isVideo(content)) {
+      return ContentCreator.getDimensionsVideo(content);
+    }
+    return exhaustiveTypeCheck<Size>(content);
+  }
+
+  protected static async getDimensionsImage<T extends HTMLImageElement>(
+    image: T,
+  ): Promise<Size> {
+    if (!image.complete)
+      await ContentCreator.waitForEvents(image, ['load'], ['abort', 'error']);
+    return { width: image.naturalWidth, height: image.naturalHeight };
+  }
+
+  protected static async getDimensionsVideo<T extends HTMLVideoElement>(
+    video: T,
+  ): Promise<Size> {
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+      await ContentCreator.waitForEvents(
+        video,
+        ['loadedmetadata'],
+        ['abort', 'error'],
+      );
+    }
+    return { width: video.videoWidth, height: video.videoHeight };
+  }
+
+  protected static async waitForEvents<T extends HTMLElement>(
+    element: T,
+    resolveEventNames: string[],
+    rejectEventNames: string[],
+  ): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const [resolveHandler, rejectHandler] = [
+        () => {
+          resolveEventNames.forEach((name) =>
+            element.removeEventListener(name, resolveHandler),
+          );
+          rejectEventNames.forEach((name) =>
+            element.removeEventListener(name, rejectHandler),
+          );
+          resolve(element);
+        },
+        (e: Event) => {
+          resolveEventNames.forEach((name) =>
+            element.removeEventListener(name, resolveHandler),
+          );
+          rejectEventNames.forEach((name) =>
+            element.removeEventListener(name, rejectHandler),
+          );
+          reject(e);
+        },
+      ];
+      resolveEventNames.forEach((e) =>
+        element.addEventListener(e, resolveHandler),
+      );
+      rejectEventNames.forEach((e) =>
+        element.addEventListener(e, rejectHandler),
+      );
     });
   }
 
-  public static play<T extends HTMLElement>(content: T) {
-    if (content.tagName === 'VIDEO') {
-      const video = content as unknown as HTMLVideoElement;
-      video.play().finally(() => {});
-    }
+  public static isImage(element: HTMLElement): element is HTMLImageElement {
+    return element instanceof HTMLImageElement;
+  }
+
+  public static isVideo(element: HTMLElement): element is HTMLVideoElement {
+    return element instanceof HTMLVideoElement;
   }
 }
 
-export { ContentCreator };
+export default ContentCreator;
+export { SupportedContentElement, Size };

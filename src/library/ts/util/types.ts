@@ -33,6 +33,19 @@ type OptionalKeys<T> = {
 
 type AtLeast<T, K extends keyof T> = Partial<T> & Pick<T, K>;
 
+/**
+ * This function can be used to check if the type of a variable has been
+ * narrowed down to the `never` type, i.e. that at the time of calling this
+ * function, all other possible types have been covered beforehand.
+ * @param n The variable to check for the `never` type.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function exhaustiveTypeCheck<T>(n: never): T {
+  throw new TypeError(
+    'This function should never be called. If it has been called, your type narrowing is incomplete.',
+  );
+}
+
 export {
   staticImplements,
   RequireOnlyOne,
@@ -41,4 +54,5 @@ export {
   RequiredKeys,
   OptionalKeys,
   AtLeast,
+  exhaustiveTypeCheck,
 };

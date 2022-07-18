@@ -1,4 +1,7 @@
-type Size = { width: number; height: number };
+import ContentCreator, {
+  SupportedContentElement,
+  Size,
+} from './content-creator';
 
 type FitType = 'cover' | 'contain';
 
@@ -16,9 +19,12 @@ class FitUpdater {
 
   protected container: HTMLElement;
 
-  protected content: HTMLElement;
+  protected content: SupportedContentElement;
 
-  protected constructor(container: HTMLElement, content: HTMLElement) {
+  protected constructor(
+    container: HTMLElement,
+    content: SupportedContentElement,
+  ) {
     this.container = container;
     this.content = content;
   }
@@ -47,30 +53,28 @@ class FitUpdater {
 
   public static register(
     container: HTMLElement,
-    content: HTMLElement,
+    content: SupportedContentElement,
   ): FitUpdater {
     const updater = new FitUpdater(container, content);
 
     FitUpdater.addInstance(container, updater);
     FitUpdater.addInstance(content, updater);
     FitUpdater.resizeObserver.observe(container);
-    if (content instanceof HTMLImageElement) {
-      const updateContentSize = () => {
-        FitUpdater.elementSizes.set(content, {
-          width: content.naturalWidth,
-          height: content.naturalHeight,
-        });
-        updater.update();
-      };
 
-      if (content.complete) {
-        updateContentSize();
-      } else {
-        content.addEventListener('load', updateContentSize, { once: true });
-      }
-    } else {
-      throw new TypeError(`Unsupported element: ${content.tagName}`);
-    }
+    ContentCreator.getDimensions(content)
+      .then((size) => {
+        FitUpdater.elementSizes.set(content, size);
+        updater.update();
+      })
+      .catch((reason) => {
+        // eslint-disable-next-line no-console
+        console.error(
+          'Could not retrieve size of content element.',
+          content,
+          reason,
+          'Content fitting will most likely not work for this element.',
+        );
+      });
 
     return updater;
   }
@@ -117,7 +121,7 @@ class FitUpdater {
 
 function fitObject(
   container: HTMLElement,
-  content: HTMLElement,
+  content: SupportedContentElement,
   type: FitType,
 ) {
   content.classList.add(`fit-${type}`);

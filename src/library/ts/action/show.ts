@@ -1,6 +1,6 @@
 import { Base } from './base';
 import { Optional, OptionalKeys, State } from '../util/types';
-import { ContentCreator } from '../util/content-creator';
+import ContentCreator from '../util/content-creator';
 import { TransitionFactory } from '../transition/factory';
 import { Transition } from '../transition/transition';
 import { AnimationFactory } from '../animation/factory';
