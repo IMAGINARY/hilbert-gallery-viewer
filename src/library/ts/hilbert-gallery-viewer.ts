@@ -15,7 +15,7 @@ import { appendStyle } from './util/style';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
-export default class HilbertGalleryViewer extends HTMLElement {
+class HilbertGalleryViewer extends HTMLElement {
   protected actionRegistry: ActionRegistry;
 
   protected state: State;
@@ -71,4 +71,4 @@ export default class HilbertGalleryViewer extends HTMLElement {
 
 customElements.define('hilbert-gallery-viewer', HilbertGalleryViewer);
 
-export { HilbertGalleryViewer };
+export default HilbertGalleryViewer;
