@@ -6,7 +6,9 @@ import {
   DOMStructure,
   SlideData,
 } from '../util/types';
-import ContentCreator from '../util/content-creator';
+import ContentCreator, {
+  SupportedContentElement,
+} from '../util/content-creator';
 import TransitionFactory from '../transition/factory';
 import { Transition } from '../transition/transition';
 import AnimationFactory from '../animation/factory';
@@ -72,7 +74,7 @@ class ShowAction extends Base<ShowActionOptions, void> {
   }
 
   appendCurrentContent(
-    contentElement: HTMLElement,
+    contentElement: SupportedContentElement,
     color = 'black',
   ): DOMStructure {
     contentElement.classList.add('content');
@@ -135,6 +137,7 @@ class ShowAction extends Base<ShowActionOptions, void> {
       color ?? 'black',
     );
     fitObject(currentDomStructure.slideElement, content, fit);
+    ContentCreator.setMuted(content, this.state.muted);
     const transition = transitionCreator(
       currentDomStructure.slideOuterWrapperElement,
     );

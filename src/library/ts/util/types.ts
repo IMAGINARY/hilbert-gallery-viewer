@@ -5,6 +5,7 @@ import type AnimationFactory from '../animation/factory';
 import type HilbertGalleryViewer from '../hilbert-gallery-viewer';
 import { Transition } from '../transition/transition';
 import { Animation } from '../animation/animation';
+import { SupportedContentElement } from './content-creator';
 
 /* class decorator for ensuring static elements on classes */
 function staticImplements<T>() {
@@ -26,7 +27,7 @@ type DOMStructure = {
   slideOuterWrapperElement: HTMLDivElement;
   slideInnerWrapperElement: HTMLDivElement;
   slideElement: HTMLDivElement;
-  contentElement: HTMLElement;
+  contentElement: SupportedContentElement;
 };
 
 type SlideData = DOMStructure & {
@@ -43,6 +44,7 @@ type State = {
   activeSlides: SlideData[];
   transitionFactory: TransitionFactory;
   animationFactory: AnimationFactory;
+  muted: boolean;
 };
 
 type RequiredKeys<T> = {

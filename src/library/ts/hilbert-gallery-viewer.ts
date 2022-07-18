@@ -14,6 +14,8 @@ import ClearAction from './action/clear';
 import { appendStyle } from './util/style';
 import AnimationFactory from './animation/factory';
 import TransitionFactory from './transition/factory';
+import MuteAction from './action/mute';
+import UnmuteAction from './action/unmute';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -46,6 +48,7 @@ class HilbertGalleryViewer extends HTMLElement {
       transitionFactory,
       animationFactory,
       activeSlides,
+      muted: false,
     };
 
     this.actionRegistry = HilbertGalleryViewer.createActionRegistry(this.state);
@@ -57,6 +60,8 @@ class HilbertGalleryViewer extends HTMLElement {
     registry.set('preload', new PreloadAction(state));
     registry.set('show', new ShowAction(state));
     registry.set('clear', new ClearAction(state));
+    registry.set('mute', new MuteAction(state));
+    registry.set('unmute', new UnmuteAction(state));
     return registry;
   }
 
