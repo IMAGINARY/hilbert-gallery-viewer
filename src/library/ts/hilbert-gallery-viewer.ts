@@ -10,6 +10,7 @@ import { Log, LogLevel } from './util/log';
 import { State } from './util/types';
 import ReloadAction from './action/reload';
 import ShowAction from './action/show';
+import ClearAction from './action/clear';
 import { appendStyle } from './util/style';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
@@ -31,6 +32,7 @@ export default class HilbertGalleryViewer extends HTMLElement {
     shadowRoot.appendChild(container);
 
     this.state = {
+      viewer: this,
       log: new Log(LogLevel.WARN),
       shadowRoot,
       container,
@@ -44,6 +46,7 @@ export default class HilbertGalleryViewer extends HTMLElement {
     registry.set('reload', new ReloadAction(this.state));
     registry.set('preload', new PreloadAction(this.state));
     registry.set('show', new ShowAction(this.state));
+    registry.set('clear', new ClearAction(this.state));
     return registry;
   }
 

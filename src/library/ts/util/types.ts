@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { Log } from './log';
+import type HilbertGalleryViewer from '../hilbert-gallery-viewer';
 
 /* class decorator for ensuring static elements on classes */
 function staticImplements<T>() {
@@ -18,6 +19,7 @@ type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 type State = {
+  viewer: HilbertGalleryViewer;
   log: Log;
   shadowRoot: ShadowRoot;
   container: HTMLDivElement;
