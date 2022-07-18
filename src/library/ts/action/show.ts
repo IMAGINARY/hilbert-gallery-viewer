@@ -23,6 +23,7 @@ interface ShowActionOptions {
   color?: string;
   startDelay?: number;
   volume?: number;
+  muted?: boolean;
   transition?: { type: string; options?: Record<string, unknown> };
   animation?: { type: string; options?: Record<string, unknown> };
 }
@@ -37,6 +38,7 @@ const showActionOptionsSchema = {
     color: { type: 'string' },
     startDelay: { type: 'number', minimum: 0 },
     volume: { type: 'number', minimum: 0, maximum: 1 },
+    muted: { type: 'boolean' },
     transition: {
       type: 'object',
       properties: {
@@ -66,6 +68,7 @@ const defaultOptionalShowArgs: Optional<
   fit: 'cover',
   color: 'black',
   volume: 1,
+  muted: false,
   transition: { type: 'none', options: {} },
   animation: { type: 'none', options: {} },
 };
@@ -129,7 +132,7 @@ class ShowAction extends Base<ShowActionOptions, void> {
     const animationCreator = this.prepareAnimation(arg);
 
     // args are parsed and considered OK
-    const { mimetype, url, fit, color, startDelay, volume } = {
+    const { mimetype, url, fit, color, startDelay, volume, muted } = {
       ...defaultOptionalShowArgs,
       ...arg,
     };
@@ -140,7 +143,7 @@ class ShowAction extends Base<ShowActionOptions, void> {
       color ?? 'black',
     );
     fitObject(currentDomStructure.slideElement, content, fit);
-    ContentCreator.setMuted(content, this.state.muted);
+    ContentCreator.setMuted(content, this.state.muted || muted);
     ContentCreator.setVolume(content, volume, 'absolute');
     const transition = transitionCreator(
       currentDomStructure.slideOuterWrapperElement,
