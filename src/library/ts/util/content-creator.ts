@@ -71,10 +71,55 @@ class ContentCreator {
 
   public static play<T extends SupportedContentElement>(content: T): T {
     if (ContentCreator.isImage(content)) {
+      // NOOP
       return content;
     }
     if (ContentCreator.isVideo(content)) {
       content.play().finally(() => {});
+      return content;
+    }
+    return exhaustiveTypeCheck<T>(content);
+  }
+
+  public static setVolume<T extends SupportedContentElement>(
+    content: T,
+    volume: number,
+    mode: 'absolute' | 'relative',
+  ): T {
+    if (ContentCreator.isImage(content)) {
+      // NOOP
+      return content;
+    }
+    if (ContentCreator.isVideo(content)) {
+      switch (mode) {
+        case 'absolute':
+          // eslint-disable-next-line no-param-reassign
+          content.volume = Math.min(1, Math.max(volume, 0));
+          break;
+        case 'relative':
+          // eslint-disable-next-line no-param-reassign
+          content.volume = Math.min(1, Math.max(content.volume * volume, 0));
+          break;
+        default:
+          exhaustiveTypeCheck<T>(mode);
+      }
+
+      return content;
+    }
+    return exhaustiveTypeCheck<T>(content);
+  }
+
+  public static setMuted<T extends SupportedContentElement>(
+    content: T,
+    value: boolean,
+  ): T {
+    if (ContentCreator.isImage(content)) {
+      // NOOP
+      return content;
+    }
+    if (ContentCreator.isVideo(content)) {
+      // eslint-disable-next-line no-param-reassign
+      content.muted = value;
       return content;
     }
     return exhaustiveTypeCheck<T>(content);

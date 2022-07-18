@@ -46,4 +46,4 @@ class AnimationFactory {
   }
 }
 
-export { AnimationFactory };
+export default AnimationFactory;

@@ -4,7 +4,7 @@ import { FadeTransition } from './fade';
 import { CrossFadeTransition } from './cross-fade';
 import { appendStyle } from '../util/style';
 
-export default class TransitionFactory {
+class TransitionFactory {
   protected root: DocumentFragment;
 
   protected transitionRegistry: Map<string, TransitionStatic<Transition, any>> =
@@ -51,4 +51,4 @@ export default class TransitionFactory {
   }
 }
 
-export { TransitionFactory };
+export default TransitionFactory;

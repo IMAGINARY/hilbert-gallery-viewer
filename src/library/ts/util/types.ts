@@ -1,6 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 import { Log } from './log';
+import type TransitionFactory from '../transition/factory';
+import type AnimationFactory from '../animation/factory';
 import type HilbertGalleryViewer from '../hilbert-gallery-viewer';
+import { Transition } from '../transition/transition';
+import { Animation } from '../animation/animation';
+import { SupportedContentElement } from './content-creator';
 
 /* class decorator for ensuring static elements on classes */
 function staticImplements<T>() {
@@ -18,11 +23,28 @@ type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
+type DOMStructure = {
+  slideOuterWrapperElement: HTMLDivElement;
+  slideInnerWrapperElement: HTMLDivElement;
+  slideElement: HTMLDivElement;
+  contentElement: SupportedContentElement;
+};
+
+type SlideData = DOMStructure & {
+  transition: Transition;
+  animation: Animation;
+  contentPlayTimeoutId: ReturnType<typeof setTimeout>;
+};
+
 type State = {
   viewer: HilbertGalleryViewer;
   log: Log;
   shadowRoot: ShadowRoot;
   container: HTMLDivElement;
+  activeSlides: SlideData[];
+  transitionFactory: TransitionFactory;
+  animationFactory: AnimationFactory;
+  muted: boolean;
 };
 
 type RequiredKeys<T> = {
@@ -52,6 +74,8 @@ export {
   staticImplements,
   RequireOnlyOne,
   Optional,
+  DOMStructure,
+  SlideData,
   State,
   RequiredKeys,
   OptionalKeys,
