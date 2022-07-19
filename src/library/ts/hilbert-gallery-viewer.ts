@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import cssText from 'bundle-text:../scss/viewer.scss';
 
 import 'core-js/actual/promise';
@@ -18,15 +19,31 @@ import SetVolumeAction from './action/set-volume';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
-class HilbertGalleryViewer extends HTMLElement {
-  protected actionRegistry: ActionRegistry;
-
-  protected state: State;
+class HilbertGalleryViewerElement extends HTMLElement {
+  protected viewer: HilbertGalleryViewer;
 
   constructor() {
     super();
 
-    const shadowRoot = this.attachShadow({ mode: 'open' });
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    this.viewer = new HilbertGalleryViewer(this);
+  }
+
+  async execute(action: string, arg: unknown): Promise<void> {
+    return this.viewer.execute(action, arg);
+  }
+}
+
+class HilbertGalleryViewer {
+  protected actionRegistry: ActionRegistry;
+
+  protected state: State;
+
+  constructor(parent: HTMLElement) {
+    const element = document.createElement('div');
+    parent.appendChild(element);
+
+    const shadowRoot = element.attachShadow({ mode: 'open' });
 
     appendStyle(shadowRoot, cssText);
 
@@ -84,10 +101,14 @@ class HilbertGalleryViewer extends HTMLElement {
   }
 
   public static defineCustomElement(): void {
-    customElements.define('hilbert-gallery-viewer', HilbertGalleryViewer);
+    customElements.define(
+      'hilbert-gallery-viewer',
+      HilbertGalleryViewerElement,
+    );
   }
 }
 
 HilbertGalleryViewer.defineCustomElement();
 
 export default HilbertGalleryViewer;
+export { HilbertGalleryViewerElement };

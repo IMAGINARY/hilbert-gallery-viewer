@@ -3,15 +3,14 @@ import { strict as assert } from 'assert';
 import ready from 'document-ready';
 
 import './side-effects';
-import type HilbertGalleryViewer from '../../library/ts/index';
+import HilbertGalleryViewer from '../../library/ts/hilbert-gallery-viewer';
 
 async function main() {
   await new Promise<void>(ready);
 
-  const hGViewer = document.querySelector<HilbertGalleryViewer>(
-    'hilbert-gallery-viewer',
-  );
-  assert(hGViewer !== null);
+  const hGViewerElement = document.querySelector<HTMLDivElement>('#viewer');
+  assert(hGViewerElement !== null);
+  const hGViewer = new HilbertGalleryViewer(hGViewerElement);
 
   const action = 'show';
   const args0 = {

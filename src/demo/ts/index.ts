@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import ready from 'document-ready';
 
 import './side-effects';
-import type HilbertGalleryViewer from '../../library/ts/index';
+import { HilbertGalleryViewerElement } from '../../library/ts/hilbert-gallery-viewer';
 
 function randomKittenUrl() {
   return `https://placekitten.com/${300 + Math.floor(Math.random() * 100)}/${
@@ -127,9 +127,9 @@ console.info(
 async function main() {
   await new Promise<void>(ready);
 
-  const hGViewer = document.querySelector(
+  const hGViewer = document.querySelector<HilbertGalleryViewerElement>(
     'hilbert-gallery-viewer',
-  ) as HilbertGalleryViewer;
+  );
   assert(hGViewer !== null);
 
   Object.assign(window, { viewer: hGViewer });
