@@ -16,6 +16,7 @@ import TransitionFactory from './transition/factory';
 import MuteAction from './action/mute';
 import UnmuteAction from './action/unmute';
 import SetVolumeAction from './action/set-volume';
+import Preloader from './util/preloader';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
@@ -47,6 +48,10 @@ class HilbertGalleryViewer {
 
     appendStyle(shadowRoot, cssText);
 
+    const preloadArea = document.createElement('div');
+    preloadArea.classList.add('preload-area');
+    shadowRoot.appendChild(preloadArea);
+
     const container = document.createElement('div');
     container.classList.add('container');
     shadowRoot.appendChild(container);
@@ -59,6 +64,7 @@ class HilbertGalleryViewer {
     this.state = {
       viewer: this,
       log: new Log(LogLevel.WARN),
+      preloader: new Preloader(preloadArea),
       shadowRoot,
       container,
       transitionFactory,

@@ -1,45 +1,86 @@
-export default class Preloader {
-  protected refs = new Map<string, unknown>();
+import { SupportedContentElement, PreloadItem } from './types';
 
-  protected typeRegistry = new Map<string, (url: URL | string) => void>();
+class Preloader {
+  protected container: HTMLElement;
 
-  constructor() {
-    this.typeRegistry.set('image', this.preloadImage.bind(this));
-    this.typeRegistry.set('video', this.preloadVideo.bind(this));
+  protected readonly refs = new Map<string, SupportedContentElement>();
+
+  constructor(container: HTMLElement = document.createElement('div')) {
+    this.container = container;
   }
 
-  preload(mimetype: string, url: URL | string): boolean {
+  public static key(mimetype: string, url: string) {
+    return `{${mimetype}}{${url}}`;
+  }
+
+  protected preloadImpl(
+    mimetype: string,
+    url: string,
+  ): { key: string; element: SupportedContentElement } {
+    const key = Preloader.key(mimetype, url);
+    const cpe = Preloader.createPreloadingElement.bind(Preloader);
+    const element = this.refs.get(key) ?? cpe(mimetype, url);
+    this.container.appendChild(element);
+    this.refs.set(key, element);
+    return { key, element };
+  }
+
+  public preload(...items: PreloadItem[]): void {
+    items.forEach(({ mimetype, url }) => this.preloadImpl(mimetype, url));
+  }
+
+  public get(mimetype: string, url: string): SupportedContentElement {
+    const { key, element } = this.preloadImpl(mimetype, url);
+    element.remove();
+    const clonedElement = element.cloneNode(true) as SupportedContentElement;
+    this.container.appendChild(clonedElement);
+    this.refs.set(key, clonedElement);
+    return element;
+  }
+
+  protected static createPreloadingElement(mimetype: string, url: string) {
     const type = mimetype.split('/', 1)[0];
-    const preloadFunc = this.typeRegistry.get(type);
-    if (preloadFunc) {
-      preloadFunc(url);
-      return true;
+    switch (type) {
+      case 'image':
+        return Preloader.createPreloadingImage(url);
+      case 'video':
+        return Preloader.createPreloadingVideo(url);
+      default:
+        throw new TypeError(`Unsupported MIME type: ${type} (${mimetype})`);
     }
-    return false;
   }
 
-  preloadImage(url: URL | string): void {
+  protected static createPreloadingImage(url: string): HTMLImageElement {
     const { href } = new URL(url);
     const image = new Image();
     image.src = href;
-    this.refs.set(href, image);
+    return image;
   }
 
-  preloadVideo(url: URL | string) {
-    const { href } = new URL(url);
+  protected static createPreloadingVideo(url: string): HTMLVideoElement {
     const video = document.createElement('video');
     video.preload = 'auto';
-    video.src = href;
-    this.refs.set(href, video);
+    video.src = url;
+    video.autoplay = false;
+    return video;
   }
 
-  unref(...refs: string[]) {
-    if (refs.length === 0) {
-      this.refs.clear();
-    } else {
-      refs.forEach((ref) => this.refs.delete(ref));
-    }
+  protected unrefImpl(...keys: string[]) {
+    keys.forEach((key) => {
+      const element = this.refs.get(key);
+      element?.remove();
+      this.refs.delete(key);
+    });
+  }
+
+  unref(...refs: PreloadItem[]) {
+    const keys = refs.map(({ mimetype, url }) => Preloader.key(mimetype, url));
+    this.unrefImpl(...keys);
+  }
+
+  clear() {
+    this.unrefImpl(...this.refs.keys());
   }
 }
 
-export { Preloader };
+export default Preloader;

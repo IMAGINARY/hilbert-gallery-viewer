@@ -1,12 +1,6 @@
 import Base from './base';
-import { Preloader } from '../util/preloader';
-import { State } from '../util/types';
+import { State, PreloadItem } from '../util/types';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
-
-type PreloadItem = {
-  mimetype: string;
-  url: string;
-};
 
 type PreloadActionOptions = PreloadItem[];
 
@@ -25,16 +19,15 @@ const preloadActionOptionsSchema: JSONSchemaType<PreloadActionOptions> = {
 const validatePreloadActionOptions = ajvCompile(preloadActionOptionsSchema);
 
 class PreloadAction extends Base<PreloadItem[], void> {
-  protected preloader: Preloader;
-
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(state: State) {
     super(state);
-    this.preloader = new Preloader();
   }
 
   async execute(items: PreloadActionOptions): Promise<void> {
-    this.preloader.unref();
-    items.forEach(({ mimetype, url }) => this.preloader.preload(mimetype, url));
+    const { preloader } = this.state;
+    preloader.clear();
+    preloader.preload(...items);
     return Promise.resolve();
   }
 

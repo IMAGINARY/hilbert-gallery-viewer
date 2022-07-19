@@ -5,7 +5,7 @@ import type AnimationFactory from '../animation/factory';
 import type HilbertGalleryViewer from '../hilbert-gallery-viewer';
 import { Transition } from '../transition/transition';
 import { Animation } from '../animation/animation';
-import { type SupportedContentElement } from './content-creator';
+import type Preloader from './preloader';
 
 /* class decorator for ensuring static elements on classes */
 function staticImplements<T>() {
@@ -23,6 +23,8 @@ type RequireOnlyOne<T, Keys extends keyof T = keyof T> = Pick<
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
+type SupportedContentElement = HTMLImageElement | HTMLVideoElement;
+
 type DOMStructure = {
   slideOuterWrapperElement: HTMLDivElement;
   slideInnerWrapperElement: HTMLDivElement;
@@ -36,9 +38,15 @@ type SlideData = DOMStructure & {
   contentPlayTimeoutId: ReturnType<typeof setTimeout>;
 };
 
+type PreloadItem = {
+  mimetype: string;
+  url: string;
+};
+
 type State = {
   viewer: HilbertGalleryViewer;
   log: Log;
+  preloader: Preloader;
   shadowRoot: ShadowRoot;
   container: HTMLDivElement;
   activeSlides: SlideData[];
@@ -74,8 +82,10 @@ export {
   staticImplements,
   RequireOnlyOne,
   Optional,
+  SupportedContentElement,
   DOMStructure,
   SlideData,
+  PreloadItem,
   State,
   RequiredKeys,
   OptionalKeys,

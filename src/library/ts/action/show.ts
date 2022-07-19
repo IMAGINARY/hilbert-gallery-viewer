@@ -135,7 +135,8 @@ class ShowAction extends Base<ShowActionOptions, void> {
       ...arg,
     };
 
-    const content = ContentCreator.create(mimetype, url);
+    const { preloader } = this.state;
+    const content = ContentCreator.create(mimetype, url, preloader);
     const currentDomStructure = this.appendCurrentContent(
       content,
       color ?? 'black',

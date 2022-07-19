@@ -1,38 +1,15 @@
-import { exhaustiveTypeCheck } from './types';
+import { exhaustiveTypeCheck, SupportedContentElement } from './types';
+import Preloader from './preloader';
 
-type SupportedContentElement = HTMLImageElement | HTMLVideoElement;
 type Size = { width: number; height: number };
 
 class ContentCreator {
-  static create(mimetype: string, url: string): SupportedContentElement {
-    const type = mimetype.split('/', 1)[0];
-    let content: SupportedContentElement;
-    switch (type) {
-      case 'image':
-        content = ContentCreator.createImage(url);
-        break;
-      case 'video':
-        content = ContentCreator.createVideo(url);
-        break;
-      default:
-        throw new TypeError(`Unsupported MIME type: ${type} (${mimetype})`);
-    }
-    content.classList.add('content');
-    return content;
-  }
-
-  protected static createImage(url: string): HTMLImageElement {
-    const image = document.createElement('img');
-    image.src = url;
-    return image;
-  }
-
-  protected static createVideo(url: string): HTMLVideoElement {
-    const video = document.createElement('video');
-    video.preload = 'auto';
-    video.src = url;
-    video.autoplay = false;
-    return video;
+  public static create(
+    mimetype: string,
+    url: string,
+    preloader = new Preloader(),
+  ): SupportedContentElement {
+    return preloader.get(mimetype, url);
   }
 
   public static async readyForDisplay<T extends SupportedContentElement>(
