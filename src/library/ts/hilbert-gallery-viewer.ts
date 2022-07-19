@@ -82,8 +82,12 @@ class HilbertGalleryViewer extends HTMLElement {
       throw new TypeError('HilbertGalleryViewer.execute(): unknown action');
     }
   }
+
+  public static defineCustomElement(): void {
+    customElements.define('hilbert-gallery-viewer', HilbertGalleryViewer);
+  }
 }
 
-customElements.define('hilbert-gallery-viewer', HilbertGalleryViewer);
+HilbertGalleryViewer.defineCustomElement();
 
 export default HilbertGalleryViewer;
