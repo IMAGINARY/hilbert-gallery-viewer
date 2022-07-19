@@ -1,7 +1,7 @@
 import ready from 'document-ready';
 
 import './side-effects';
-import { HilbertGalleryViewer } from '../../library/ts/hilbert-gallery-viewer';
+import type HilbertGalleryViewer from '../../library/ts/hilbert-gallery-viewer';
 
 function randomKittenUrl() {
   return `https://placekitten.com/${300 + Math.floor(Math.random() * 100)}/${
@@ -126,9 +126,9 @@ console.info(
 async function main() {
   await new Promise<void>(ready);
 
-  const hGViewer = document.querySelector(
+  const hGViewer = document.querySelector<HilbertGalleryViewer>(
     'hilbert-gallery-viewer',
-  ) as HilbertGalleryViewer;
+  );
 
   Object.assign(window, { viewer: hGViewer });
   console.info(

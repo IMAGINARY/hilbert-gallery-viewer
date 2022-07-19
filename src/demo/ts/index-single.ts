@@ -2,14 +2,14 @@
 import ready from 'document-ready';
 
 import './side-effects';
-import { HilbertGalleryViewer } from '../../library/ts/hilbert-gallery-viewer';
+import type HilbertGalleryViewer from '../../library/ts/hilbert-gallery-viewer';
 
 async function main() {
   await new Promise<void>(ready);
 
-  const hGViewer = document.querySelector(
+  const hGViewer = document.querySelector<HilbertGalleryViewer>(
     'hilbert-gallery-viewer',
-  ) as HilbertGalleryViewer;
+  );
 
   const action = 'show';
   const args0 = {
