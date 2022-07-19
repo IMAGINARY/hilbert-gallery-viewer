@@ -21,9 +21,10 @@ module.exports = {
         'eslint:recommended',
         'airbnb-base',
         'airbnb-typescript/base',
-        'prettier',
+        'plugin:compat/recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        'prettier',
       ],
       rules: {
         'no-underscore-dangle': [

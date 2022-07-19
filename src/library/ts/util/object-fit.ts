@@ -5,7 +5,9 @@ import ContentCreator, {
   Size,
 } from './content-creator';
 
-const ResizeObserver = window.ResizeObserver || ResizeObserverPolyfill;
+// eslint-disable-next-line compat/compat
+const ResizeObserverOnWindow = window.ResizeObserver;
+const ResizeObserver = ResizeObserverOnWindow || ResizeObserverPolyfill;
 
 type FitType = 'cover' | 'contain';
 
