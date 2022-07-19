@@ -1,7 +1,11 @@
+import { ResizeObserver as ResizeObserverPolyfill } from '@juggle/resize-observer';
+
 import ContentCreator, {
   SupportedContentElement,
   Size,
 } from './content-creator';
+
+const ResizeObserver = window.ResizeObserver || ResizeObserverPolyfill;
 
 type FitType = 'cover' | 'contain';
 

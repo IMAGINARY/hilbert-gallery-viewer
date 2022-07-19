@@ -111,14 +111,14 @@
     "typescript-plugin-css-modules": "^3.4.0"
   },
   "dependencies": {
+    "@juggle/resize-observer": "^3.3.1",
     "@swc/helpers": "^0.4.0",
     "@types/assert": "^1.5.6",
     "@types/document-ready": "^2.0.0",
     "ajv": "^8.11.0",
     "core-js": "^3.23.2",
     "document-ready": "^2.0.2",
-    "regenerator-runtime": "^0.13.9",
-    "resize-observer-polyfill": "^1.5.1"
+    "regenerator-runtime": "^0.13.9"
   },
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target demo",
