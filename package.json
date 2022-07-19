@@ -17,8 +17,7 @@
     "node": ">=16.0.0"
   },
   "browserslist": [
-    "> 0.2%",
-    "not dead",
+    "> 0.2% and not dead and supports css-animation",
     "Chrome 56"
   ],
   "source": "src/library/ts/index.ts",
@@ -41,8 +40,7 @@
       "context": "browser",
       "engines": {
         "browsers": [
-          "> 0.2%",
-          "not dead",
+          "> 0.2% and not dead and supports css-animation",
           "Chrome 56"
         ]
       }
@@ -94,6 +92,7 @@
     "eslint": "^8.11.0",
     "eslint-config-airbnb-typescript": "^16.1.2",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-compat": "^4.0.2",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.29.4",
@@ -111,17 +110,18 @@
     "typescript-plugin-css-modules": "^3.4.0"
   },
   "dependencies": {
+    "@juggle/resize-observer": "^3.3.1",
     "@swc/helpers": "^0.4.0",
     "@types/assert": "^1.5.6",
     "@types/document-ready": "^2.0.0",
     "ajv": "^8.11.0",
     "core-js": "^3.23.2",
     "document-ready": "^2.0.2",
-    "regenerator-runtime": "^0.13.9",
-    "resize-observer-polyfill": "^1.5.1"
+    "regenerator-runtime": "^0.13.9"
   },
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target demo",
+    "serve:chrome56": "parcel serve --dist-dir dist-dev --target demo --no-hmr",
     "watch": "parcel watch",
     "build": "rm -r dist; parcel build --public-url .",
     "build:library": "rm -r dist/library; parcel build --public-url . --target main --target module --target target-script-tag --target target-script-tag-min --target target-script-tag-module --target target-script-tag-module-min --target types",
