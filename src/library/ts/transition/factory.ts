@@ -1,4 +1,4 @@
-import { Transition, TransitionStatic } from './transition';
+import { Transition, TransitionOptions, TransitionStatic } from './transition';
 import { NoneTransition } from './none';
 import { FadeTransition } from './fade';
 import { CrossFadeTransition } from './cross-fade';
@@ -7,8 +7,10 @@ import { appendStyle } from '../util/style';
 class TransitionFactory {
   protected root: DocumentFragment;
 
-  protected transitionRegistry: Map<string, TransitionStatic<Transition, any>> =
-    new Map();
+  protected transitionRegistry: Map<
+    string,
+    TransitionStatic<Transition, TransitionOptions>
+  > = new Map();
 
   constructor(root: DocumentFragment) {
     this.root = root;
@@ -23,7 +25,7 @@ class TransitionFactory {
 
   public register(
     id: string,
-    transitionClass: TransitionStatic<Transition, any>,
+    transitionClass: TransitionStatic<Transition, TransitionOptions>,
   ) {
     if (this.transitionRegistry.has(id)) {
       throw new Error('Transition type already registered');

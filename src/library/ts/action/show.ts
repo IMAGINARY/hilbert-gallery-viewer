@@ -10,9 +10,7 @@ import ContentCreator, {
   SupportedContentElement,
 } from '../util/content-creator';
 import TransitionFactory from '../transition/factory';
-import { Transition } from '../transition/transition';
 import AnimationFactory from '../animation/factory';
-import { Animation } from '../animation/animation';
 import { ajvCompile, JSONSchemaType } from '../util/validate';
 import fitObject, { FitType } from '../util/object-fit';
 

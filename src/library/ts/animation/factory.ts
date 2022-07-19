@@ -1,4 +1,4 @@
-import { Animation, AnimationStatic } from './animation';
+import { Animation, AnimationOptions, AnimationStatic } from './animation';
 import { appendStyle } from '../util/style';
 import { NoneAnimation } from './none';
 import { PanZoomAnimation } from './pan-zoom';
@@ -6,8 +6,10 @@ import { PanZoomAnimation } from './pan-zoom';
 class AnimationFactory {
   protected root: DocumentFragment;
 
-  protected animationRegistry: Map<string, AnimationStatic<Animation, any>> =
-    new Map();
+  protected animationRegistry: Map<
+    string,
+    AnimationStatic<Animation, AnimationOptions>
+  > = new Map();
 
   constructor(root: DocumentFragment) {
     this.root = root;
@@ -19,7 +21,10 @@ class AnimationFactory {
     this.register('pan-zoom', PanZoomAnimation);
   }
 
-  public register(id: string, AnimationClass: AnimationStatic<Animation, any>) {
+  public register(
+    id: string,
+    AnimationClass: AnimationStatic<Animation, AnimationOptions>,
+  ) {
     if (this.animationRegistry.has(id)) {
       throw new Error('Animation type already registered');
     }

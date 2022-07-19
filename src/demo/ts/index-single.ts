@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
+import { strict as assert } from 'assert';
 import ready from 'document-ready';
 
 import './side-effects';
-import type HilbertGalleryViewer from '../../library/ts/hilbert-gallery-viewer';
+import type HilbertGalleryViewer from '../../library/ts/index';
 
 async function main() {
   await new Promise<void>(ready);
@@ -10,6 +11,7 @@ async function main() {
   const hGViewer = document.querySelector<HilbertGalleryViewer>(
     'hilbert-gallery-viewer',
   );
+  assert(hGViewer !== null);
 
   const action = 'show';
   const args0 = {

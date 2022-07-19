@@ -5,7 +5,7 @@ import type AnimationFactory from '../animation/factory';
 import type HilbertGalleryViewer from '../hilbert-gallery-viewer';
 import { Transition } from '../transition/transition';
 import { Animation } from '../animation/animation';
-import { SupportedContentElement } from './content-creator';
+import { type SupportedContentElement } from './content-creator';
 
 /* class decorator for ensuring static elements on classes */
 function staticImplements<T>() {

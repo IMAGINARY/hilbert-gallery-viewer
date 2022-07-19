@@ -2,7 +2,6 @@ import cssText from 'bundle-text:../scss/viewer.scss';
 
 import 'core-js/actual/promise';
 
-import assert from 'assert';
 import Action from './action/action';
 import PreloadAction from './action/preload';
 import { Log, LogLevel } from './util/log';

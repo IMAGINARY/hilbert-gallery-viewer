@@ -1,4 +1,4 @@
-import { Animation, AnimationOptions } from './animation';
+import { Animation } from './animation';
 import { PromiseExecutorCallbacks } from '../util/promise';
 
 export default abstract class BaseAnimation implements Animation {

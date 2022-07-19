@@ -86,8 +86,10 @@
     "@parcel/transformer-sass": "2.6.2",
     "@parcel/transformer-typescript-tsc": "2.6.2",
     "@parcel/transformer-typescript-types": "2.6.2",
+    "@types/assert": "^1.5.6",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
+    "assert": "^2.0.0",
     "electron": "~1.6.18",
     "eslint": "^8.11.0",
     "eslint-config-airbnb-typescript": "^16.1.2",
@@ -112,7 +114,6 @@
   "dependencies": {
     "@juggle/resize-observer": "^3.3.1",
     "@swc/helpers": "^0.4.0",
-    "@types/assert": "^1.5.6",
     "@types/document-ready": "^2.0.0",
     "ajv": "^8.11.0",
     "core-js": "^3.23.2",

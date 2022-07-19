@@ -7,8 +7,8 @@ class PromiseExecutorCallbacks<T> {
 
   constructor() {
     // dummy initialization required to satisfy TS2564 (definite assignment)
-    let tmpResolve = (result: T) => {};
-    let tmpReject = () => {};
+    let tmpResolve: (result: T) => void = () => {};
+    let tmpReject: () => void = () => {};
     this._promise = new Promise((resolve, reject) => {
       tmpResolve = resolve;
       tmpReject = reject;

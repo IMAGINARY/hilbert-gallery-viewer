@@ -15,8 +15,8 @@ const cssBasedAnimationOptionsDefault: Required<
   Pick<CssBasedAnimationOptions, OptionalKeys<CssBasedAnimationOptions>>
 > = {
   classList: [],
-  cssPropertySetter: (e: HTMLElement) => {},
-  cssPropertyRemover: (e: HTMLElement) => {},
+  cssPropertySetter: () => {},
+  cssPropertyRemover: () => {},
   endEventFilter: () => true,
   cancelEventFilter: () => true,
   removeAtEnd: true,
@@ -101,7 +101,7 @@ class CssBasedAnimation extends BaseAnimation {
 
   protected cleanup(removeClassesAndProperties: boolean) {
     const { element, cssBasedAnimationOptions } = this;
-    const { classList, cssPropertyRemover } = cssBasedAnimationOptions;
+    const { cssPropertyRemover } = cssBasedAnimationOptions;
     element.removeEventListener('animationend', this.endHandler);
     element.removeEventListener('animationcancel', this.cancelHandler);
     if (removeClassesAndProperties) {
