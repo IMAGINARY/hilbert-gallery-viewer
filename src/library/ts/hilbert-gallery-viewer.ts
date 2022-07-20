@@ -27,7 +27,7 @@ class HilbertGalleryViewerElement extends HTMLElement {
     super();
 
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    this.viewer = new HilbertGalleryViewer(this);
+    this.viewer = new HilbertGalleryViewer(this, false);
   }
 
   async execute(action: string, arg: unknown): Promise<void> {
@@ -40,11 +40,14 @@ class HilbertGalleryViewer {
 
   protected state: State;
 
-  constructor(parent: HTMLElement) {
-    const element = document.createElement('div');
-    parent.appendChild(element);
+  constructor(parent: HTMLElement, wrap = true) {
+    const insertWrapper = (element: HTMLElement): HTMLDivElement => {
+      const wrapper = document.createElement('div');
+      return element.appendChild(wrapper);
+    };
 
-    const shadowRoot = element.attachShadow({ mode: 'open' });
+    const host = wrap ? insertWrapper(parent) : parent;
+    const shadowRoot = host.attachShadow({ mode: 'open' });
 
     appendStyle(shadowRoot, cssText);
 
