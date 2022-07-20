@@ -22,4 +22,13 @@ function hud() {
   }
 }
 
+window.addEventListener('error', (e) => {
+  console.error(e);
+  return false;
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error(e);
+  return false;
+});
+
 ready(hud);
