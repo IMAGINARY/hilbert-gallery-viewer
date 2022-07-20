@@ -20,7 +20,14 @@ import Preloader from './util/preloader';
 
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
-class HilbertGalleryViewerElement extends HTMLElement {
+interface IHilbertGalleryViewer {
+  execute(action: string, arg: unknown): Promise<void>;
+}
+
+class HilbertGalleryViewerElement
+  extends HTMLElement
+  implements IHilbertGalleryViewer
+{
   protected viewer: HilbertGalleryViewer;
 
   constructor() {
@@ -35,7 +42,7 @@ class HilbertGalleryViewerElement extends HTMLElement {
   }
 }
 
-class HilbertGalleryViewer {
+class HilbertGalleryViewer implements IHilbertGalleryViewer {
   protected actionRegistry: ActionRegistry;
 
   protected state: State;
@@ -120,4 +127,4 @@ class HilbertGalleryViewer {
 HilbertGalleryViewer.defineCustomElement();
 
 export default HilbertGalleryViewer;
-export { HilbertGalleryViewerElement };
+export { IHilbertGalleryViewer, HilbertGalleryViewerElement };
