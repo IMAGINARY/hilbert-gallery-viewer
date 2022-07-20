@@ -88,12 +88,6 @@ function createPlaylist() {
     url: randomKittenUrl(),
   }));
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const otherPngImages = [
-    new URL('../img/red.png', import.meta.url).href,
-    new URL('../img/green.png', import.meta.url).href,
-    new URL('../img/yellow.png', import.meta.url).href,
-  ].map((url) => ({ mimetype: 'image/png', url }));
   const videos = [
     {
       mimetype: 'video/mp4',
