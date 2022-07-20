@@ -9,7 +9,5 @@
  * about it anywhere else in the code.
  */
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'console-log-div';
 import './hud';
 import '../../library/ts/hilbert-gallery-viewer';

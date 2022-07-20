@@ -8,9 +8,22 @@
     />
     <title>Hilbert gallery viewer demo</title>
     <link rel="stylesheet" href="../scss/main.scss" />
-    <script src="../library/hilbert-gallery-viewer.js"></script>
   </head>
   <body>
     <hilbert-gallery-viewer id="viewer"></hilbert-gallery-viewer>
+    <fieldset id="console-log-div" style="display: none"></fieldset>
+    <script src="../library/hilbert-gallery-viewer.js" type="module"></script>
+    <script type="module">
+      import '../ts/hud';
+
+      window.addEventListener('load', () => {
+        const viewer = document.querySelector('#viewer');
+        viewer.execute('show', {
+          mimetype: 'image/jpeg',
+          url: 'https://placekitten.com/349/321',
+          color: 'black',
+        });
+      });
+    </script>
   </body>
 </html>
