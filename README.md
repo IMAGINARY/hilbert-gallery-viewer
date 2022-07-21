@@ -327,6 +327,9 @@ type PreloadItem = {
 where `mimetype` and `url` are defined as in the arguments to the
 [`show` action](#the-show-action).
 
+The action will return an array containing a `Promise` for each item which
+resolves once the items has been sufficiently preloaded.
+
 The viewer will create an `<img>` or `<video>` tag for each preload item and, if
 necessary, apply the right settings to start buffering. The tags will be
 inserted into a hidden area in the viewer's DOM tree. When the media file is

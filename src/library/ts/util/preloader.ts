@@ -1,4 +1,9 @@
-import { SupportedContentElement, PreloadItem } from './types';
+import {
+  SupportedContentElement,
+  PreloadItem,
+  exhaustiveTypeCheck,
+} from './types';
+import { waitForEvents } from './promise';
 
 class Preloader {
   protected container: HTMLElement;
@@ -25,8 +30,10 @@ class Preloader {
     return { key, element };
   }
 
-  public preload(...items: PreloadItem[]): void {
-    items.forEach(({ mimetype, url }) => this.preloadImpl(mimetype, url));
+  public preload(...items: PreloadItem[]): Promise<void>[] {
+    return items
+      .map(({ mimetype, url }) => this.preloadImpl(mimetype, url))
+      .map(({ element }) => Preloader.readyForDisplay(element).then());
   }
 
   public get(mimetype: string, url: string): SupportedContentElement {
@@ -36,6 +43,36 @@ class Preloader {
     this.container.appendChild(clonedElement);
     this.refs.set(key, clonedElement);
     return element;
+  }
+
+  public static async readyForDisplay<T extends SupportedContentElement>(
+    content: T,
+  ): Promise<T> {
+    if (content instanceof HTMLImageElement) {
+      await Preloader.readyForDisplayImage(content);
+    } else if (content instanceof HTMLVideoElement) {
+      await Preloader.readyForDisplayVideo(content);
+    } else {
+      exhaustiveTypeCheck(content);
+    }
+    return content;
+  }
+
+  protected static async readyForDisplayImage<T extends HTMLImageElement>(
+    image: T,
+  ): Promise<T> {
+    if (!image.complete)
+      await waitForEvents(image, ['load'], ['abort', 'error']);
+    return image;
+  }
+
+  protected static async readyForDisplayVideo<T extends HTMLVideoElement>(
+    video: T,
+  ): Promise<T> {
+    if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) {
+      await waitForEvents(video, ['canplaythrough'], ['abort', 'error']);
+    }
+    return video;
   }
 
   protected static createPreloadingElement(mimetype: string, url: string) {

@@ -30,4 +30,37 @@ class PromiseExecutorCallbacks<T> {
   }
 }
 
-export { PromiseExecutorCallbacks };
+async function waitForEvents<T extends EventTarget>(
+  element: T,
+  resolveEventNames: string[],
+  rejectEventNames: string[],
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const [resolveHandler, rejectHandler] = [
+      () => {
+        resolveEventNames.forEach((name) =>
+          element.removeEventListener(name, resolveHandler),
+        );
+        rejectEventNames.forEach((name) =>
+          element.removeEventListener(name, rejectHandler),
+        );
+        resolve(element);
+      },
+      (e: Event) => {
+        resolveEventNames.forEach((name) =>
+          element.removeEventListener(name, resolveHandler),
+        );
+        rejectEventNames.forEach((name) =>
+          element.removeEventListener(name, rejectHandler),
+        );
+        reject(e);
+      },
+    ];
+    resolveEventNames.forEach((e) =>
+      element.addEventListener(e, resolveHandler),
+    );
+    rejectEventNames.forEach((e) => element.addEventListener(e, rejectHandler));
+  });
+}
+
+export { PromiseExecutorCallbacks, waitForEvents };

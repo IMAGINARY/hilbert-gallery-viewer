@@ -21,7 +21,7 @@ import Preloader from './util/preloader';
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
 
 interface IHilbertGalleryViewer {
-  execute(action: string, arg: unknown): Promise<void>;
+  execute(action: string, arg: unknown): Promise<unknown>;
 }
 
 class HilbertGalleryViewerElement
@@ -37,7 +37,7 @@ class HilbertGalleryViewerElement
     this.viewer = new HilbertGalleryViewer(this, false);
   }
 
-  async execute(action: string, arg: unknown): Promise<void> {
+  async execute(action: string, arg: unknown): Promise<unknown> {
     return this.viewer.execute(action, arg);
   }
 }
@@ -98,22 +98,28 @@ class HilbertGalleryViewer implements IHilbertGalleryViewer {
     return registry;
   }
 
-  async execute(action: string, arg: unknown): Promise<void> {
+  async execute(action: string, arg: unknown): Promise<unknown> {
     // executeImpl only exists for the purpose of renaming the parameters
-    await this.executeImpl(action, arg);
+    return this.executeImpl(action, arg);
   }
 
-  private async executeImpl(actionName: string, arg: unknown): Promise<void> {
+  private async executeImpl(
+    actionName: string,
+    arg: unknown,
+  ): Promise<unknown> {
     const action = this.actionRegistry.get(actionName);
     if (action) {
       // this may throw an exception if arg has invalid type
       const executor = action.buildExecutor(arg);
+
       // the executor encapsulates the preprocessed arg
       // and allows type-safe execution
-      await executor();
-    } else {
-      throw new TypeError('HilbertGalleryViewer.execute(): unknown action');
+
+      // we need to await the result to avoid several levels of Promises
+      // eslint-disable-next-line @typescript-eslint/return-await
+      return await executor();
     }
+    throw new TypeError('HilbertGalleryViewer.execute(): unknown action');
   }
 
   public static defineCustomElement(): void {
