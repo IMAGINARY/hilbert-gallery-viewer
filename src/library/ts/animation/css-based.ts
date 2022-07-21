@@ -11,9 +11,9 @@ interface CssBasedAnimationOptions {
   removeOnCancel?: boolean;
 }
 
-const cssBasedAnimationOptionsDefault: Required<
+const cssBasedAnimationOptionsDefaults: () => Required<
   Pick<CssBasedAnimationOptions, OptionalKeys<CssBasedAnimationOptions>>
-> = {
+> = () => ({
   classList: [],
   cssPropertySetter: () => {},
   cssPropertyRemover: () => {},
@@ -21,7 +21,7 @@ const cssBasedAnimationOptionsDefault: Required<
   cancelEventFilter: () => true,
   removeAtEnd: true,
   removeOnCancel: true,
-};
+});
 
 class CssBasedAnimation extends BaseAnimation {
   protected endHandler: (event: AnimationEvent) => void;
@@ -36,7 +36,7 @@ class CssBasedAnimation extends BaseAnimation {
     const { element } = this;
 
     this.cssBasedAnimationOptions = {
-      ...cssBasedAnimationOptionsDefault,
+      ...cssBasedAnimationOptionsDefaults(),
       ...options,
     };
 
@@ -114,4 +114,4 @@ class CssBasedAnimation extends BaseAnimation {
 }
 
 export default CssBasedAnimation;
-export { CssBasedAnimationOptions };
+export { CssBasedAnimationOptions, cssBasedAnimationOptionsDefaults };

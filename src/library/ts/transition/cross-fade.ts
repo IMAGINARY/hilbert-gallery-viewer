@@ -58,6 +58,7 @@ export default class CrossFadeTransition extends CssBasedTransition {
 
     return {
       classList: ['transition', 'transition-cross-fade'],
+      outEndEventFilter: animationEventFilter,
       endEventFilter: animationEventFilter,
       cancelEventFilter: animationEventFilter,
       cssPropertySetter,

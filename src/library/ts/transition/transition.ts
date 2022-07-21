@@ -2,6 +2,9 @@ import { Animation, AnimationOptions } from '../animation/animation';
 
 interface Transition extends Animation {
   readonly targetShowUpDelay: number;
+
+  out(): Promise<void>;
+  isOut(): boolean;
 }
 
 type TransitionOptions = AnimationOptions;

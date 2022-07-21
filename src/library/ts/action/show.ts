@@ -167,9 +167,9 @@ class ShowAction extends Base<ShowActionOptions, void> {
     activeSlides.push(slideData);
 
     try {
-      await transition.done();
+      await transition.out();
     } catch (e) {
-      const msg = 'Waiting for transition to end failed. Proceeding anyway';
+      const msg = 'Waiting for transition.out() failed. Proceeding anyway';
       if (e) {
         this.state.log.warn(msg, e);
       } else {

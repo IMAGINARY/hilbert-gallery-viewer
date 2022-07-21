@@ -32,6 +32,8 @@ export default class NoneTransition extends CssBasedTransition {
   static createCssBasedTransitionOptions(
     options: NoneTransitionOptions,
   ): CssBasedTransitionOptions {
+    const outAnimationEventFilter = ({ animationName }: AnimationEvent) =>
+      animationName === 'transition-none-out';
     const animationEventFilter = ({ animationName }: AnimationEvent) =>
       animationName === 'transition-none';
 
@@ -53,6 +55,7 @@ export default class NoneTransition extends CssBasedTransition {
 
     return {
       classList: ['transition', 'transition-none'],
+      outEndEventFilter: outAnimationEventFilter,
       endEventFilter: animationEventFilter,
       cancelEventFilter: animationEventFilter,
       cssPropertySetter,

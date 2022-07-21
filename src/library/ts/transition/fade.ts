@@ -36,6 +36,8 @@ export default class FadeTransition extends CssBasedTransition {
   static createCssBasedTransitionOptions(
     options: FadeTransitionOptions,
   ): CssBasedTransitionOptions {
+    const outAnimationEventFilter = ({ animationName }: AnimationEvent) =>
+      animationName === 'transition-fade-overlay';
     const animationEventFilter = ({ animationName }: AnimationEvent) =>
       animationName === 'transition-fade';
     const { delay, duration } = { duration: defaultDuration, ...options };
@@ -56,6 +58,7 @@ export default class FadeTransition extends CssBasedTransition {
 
     return {
       classList: ['transition', 'transition-fade'],
+      outEndEventFilter: outAnimationEventFilter,
       endEventFilter: animationEventFilter,
       cancelEventFilter: animationEventFilter,
       cssPropertySetter,

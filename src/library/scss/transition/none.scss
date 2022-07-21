@@ -5,14 +5,21 @@
   }
 }
 
+@keyframes transition-none-out {
+  0%,
+  100% {
+    opacity: 1;
+  }
+}
+
 .transition-none {
   --transition-none-delay: 0s;
   --transition-none-duration: 0s;
 
   opacity: 0;
   animation-delay: var(--transition-none-delay);
-  animation-duration: var(--transition-none-duration);
+  animation-duration: var(--transition-none-duration), 0s;
   animation-timing-function: ease-in-out;
   animation-fill-mode: forwards;
-  animation-name: transition-none;
+  animation-name: transition-none, transition-none-out;
 }
