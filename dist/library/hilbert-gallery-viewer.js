@@ -18,7 +18,7 @@ typeof globalThis !== 'undefined'
 var $parcel$modules = {};
 var $parcel$inits = {};
 
-var parcelRequire = $parcel$global["parcelRequireebb2"];
+var parcelRequire = $parcel$global["parcelRequire09b2"];
 if (parcelRequire == null) {
   parcelRequire = function(id) {
     if (id in $parcel$modules) {
@@ -41,7 +41,7 @@ if (parcelRequire == null) {
     $parcel$inits[id] = init;
   };
 
-  $parcel$global["parcelRequireebb2"] = parcelRequire;
+  $parcel$global["parcelRequire09b2"] = parcelRequire;
 }
 parcelRequire.register("4FUon", function(module, exports) {
 
@@ -15515,9 +15515,11 @@ var $1e944b2475d0cfdb$var$PreloadAction = /*#__PURE__*/ function(Base1) {
                                 ;
                                 preloader = _this.state.preloader;
                                 preloader.clear();
-                                (_preloader = preloader).preload.apply(_preloader, (0, $d67Ag.default)(items));
-                                return _ctx.abrupt("return", Promise.resolve());
+                                _ctx.next = 5;
+                                return Promise.resolve();
                             case 5:
+                                return _ctx.abrupt("return", (_preloader = preloader).preload.apply(_preloader, (0, $d67Ag.default)(items)));
+                            case 6:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -15709,6 +15711,103 @@ var $2x3qu = parcelRequire("2x3qu");
 var $aT4ZK = parcelRequire("aT4ZK");
 
 
+var $dzBOF = parcelRequire("dzBOF");
+
+var $f3yih = parcelRequire("f3yih");
+
+var $2x3qu = parcelRequire("2x3qu");
+
+var $3jaBu = parcelRequire("3jaBu");
+
+var $aT4ZK = parcelRequire("aT4ZK");
+var $2ec0177fc7e2e758$export$af22135957e110d7 = /*#__PURE__*/ function() {
+    "use strict";
+    function PromiseExecutorCallbacks() {
+        (0, $f3yih.default)(this, PromiseExecutorCallbacks);
+        (0, $3jaBu.default)(this, "_promise", void 0);
+        (0, $3jaBu.default)(this, "_resolve", void 0);
+        (0, $3jaBu.default)(this, "_reject", void 0);
+        // dummy initialization required to satisfy TS2564 (definite assignment)
+        var tmpResolve = function() {};
+        var tmpReject = function() {};
+        this._promise = new Promise(function(resolve, reject) {
+            tmpResolve = resolve;
+            tmpReject = reject;
+        });
+        this._resolve = tmpResolve;
+        this._reject = tmpReject;
+    }
+    (0, $2x3qu.default)(PromiseExecutorCallbacks, [
+        {
+            key: "promise",
+            value: function promise() {
+                return this._promise;
+            }
+        },
+        {
+            key: "resolve",
+            value: function resolve(result) {
+                return this._resolve(result);
+            }
+        },
+        {
+            key: "reject",
+            value: function reject() {
+                return this._reject();
+            }
+        }
+    ]);
+    return PromiseExecutorCallbacks;
+}();
+function $2ec0177fc7e2e758$export$1f4f18df0126964a(element, resolveEventNames, rejectEventNames) {
+    return $2ec0177fc7e2e758$var$_waitForEvents.apply(this, arguments);
+}
+function $2ec0177fc7e2e758$var$_waitForEvents() {
+    $2ec0177fc7e2e758$var$_waitForEvents = (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee(element, resolveEventNames, rejectEventNames) {
+        return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
+            while(1)switch(_ctx.prev = _ctx.next){
+                case 0:
+                    return _ctx.abrupt("return", new Promise(function(resolve, reject) {
+                        var ref = [
+                            function() {
+                                resolveEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, resolveHandler);
+                                });
+                                rejectEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, rejectHandler);
+                                });
+                                resolve(element);
+                            },
+                            function(e) {
+                                resolveEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, resolveHandler);
+                                });
+                                rejectEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, rejectHandler);
+                                });
+                                reject(e);
+                            }, 
+                        ], resolveHandler = ref[0], rejectHandler = ref[1];
+                        resolveEventNames.forEach(function(e) {
+                            return element.addEventListener(e, resolveHandler);
+                        });
+                        rejectEventNames.forEach(function(e) {
+                            return element.addEventListener(e, rejectHandler);
+                        });
+                    }));
+                case 1:
+                case "end":
+                    return _ctx.stop();
+            }
+        }, _callee);
+    }));
+    return $2ec0177fc7e2e758$var$_waitForEvents.apply(this, arguments);
+}
+
+
+
+var $dzBOF = parcelRequire("dzBOF");
+
 var $f3yih = parcelRequire("f3yih");
 
 var $2x3qu = parcelRequire("2x3qu");
@@ -15716,6 +15815,10 @@ var $2x3qu = parcelRequire("2x3qu");
 var $3jaBu = parcelRequire("3jaBu");
 
 var $d67Ag = parcelRequire("d67Ag");
+
+var $aT4ZK = parcelRequire("aT4ZK");
+
+
 var $13567610da0bfca0$var$Preloader = /*#__PURE__*/ function() {
     "use strict";
     function Preloader() {
@@ -15748,9 +15851,12 @@ var $13567610da0bfca0$var$Preloader = /*#__PURE__*/ function() {
                     items[_key] = arguments[_key];
                 }
                 var _this = this;
-                items.forEach(function(param) {
+                return items.map(function(param) {
                     var mimetype = param.mimetype, url = param.url;
                     return _this.preloadImpl(mimetype, url);
+                }).map(function(param) {
+                    var element = param.element;
+                    return Preloader.readyForDisplay(element).then();
                 });
             }
         },
@@ -15806,6 +15912,100 @@ var $13567610da0bfca0$var$Preloader = /*#__PURE__*/ function() {
             }
         },
         {
+            key: "readyForDisplay",
+            value: function readyForDisplay(content) {
+                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
+                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (!(content instanceof HTMLImageElement)) {
+                                    _ctx.next = 5;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return Preloader.readyForDisplayImage(content);
+                            case 3:
+                                _ctx.next = 11;
+                                break;
+                            case 5:
+                                if (!(content instanceof HTMLVideoElement)) {
+                                    _ctx.next = 10;
+                                    break;
+                                }
+                                _ctx.next = 8;
+                                return Preloader.readyForDisplayVideo(content);
+                            case 8:
+                                _ctx.next = 11;
+                                break;
+                            case 10:
+                                (0, $688e8b72d0f8e53f$export$57b5e12ee8bbcf57)(content);
+                            case 11:
+                                return _ctx.abrupt("return", content);
+                            case 12:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
+            key: "readyForDisplayImage",
+            value: function readyForDisplayImage(image) {
+                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
+                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (image.complete) {
+                                    _ctx.next = 3;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return (0, $2ec0177fc7e2e758$export$1f4f18df0126964a)(image, [
+                                    "load"
+                                ], [
+                                    "abort",
+                                    "error"
+                                ]);
+                            case 3:
+                                return _ctx.abrupt("return", image);
+                            case 4:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
+            key: "readyForDisplayVideo",
+            value: function readyForDisplayVideo(video) {
+                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
+                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (!(video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA)) {
+                                    _ctx.next = 3;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return (0, $2ec0177fc7e2e758$export$1f4f18df0126964a)(video, [
+                                    "canplaythrough"
+                                ], [
+                                    "abort",
+                                    "error"
+                                ]);
+                            case 3:
+                                return _ctx.abrupt("return", video);
+                            case 4:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
             key: "createPreloadingElement",
             value: function createPreloadingElement(mimetype, url) {
                 var type = mimetype.split("/", 1)[0];
@@ -15858,105 +16058,11 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
             }
         },
         {
-            key: "readyForDisplay",
-            value: function readyForDisplay(content) {
-                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
-                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (!ContentCreator.isImage(content)) {
-                                    _ctx.next = 5;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.readyForDisplayImage(content);
-                            case 3:
-                                _ctx.next = 11;
-                                break;
-                            case 5:
-                                if (!ContentCreator.isVideo(content)) {
-                                    _ctx.next = 10;
-                                    break;
-                                }
-                                _ctx.next = 8;
-                                return ContentCreator.readyForDisplayVideo(content);
-                            case 8:
-                                _ctx.next = 11;
-                                break;
-                            case 10:
-                                (0, $688e8b72d0f8e53f$export$57b5e12ee8bbcf57)(content);
-                            case 11:
-                                return _ctx.abrupt("return", content);
-                            case 12:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "readyForDisplayImage",
-            value: function readyForDisplayImage(image) {
-                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
-                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (image.complete) {
-                                    _ctx.next = 3;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.waitForEvents(image, [
-                                    "load"
-                                ], [
-                                    "abort",
-                                    "error"
-                                ]);
-                            case 3:
-                                return _ctx.abrupt("return", image);
-                            case 4:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "readyForDisplayVideo",
-            value: function readyForDisplayVideo(video) {
-                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
-                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (!(video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA)) {
-                                    _ctx.next = 3;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.waitForEvents(video, [
-                                    "canplaythrough"
-                                ], [
-                                    "abort",
-                                    "error"
-                                ]);
-                            case 3:
-                                return _ctx.abrupt("return", video);
-                            case 4:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
             key: "play",
             value: function play(content) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     content.play().finally(function() {});
                     return content;
                 }
@@ -15966,9 +16072,9 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
         {
             key: "setVolume",
             value: function setVolume(content, volume, mode) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     switch(mode){
                         case "absolute":
                             // eslint-disable-next-line no-param-reassign
@@ -15989,9 +16095,9 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
         {
             key: "setMuted",
             value: function setMuted(content, value) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     // eslint-disable-next-line no-param-reassign
                     content.muted = value;
                     return content;
@@ -16006,13 +16112,13 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
                     return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
                         while(1)switch(_ctx.prev = _ctx.next){
                             case 0:
-                                if (!ContentCreator.isImage(content)) {
+                                if (!(content instanceof HTMLImageElement)) {
                                     _ctx.next = 2;
                                     break;
                                 }
                                 return _ctx.abrupt("return", ContentCreator.getDimensionsImage(content));
                             case 2:
-                                if (!ContentCreator.isVideo(content)) {
+                                if (!(content instanceof HTMLVideoElement)) {
                                     _ctx.next = 4;
                                     break;
                                 }
@@ -16039,7 +16145,7 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
                                     break;
                                 }
                                 _ctx.next = 3;
-                                return ContentCreator.waitForEvents(image, [
+                                return (0, $2ec0177fc7e2e758$export$1f4f18df0126964a)(image, [
                                     "load"
                                 ], [
                                     "abort",
@@ -16070,7 +16176,7 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
                                     break;
                                 }
                                 _ctx.next = 3;
-                                return ContentCreator.waitForEvents(video, [
+                                return (0, $2ec0177fc7e2e758$export$1f4f18df0126964a)(video, [
                                     "loadedmetadata"
                                 ], [
                                     "abort",
@@ -16087,61 +16193,6 @@ var $231a03076fd592fe$var$ContentCreator = /*#__PURE__*/ function() {
                         }
                     }, _callee);
                 }))();
-            }
-        },
-        {
-            key: "waitForEvents",
-            value: function waitForEvents(element, resolveEventNames, rejectEventNames) {
-                return (0, $dzBOF.default)((0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).mark(function _callee() {
-                    return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                return _ctx.abrupt("return", new Promise(function(resolve, reject) {
-                                    var ref = [
-                                        function() {
-                                            resolveEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, resolveHandler);
-                                            });
-                                            rejectEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, rejectHandler);
-                                            });
-                                            resolve(element);
-                                        },
-                                        function(e) {
-                                            resolveEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, resolveHandler);
-                                            });
-                                            rejectEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, rejectHandler);
-                                            });
-                                            reject(e);
-                                        }, 
-                                    ], resolveHandler = ref[0], rejectHandler = ref[1];
-                                    resolveEventNames.forEach(function(e) {
-                                        return element.addEventListener(e, resolveHandler);
-                                    });
-                                    rejectEventNames.forEach(function(e) {
-                                        return element.addEventListener(e, rejectHandler);
-                                    });
-                                }));
-                            case 1:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "isImage",
-            value: function isImage(element) {
-                return element instanceof HTMLImageElement;
-            }
-        },
-        {
-            key: "isVideo",
-            value: function isVideo(element) {
-                return element instanceof HTMLVideoElement;
             }
         }
     ]);
@@ -17121,8 +17172,9 @@ var $2649752ae9b46642$var$ClearAction = /*#__PURE__*/ function(Base1) {
                                     }
                                 });
                                 viewer = _this.state.viewer;
-                                return _ctx.abrupt("return", viewer.execute("show", showActionOptions));
-                            case 3:
+                                _ctx.next = 4;
+                                return viewer.execute("show", showActionOptions);
+                            case 4:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -17201,52 +17253,6 @@ var $f3yih = parcelRequire("f3yih");
 var $2x3qu = parcelRequire("2x3qu");
 
 var $3jaBu = parcelRequire("3jaBu");
-
-var $f3yih = parcelRequire("f3yih");
-
-var $2x3qu = parcelRequire("2x3qu");
-
-var $3jaBu = parcelRequire("3jaBu");
-var $2ec0177fc7e2e758$export$af22135957e110d7 = /*#__PURE__*/ function() {
-    "use strict";
-    function PromiseExecutorCallbacks() {
-        (0, $f3yih.default)(this, PromiseExecutorCallbacks);
-        (0, $3jaBu.default)(this, "_promise", void 0);
-        (0, $3jaBu.default)(this, "_resolve", void 0);
-        (0, $3jaBu.default)(this, "_reject", void 0);
-        // dummy initialization required to satisfy TS2564 (definite assignment)
-        var tmpResolve = function() {};
-        var tmpReject = function() {};
-        this._promise = new Promise(function(resolve, reject) {
-            tmpResolve = resolve;
-            tmpReject = reject;
-        });
-        this._resolve = tmpResolve;
-        this._reject = tmpReject;
-    }
-    (0, $2x3qu.default)(PromiseExecutorCallbacks, [
-        {
-            key: "promise",
-            value: function promise() {
-                return this._promise;
-            }
-        },
-        {
-            key: "resolve",
-            value: function resolve(result) {
-                return this._resolve(result);
-            }
-        },
-        {
-            key: "reject",
-            value: function reject() {
-                return this._reject();
-            }
-        }
-    ]);
-    return PromiseExecutorCallbacks;
-}();
-
 
 var $fbe767e9a27761f9$export$2e2bcd8739ae039 = /*#__PURE__*/ function() {
     "use strict";
@@ -18385,7 +18391,7 @@ var $5a51d6cd0739d348$export$a3f2a64f39c0a404 = /*#__PURE__*/ function(HTMLEleme
         _this = _super.call(this);
         (0, $3jaBu.default)((0, $apDhX.default)(_this), "viewer", void 0);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        _this.viewer = new $5a51d6cd0739d348$var$HilbertGalleryViewer((0, $apDhX.default)(_this));
+        _this.viewer = new $5a51d6cd0739d348$var$HilbertGalleryViewer((0, $apDhX.default)(_this), false);
         return _this;
     }
     (0, $2x3qu.default)(HilbertGalleryViewerElement, [
@@ -18412,12 +18418,16 @@ var $5a51d6cd0739d348$export$a3f2a64f39c0a404 = /*#__PURE__*/ function(HTMLEleme
 var $5a51d6cd0739d348$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
     "use strict";
     function HilbertGalleryViewer(parent) {
+        var wrap = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
         (0, $f3yih.default)(this, HilbertGalleryViewer);
         (0, $3jaBu.default)(this, "actionRegistry", void 0);
         (0, $3jaBu.default)(this, "state", void 0);
-        var element = document.createElement("div");
-        parent.appendChild(element);
-        var shadowRoot = element.attachShadow({
+        var insertWrapper = function(element) {
+            var wrapper = document.createElement("div");
+            return element.appendChild(wrapper);
+        };
+        var host = wrap ? insertWrapper(parent) : parent;
+        var shadowRoot = host.attachShadow({
             mode: "open"
         });
         (0, $58b88e7064bf4641$export$c2aff9e92362a9b2)(shadowRoot, (0, (/*@__PURE__*/$parcel$interopDefault($83f205a4fe0059ea$exports))));
@@ -18452,9 +18462,8 @@ var $5a51d6cd0739d348$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
                     return (0, (/*@__PURE__*/$parcel$interopDefault($aT4ZK))).wrap(function _callee$(_ctx) {
                         while(1)switch(_ctx.prev = _ctx.next){
                             case 0:
-                                _ctx.next = 2;
-                                return _this.executeImpl(action, arg);
-                            case 2:
+                                return _ctx.abrupt("return", _this.executeImpl(action, arg));
+                            case 1:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -18473,18 +18482,17 @@ var $5a51d6cd0739d348$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
                             case 0:
                                 action = _this.actionRegistry.get(actionName);
                                 if (!action) {
-                                    _ctx.next = 7;
+                                    _ctx.next = 6;
                                     break;
                                 }
                                 executor = action.buildExecutor(arg);
                                 _ctx.next = 5;
                                 return executor();
                             case 5:
-                                _ctx.next = 8;
-                                break;
-                            case 7:
+                                return _ctx.abrupt("return", _ctx.sent);
+                            case 6:
                                 throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
-                            case 8:
+                            case 7:
                             case "end":
                                 return _ctx.stop();
                         }

@@ -62,8 +62,11 @@ declare class Preloader {
         key: string;
         element: SupportedContentElement;
     };
-    preload(...items: PreloadItem[]): void;
+    preload(...items: PreloadItem[]): Promise<void>[];
     get(mimetype: string, url: string): SupportedContentElement;
+    static readyForDisplay<T extends SupportedContentElement>(content: T): Promise<T>;
+    protected static readyForDisplayImage<T extends HTMLImageElement>(image: T): Promise<T>;
+    protected static readyForDisplayVideo<T extends HTMLVideoElement>(video: T): Promise<T>;
     protected static createPreloadingElement(mimetype: string, url: string): HTMLImageElement | HTMLVideoElement;
     protected static createPreloadingImage(url: string): HTMLImageElement;
     protected static createPreloadingVideo(url: string): HTMLVideoElement;
@@ -99,12 +102,15 @@ type State = {
     muted: boolean;
 };
 type ActionRegistry = Map<string, Action<unknown, unknown>>;
-declare class HilbertGalleryViewer {
+interface IHilbertGalleryViewer {
+    execute(action: string, arg: unknown): Promise<unknown>;
+}
+declare class HilbertGalleryViewer implements IHilbertGalleryViewer {
     protected actionRegistry: ActionRegistry;
     protected state: State;
-    constructor(parent: HTMLElement);
+    constructor(parent: HTMLElement, wrap?: boolean);
     protected static createActionRegistry(state: State): ActionRegistry;
-    execute(action: string, arg: unknown): Promise<void>;
+    execute(action: string, arg: unknown): Promise<unknown>;
     static defineCustomElement(): void;
 }
 export default HilbertGalleryViewer;

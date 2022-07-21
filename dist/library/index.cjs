@@ -156,9 +156,11 @@ var $4f42560bd79c319d$var$PreloadAction = /*#__PURE__*/ function(Base1) {
                                 ;
                                 preloader = _this.state.preloader;
                                 preloader.clear();
-                                (_preloader = preloader).preload.apply(_preloader, (0, ($parcel$interopDefault($iBAnd$swchelperslib_to_consumable_arrayjs)))(items));
-                                return _ctx.abrupt("return", Promise.resolve());
+                                _ctx.next = 5;
+                                return Promise.resolve();
                             case 5:
+                                return _ctx.abrupt("return", (_preloader = preloader).preload.apply(_preloader, (0, ($parcel$interopDefault($iBAnd$swchelperslib_to_consumable_arrayjs)))(items)));
+                            case 6:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -331,6 +333,100 @@ var $4fcaa8c8db08f630$export$2e2bcd8739ae039 = $4fcaa8c8db08f630$var$ReloadActio
 
 
 
+
+var $a8735f73fa579b7c$export$af22135957e110d7 = /*#__PURE__*/ function() {
+    "use strict";
+    function PromiseExecutorCallbacks() {
+        (0, ($parcel$interopDefault($iBAnd$swchelperslib_class_call_checkjs)))(this, PromiseExecutorCallbacks);
+        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_promise", void 0);
+        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_resolve", void 0);
+        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_reject", void 0);
+        // dummy initialization required to satisfy TS2564 (definite assignment)
+        var tmpResolve = function() {};
+        var tmpReject = function() {};
+        this._promise = new Promise(function(resolve, reject) {
+            tmpResolve = resolve;
+            tmpReject = reject;
+        });
+        this._resolve = tmpResolve;
+        this._reject = tmpReject;
+    }
+    (0, ($parcel$interopDefault($iBAnd$swchelperslib_create_classjs)))(PromiseExecutorCallbacks, [
+        {
+            key: "promise",
+            value: function promise() {
+                return this._promise;
+            }
+        },
+        {
+            key: "resolve",
+            value: function resolve(result) {
+                return this._resolve(result);
+            }
+        },
+        {
+            key: "reject",
+            value: function reject() {
+                return this._reject();
+            }
+        }
+    ]);
+    return PromiseExecutorCallbacks;
+}();
+function $a8735f73fa579b7c$export$1f4f18df0126964a(element, resolveEventNames, rejectEventNames) {
+    return $a8735f73fa579b7c$var$_waitForEvents.apply(this, arguments);
+}
+function $a8735f73fa579b7c$var$_waitForEvents() {
+    $a8735f73fa579b7c$var$_waitForEvents = (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee(element, resolveEventNames, rejectEventNames) {
+        return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
+            while(1)switch(_ctx.prev = _ctx.next){
+                case 0:
+                    return _ctx.abrupt("return", new Promise(function(resolve, reject) {
+                        var ref = [
+                            function() {
+                                resolveEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, resolveHandler);
+                                });
+                                rejectEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, rejectHandler);
+                                });
+                                resolve(element);
+                            },
+                            function(e) {
+                                resolveEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, resolveHandler);
+                                });
+                                rejectEventNames.forEach(function(name) {
+                                    return element.removeEventListener(name, rejectHandler);
+                                });
+                                reject(e);
+                            }, 
+                        ], resolveHandler = ref[0], rejectHandler = ref[1];
+                        resolveEventNames.forEach(function(e) {
+                            return element.addEventListener(e, resolveHandler);
+                        });
+                        rejectEventNames.forEach(function(e) {
+                            return element.addEventListener(e, rejectHandler);
+                        });
+                    }));
+                case 1:
+                case "end":
+                    return _ctx.stop();
+            }
+        }, _callee);
+    }));
+    return $a8735f73fa579b7c$var$_waitForEvents.apply(this, arguments);
+}
+
+
+
+
+
+
+
+
+
+
 var $8bbfb6fe1ceb6076$var$Preloader = /*#__PURE__*/ function() {
     "use strict";
     function Preloader() {
@@ -363,9 +459,12 @@ var $8bbfb6fe1ceb6076$var$Preloader = /*#__PURE__*/ function() {
                     items[_key] = arguments[_key];
                 }
                 var _this = this;
-                items.forEach(function(param) {
+                return items.map(function(param) {
                     var mimetype = param.mimetype, url = param.url;
                     return _this.preloadImpl(mimetype, url);
+                }).map(function(param) {
+                    var element = param.element;
+                    return Preloader.readyForDisplay(element).then();
                 });
             }
         },
@@ -421,6 +520,100 @@ var $8bbfb6fe1ceb6076$var$Preloader = /*#__PURE__*/ function() {
             }
         },
         {
+            key: "readyForDisplay",
+            value: function readyForDisplay(content) {
+                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
+                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (!(content instanceof HTMLImageElement)) {
+                                    _ctx.next = 5;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return Preloader.readyForDisplayImage(content);
+                            case 3:
+                                _ctx.next = 11;
+                                break;
+                            case 5:
+                                if (!(content instanceof HTMLVideoElement)) {
+                                    _ctx.next = 10;
+                                    break;
+                                }
+                                _ctx.next = 8;
+                                return Preloader.readyForDisplayVideo(content);
+                            case 8:
+                                _ctx.next = 11;
+                                break;
+                            case 10:
+                                (0, $3f2808a10fe174a4$export$57b5e12ee8bbcf57)(content);
+                            case 11:
+                                return _ctx.abrupt("return", content);
+                            case 12:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
+            key: "readyForDisplayImage",
+            value: function readyForDisplayImage(image) {
+                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
+                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (image.complete) {
+                                    _ctx.next = 3;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return (0, $a8735f73fa579b7c$export$1f4f18df0126964a)(image, [
+                                    "load"
+                                ], [
+                                    "abort",
+                                    "error"
+                                ]);
+                            case 3:
+                                return _ctx.abrupt("return", image);
+                            case 4:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
+            key: "readyForDisplayVideo",
+            value: function readyForDisplayVideo(video) {
+                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
+                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
+                        while(1)switch(_ctx.prev = _ctx.next){
+                            case 0:
+                                if (!(video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA)) {
+                                    _ctx.next = 3;
+                                    break;
+                                }
+                                _ctx.next = 3;
+                                return (0, $a8735f73fa579b7c$export$1f4f18df0126964a)(video, [
+                                    "canplaythrough"
+                                ], [
+                                    "abort",
+                                    "error"
+                                ]);
+                            case 3:
+                                return _ctx.abrupt("return", video);
+                            case 4:
+                            case "end":
+                                return _ctx.stop();
+                        }
+                    }, _callee);
+                }))();
+            }
+        },
+        {
             key: "createPreloadingElement",
             value: function createPreloadingElement(mimetype, url) {
                 var type = mimetype.split("/", 1)[0];
@@ -473,105 +666,11 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
             }
         },
         {
-            key: "readyForDisplay",
-            value: function readyForDisplay(content) {
-                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
-                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (!ContentCreator.isImage(content)) {
-                                    _ctx.next = 5;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.readyForDisplayImage(content);
-                            case 3:
-                                _ctx.next = 11;
-                                break;
-                            case 5:
-                                if (!ContentCreator.isVideo(content)) {
-                                    _ctx.next = 10;
-                                    break;
-                                }
-                                _ctx.next = 8;
-                                return ContentCreator.readyForDisplayVideo(content);
-                            case 8:
-                                _ctx.next = 11;
-                                break;
-                            case 10:
-                                (0, $3f2808a10fe174a4$export$57b5e12ee8bbcf57)(content);
-                            case 11:
-                                return _ctx.abrupt("return", content);
-                            case 12:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "readyForDisplayImage",
-            value: function readyForDisplayImage(image) {
-                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
-                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (image.complete) {
-                                    _ctx.next = 3;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.waitForEvents(image, [
-                                    "load"
-                                ], [
-                                    "abort",
-                                    "error"
-                                ]);
-                            case 3:
-                                return _ctx.abrupt("return", image);
-                            case 4:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "readyForDisplayVideo",
-            value: function readyForDisplayVideo(video) {
-                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
-                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                if (!(video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA)) {
-                                    _ctx.next = 3;
-                                    break;
-                                }
-                                _ctx.next = 3;
-                                return ContentCreator.waitForEvents(video, [
-                                    "canplaythrough"
-                                ], [
-                                    "abort",
-                                    "error"
-                                ]);
-                            case 3:
-                                return _ctx.abrupt("return", video);
-                            case 4:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
             key: "play",
             value: function play(content) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     content.play().finally(function() {});
                     return content;
                 }
@@ -581,9 +680,9 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
         {
             key: "setVolume",
             value: function setVolume(content, volume, mode) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     switch(mode){
                         case "absolute":
                             // eslint-disable-next-line no-param-reassign
@@ -604,9 +703,9 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
         {
             key: "setMuted",
             value: function setMuted(content, value) {
-                if (ContentCreator.isImage(content)) // NOOP
+                if (content instanceof HTMLImageElement) // NOOP
                 return content;
-                if (ContentCreator.isVideo(content)) {
+                if (content instanceof HTMLVideoElement) {
                     // eslint-disable-next-line no-param-reassign
                     content.muted = value;
                     return content;
@@ -621,13 +720,13 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
                     return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
                         while(1)switch(_ctx.prev = _ctx.next){
                             case 0:
-                                if (!ContentCreator.isImage(content)) {
+                                if (!(content instanceof HTMLImageElement)) {
                                     _ctx.next = 2;
                                     break;
                                 }
                                 return _ctx.abrupt("return", ContentCreator.getDimensionsImage(content));
                             case 2:
-                                if (!ContentCreator.isVideo(content)) {
+                                if (!(content instanceof HTMLVideoElement)) {
                                     _ctx.next = 4;
                                     break;
                                 }
@@ -654,7 +753,7 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
                                     break;
                                 }
                                 _ctx.next = 3;
-                                return ContentCreator.waitForEvents(image, [
+                                return (0, $a8735f73fa579b7c$export$1f4f18df0126964a)(image, [
                                     "load"
                                 ], [
                                     "abort",
@@ -685,7 +784,7 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
                                     break;
                                 }
                                 _ctx.next = 3;
-                                return ContentCreator.waitForEvents(video, [
+                                return (0, $a8735f73fa579b7c$export$1f4f18df0126964a)(video, [
                                     "loadedmetadata"
                                 ], [
                                     "abort",
@@ -702,61 +801,6 @@ var $5c6aef9cc60ab4fd$var$ContentCreator = /*#__PURE__*/ function() {
                         }
                     }, _callee);
                 }))();
-            }
-        },
-        {
-            key: "waitForEvents",
-            value: function waitForEvents(element, resolveEventNames, rejectEventNames) {
-                return (0, ($parcel$interopDefault($iBAnd$swchelperslib_async_to_generatorjs)))((0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).mark(function _callee() {
-                    return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
-                        while(1)switch(_ctx.prev = _ctx.next){
-                            case 0:
-                                return _ctx.abrupt("return", new Promise(function(resolve, reject) {
-                                    var ref = [
-                                        function() {
-                                            resolveEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, resolveHandler);
-                                            });
-                                            rejectEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, rejectHandler);
-                                            });
-                                            resolve(element);
-                                        },
-                                        function(e) {
-                                            resolveEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, resolveHandler);
-                                            });
-                                            rejectEventNames.forEach(function(name) {
-                                                return element.removeEventListener(name, rejectHandler);
-                                            });
-                                            reject(e);
-                                        }, 
-                                    ], resolveHandler = ref[0], rejectHandler = ref[1];
-                                    resolveEventNames.forEach(function(e) {
-                                        return element.addEventListener(e, resolveHandler);
-                                    });
-                                    rejectEventNames.forEach(function(e) {
-                                        return element.addEventListener(e, rejectHandler);
-                                    });
-                                }));
-                            case 1:
-                            case "end":
-                                return _ctx.stop();
-                        }
-                    }, _callee);
-                }))();
-            }
-        },
-        {
-            key: "isImage",
-            value: function isImage(element) {
-                return element instanceof HTMLImageElement;
-            }
-        },
-        {
-            key: "isVideo",
-            value: function isVideo(element) {
-                return element instanceof HTMLVideoElement;
             }
         }
     ]);
@@ -1185,8 +1229,9 @@ var $6cac68e21ab2a4a9$var$ClearAction = /*#__PURE__*/ function(Base1) {
                                     }
                                 });
                                 viewer = _this.state.viewer;
-                                return _ctx.abrupt("return", viewer.execute("show", showActionOptions));
-                            case 3:
+                                _ctx.next = 4;
+                                return viewer.execute("show", showActionOptions);
+                            case 4:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -1247,49 +1292,6 @@ $7d8361fea80b2f58$exports = "@-webkit-keyframes animation-none {\n  0%, 100% {\n
 
 
 
-
-
-
-
-var $a8735f73fa579b7c$export$af22135957e110d7 = /*#__PURE__*/ function() {
-    "use strict";
-    function PromiseExecutorCallbacks() {
-        (0, ($parcel$interopDefault($iBAnd$swchelperslib_class_call_checkjs)))(this, PromiseExecutorCallbacks);
-        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_promise", void 0);
-        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_resolve", void 0);
-        (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "_reject", void 0);
-        // dummy initialization required to satisfy TS2564 (definite assignment)
-        var tmpResolve = function() {};
-        var tmpReject = function() {};
-        this._promise = new Promise(function(resolve, reject) {
-            tmpResolve = resolve;
-            tmpReject = reject;
-        });
-        this._resolve = tmpResolve;
-        this._reject = tmpReject;
-    }
-    (0, ($parcel$interopDefault($iBAnd$swchelperslib_create_classjs)))(PromiseExecutorCallbacks, [
-        {
-            key: "promise",
-            value: function promise() {
-                return this._promise;
-            }
-        },
-        {
-            key: "resolve",
-            value: function resolve(result) {
-                return this._resolve(result);
-            }
-        },
-        {
-            key: "reject",
-            value: function reject() {
-                return this._reject();
-            }
-        }
-    ]);
-    return PromiseExecutorCallbacks;
-}();
 
 
 var $82b9c80dd0edcbfa$export$2e2bcd8739ae039 = /*#__PURE__*/ function() {
@@ -2383,7 +2385,7 @@ var $aa6c68a2cb8884dd$export$a3f2a64f39c0a404 = /*#__PURE__*/ function(HTMLEleme
         _this = _super.call(this);
         (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))((0, ($parcel$interopDefault($iBAnd$swchelperslib_assert_this_initializedjs)))(_this), "viewer", void 0);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        _this.viewer = new $aa6c68a2cb8884dd$var$HilbertGalleryViewer((0, ($parcel$interopDefault($iBAnd$swchelperslib_assert_this_initializedjs)))(_this));
+        _this.viewer = new $aa6c68a2cb8884dd$var$HilbertGalleryViewer((0, ($parcel$interopDefault($iBAnd$swchelperslib_assert_this_initializedjs)))(_this), false);
         return _this;
     }
     (0, ($parcel$interopDefault($iBAnd$swchelperslib_create_classjs)))(HilbertGalleryViewerElement, [
@@ -2410,12 +2412,16 @@ var $aa6c68a2cb8884dd$export$a3f2a64f39c0a404 = /*#__PURE__*/ function(HTMLEleme
 var $aa6c68a2cb8884dd$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
     "use strict";
     function HilbertGalleryViewer(parent) {
+        var wrap = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
         (0, ($parcel$interopDefault($iBAnd$swchelperslib_class_call_checkjs)))(this, HilbertGalleryViewer);
         (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "actionRegistry", void 0);
         (0, ($parcel$interopDefault($iBAnd$swchelperslib_define_propertyjs)))(this, "state", void 0);
-        var element = document.createElement("div");
-        parent.appendChild(element);
-        var shadowRoot = element.attachShadow({
+        var insertWrapper = function(element) {
+            var wrapper = document.createElement("div");
+            return element.appendChild(wrapper);
+        };
+        var host = wrap ? insertWrapper(parent) : parent;
+        var shadowRoot = host.attachShadow({
             mode: "open"
         });
         (0, $50f38f10471e978d$export$c2aff9e92362a9b2)(shadowRoot, (0, (/*@__PURE__*/$parcel$interopDefault($fcd220369608a622$exports))));
@@ -2450,9 +2456,8 @@ var $aa6c68a2cb8884dd$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
                     return (0, ($parcel$interopDefault($iBAnd$regeneratorruntime))).wrap(function _callee$(_ctx) {
                         while(1)switch(_ctx.prev = _ctx.next){
                             case 0:
-                                _ctx.next = 2;
-                                return _this.executeImpl(action, arg);
-                            case 2:
+                                return _ctx.abrupt("return", _this.executeImpl(action, arg));
+                            case 1:
                             case "end":
                                 return _ctx.stop();
                         }
@@ -2471,18 +2476,17 @@ var $aa6c68a2cb8884dd$var$HilbertGalleryViewer = /*#__PURE__*/ function() {
                             case 0:
                                 action = _this.actionRegistry.get(actionName);
                                 if (!action) {
-                                    _ctx.next = 7;
+                                    _ctx.next = 6;
                                     break;
                                 }
                                 executor = action.buildExecutor(arg);
                                 _ctx.next = 5;
                                 return executor();
                             case 5:
-                                _ctx.next = 8;
-                                break;
-                            case 7:
+                                return _ctx.abrupt("return", _ctx.sent);
+                            case 6:
                                 throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
-                            case 8:
+                            case 7:
                             case "end":
                                 return _ctx.stop();
                         }

@@ -83,8 +83,8 @@ class $d25ad1ee5461b425$var$PreloadAction extends (0, $c8dd2254d196ae65$export$2
     async execute(items) {
         const { preloader: preloader  } = this.state;
         preloader.clear();
-        preloader.preload(...items);
-        return Promise.resolve();
+        await Promise.resolve(); // this is just to make the method actually async
+        return preloader.preload(...items);
     }
     // eslint-disable-next-line class-methods-use-this
     unpack(options) {
@@ -154,6 +154,54 @@ var $4e99b53c19192378$export$2e2bcd8739ae039 = $4e99b53c19192378$var$ReloadActio
 
 
 
+class $bc87f8d7ea698dd0$export$af22135957e110d7 {
+    promise() {
+        return this._promise;
+    }
+    resolve(result) {
+        return this._resolve(result);
+    }
+    reject() {
+        return this._reject();
+    }
+    constructor(){
+        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_promise", void 0);
+        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_resolve", void 0);
+        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_reject", void 0);
+        // dummy initialization required to satisfy TS2564 (definite assignment)
+        let tmpResolve = ()=>{};
+        let tmpReject = ()=>{};
+        this._promise = new Promise((resolve, reject)=>{
+            tmpResolve = resolve;
+            tmpReject = reject;
+        });
+        this._resolve = tmpResolve;
+        this._reject = tmpReject;
+    }
+}
+async function $bc87f8d7ea698dd0$export$1f4f18df0126964a(element, resolveEventNames, rejectEventNames) {
+    return new Promise((resolve, reject)=>{
+        const [resolveHandler, rejectHandler] = [
+            ()=>{
+                resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
+                rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
+                resolve(element);
+            },
+            (e)=>{
+                resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
+                rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
+                reject(e);
+            }, 
+        ];
+        resolveEventNames.forEach((e)=>element.addEventListener(e, resolveHandler));
+        rejectEventNames.forEach((e)=>element.addEventListener(e, rejectHandler));
+    });
+}
+
+
+
+
+
 class $940da77736a2a569$var$Preloader {
     static key(mimetype, url) {
         return `{${mimetype}}{${url}}`;
@@ -171,7 +219,7 @@ class $940da77736a2a569$var$Preloader {
         };
     }
     preload(...items) {
-        items.forEach(({ mimetype: mimetype , url: url  })=>this.preloadImpl(mimetype, url));
+        return items.map(({ mimetype: mimetype , url: url  })=>this.preloadImpl(mimetype, url)).map(({ element: element  })=>$940da77736a2a569$var$Preloader.readyForDisplay(element).then());
     }
     get(mimetype, url) {
         const { key: key , element: element  } = this.preloadImpl(mimetype, url);
@@ -180,6 +228,30 @@ class $940da77736a2a569$var$Preloader {
         this.container.appendChild(clonedElement);
         this.refs.set(key, clonedElement);
         return element;
+    }
+    static async readyForDisplay(content) {
+        if (content instanceof HTMLImageElement) await $940da77736a2a569$var$Preloader.readyForDisplayImage(content);
+        else if (content instanceof HTMLVideoElement) await $940da77736a2a569$var$Preloader.readyForDisplayVideo(content);
+        else (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
+        return content;
+    }
+    static async readyForDisplayImage(image) {
+        if (!image.complete) await (0, $bc87f8d7ea698dd0$export$1f4f18df0126964a)(image, [
+            "load"
+        ], [
+            "abort",
+            "error"
+        ]);
+        return image;
+    }
+    static async readyForDisplayVideo(video) {
+        if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) await (0, $bc87f8d7ea698dd0$export$1f4f18df0126964a)(video, [
+            "canplaythrough"
+        ], [
+            "abort",
+            "error"
+        ]);
+        return video;
     }
     static createPreloadingElement(mimetype, url) {
         const type = mimetype.split("/", 1)[0];
@@ -232,43 +304,19 @@ class $211cca56a875d2d3$var$ContentCreator {
     static create(mimetype, url, preloader = new (0, $940da77736a2a569$export$2e2bcd8739ae039)()) {
         return preloader.get(mimetype, url);
     }
-    static async readyForDisplay(content) {
-        if ($211cca56a875d2d3$var$ContentCreator.isImage(content)) await $211cca56a875d2d3$var$ContentCreator.readyForDisplayImage(content);
-        else if ($211cca56a875d2d3$var$ContentCreator.isVideo(content)) await $211cca56a875d2d3$var$ContentCreator.readyForDisplayVideo(content);
-        else (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
-        return content;
-    }
-    static async readyForDisplayImage(image) {
-        if (!image.complete) await $211cca56a875d2d3$var$ContentCreator.waitForEvents(image, [
-            "load"
-        ], [
-            "abort",
-            "error"
-        ]);
-        return image;
-    }
-    static async readyForDisplayVideo(video) {
-        if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) await $211cca56a875d2d3$var$ContentCreator.waitForEvents(video, [
-            "canplaythrough"
-        ], [
-            "abort",
-            "error"
-        ]);
-        return video;
-    }
     static play(content) {
-        if ($211cca56a875d2d3$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($211cca56a875d2d3$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             content.play().finally(()=>{});
             return content;
         }
         return (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
     }
     static setVolume(content, volume, mode) {
-        if ($211cca56a875d2d3$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($211cca56a875d2d3$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             switch(mode){
                 case "absolute":
                     // eslint-disable-next-line no-param-reassign
@@ -286,9 +334,9 @@ class $211cca56a875d2d3$var$ContentCreator {
         return (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
     }
     static setMuted(content, value) {
-        if ($211cca56a875d2d3$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($211cca56a875d2d3$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             // eslint-disable-next-line no-param-reassign
             content.muted = value;
             return content;
@@ -296,12 +344,12 @@ class $211cca56a875d2d3$var$ContentCreator {
         return (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
     }
     static async getDimensions(content) {
-        if ($211cca56a875d2d3$var$ContentCreator.isImage(content)) return $211cca56a875d2d3$var$ContentCreator.getDimensionsImage(content);
-        if ($211cca56a875d2d3$var$ContentCreator.isVideo(content)) return $211cca56a875d2d3$var$ContentCreator.getDimensionsVideo(content);
+        if (content instanceof HTMLImageElement) return $211cca56a875d2d3$var$ContentCreator.getDimensionsImage(content);
+        if (content instanceof HTMLVideoElement) return $211cca56a875d2d3$var$ContentCreator.getDimensionsVideo(content);
         return (0, $45504323f366cd38$export$57b5e12ee8bbcf57)(content);
     }
     static async getDimensionsImage(image) {
-        if (!image.complete) await $211cca56a875d2d3$var$ContentCreator.waitForEvents(image, [
+        if (!image.complete) await (0, $bc87f8d7ea698dd0$export$1f4f18df0126964a)(image, [
             "load"
         ], [
             "abort",
@@ -313,7 +361,7 @@ class $211cca56a875d2d3$var$ContentCreator {
         };
     }
     static async getDimensionsVideo(video) {
-        if (video.readyState < HTMLMediaElement.HAVE_METADATA) await $211cca56a875d2d3$var$ContentCreator.waitForEvents(video, [
+        if (video.readyState < HTMLMediaElement.HAVE_METADATA) await (0, $bc87f8d7ea698dd0$export$1f4f18df0126964a)(video, [
             "loadedmetadata"
         ], [
             "abort",
@@ -323,30 +371,6 @@ class $211cca56a875d2d3$var$ContentCreator {
             width: video.videoWidth,
             height: video.videoHeight
         };
-    }
-    static async waitForEvents(element, resolveEventNames, rejectEventNames) {
-        return new Promise((resolve, reject)=>{
-            const [resolveHandler, rejectHandler] = [
-                ()=>{
-                    resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
-                    rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
-                    resolve(element);
-                },
-                (e)=>{
-                    resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
-                    rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
-                    reject(e);
-                }, 
-            ];
-            resolveEventNames.forEach((e)=>element.addEventListener(e, resolveHandler));
-            rejectEventNames.forEach((e)=>element.addEventListener(e, rejectHandler));
-        });
-    }
-    static isImage(element) {
-        return element instanceof HTMLImageElement;
-    }
-    static isVideo(element) {
-        return element instanceof HTMLVideoElement;
     }
 }
 var $211cca56a875d2d3$export$2e2bcd8739ae039 = $211cca56a875d2d3$var$ContentCreator;
@@ -670,7 +694,7 @@ class $a05327589db9230d$var$ClearAction extends (0, $c8dd2254d196ae65$export$2e2
             }
         };
         const { viewer: viewer  } = this.state;
-        return viewer.execute("show", showActionOptions);
+        await viewer.execute("show", showActionOptions);
     }
     // eslint-disable-next-line class-methods-use-this
     unpack(options) {
@@ -710,33 +734,6 @@ $2baed1b998f22cc0$exports = "@-webkit-keyframes animation-none {\n  0%, 100% {\n
 
 
 
-
-
-class $bc87f8d7ea698dd0$export$af22135957e110d7 {
-    promise() {
-        return this._promise;
-    }
-    resolve(result) {
-        return this._resolve(result);
-    }
-    reject() {
-        return this._reject();
-    }
-    constructor(){
-        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_promise", void 0);
-        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_resolve", void 0);
-        (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "_reject", void 0);
-        // dummy initialization required to satisfy TS2564 (definite assignment)
-        let tmpResolve = ()=>{};
-        let tmpReject = ()=>{};
-        this._promise = new Promise((resolve, reject)=>{
-            tmpResolve = resolve;
-            tmpReject = reject;
-        });
-        this._resolve = tmpResolve;
-        this._reject = tmpReject;
-    }
-}
 
 
 class $63baa6fd7edc5e26$export$2e2bcd8739ae039 {
@@ -1463,7 +1460,7 @@ class $4640deaaeaf7eefa$export$a3f2a64f39c0a404 extends HTMLElement {
         super();
         (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "viewer", void 0);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        this.viewer = new $4640deaaeaf7eefa$var$HilbertGalleryViewer(this);
+        this.viewer = new $4640deaaeaf7eefa$var$HilbertGalleryViewer(this, false);
     }
 }
 class $4640deaaeaf7eefa$var$HilbertGalleryViewer {
@@ -1480,7 +1477,7 @@ class $4640deaaeaf7eefa$var$HilbertGalleryViewer {
     }
     async execute(action, arg) {
         // executeImpl only exists for the purpose of renaming the parameters
-        await this.executeImpl(action, arg);
+        return this.executeImpl(action, arg);
     }
     async executeImpl(actionName, arg) {
         const action = this.actionRegistry.get(actionName);
@@ -1489,18 +1486,24 @@ class $4640deaaeaf7eefa$var$HilbertGalleryViewer {
             const executor = action.buildExecutor(arg);
             // the executor encapsulates the preprocessed arg
             // and allows type-safe execution
-            await executor();
-        } else throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
+            // we need to await the result to avoid several levels of Promises
+            // eslint-disable-next-line @typescript-eslint/return-await
+            return await executor();
+        }
+        throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
     }
     static defineCustomElement() {
         customElements.define("hilbert-gallery-viewer", $4640deaaeaf7eefa$export$a3f2a64f39c0a404);
     }
-    constructor(parent){
+    constructor(parent, wrap = true){
         (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "actionRegistry", void 0);
         (0, $9vIO6$swchelperssrc_define_propertymjs)(this, "state", void 0);
-        const element = document.createElement("div");
-        parent.appendChild(element);
-        const shadowRoot = element.attachShadow({
+        const insertWrapper = (element)=>{
+            const wrapper = document.createElement("div");
+            return element.appendChild(wrapper);
+        };
+        const host = wrap ? insertWrapper(parent) : parent;
+        const shadowRoot = host.attachShadow({
             mode: "open"
         });
         (0, $74a2ff0e4bf74f31$export$c2aff9e92362a9b2)(shadowRoot, (0, (/*@__PURE__*/$parcel$interopDefault($6a82cea56a5d57cd$exports))));

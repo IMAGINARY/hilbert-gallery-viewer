@@ -17,7 +17,7 @@ function $parcel$export(e, n, v, s) {
 var $parcel$modules = {};
 var $parcel$inits = {};
 
-var parcelRequire = $parcel$global["parcelRequireebb2"];
+var parcelRequire = $parcel$global["parcelRequire09b2"];
 if (parcelRequire == null) {
   parcelRequire = function(id) {
     if (id in $parcel$modules) {
@@ -40,7 +40,7 @@ if (parcelRequire == null) {
     $parcel$inits[id] = init;
   };
 
-  $parcel$global["parcelRequireebb2"] = parcelRequire;
+  $parcel$global["parcelRequire09b2"] = parcelRequire;
 }
 parcelRequire.register("91QCr", function(module, exports) {
 "use strict";
@@ -8558,8 +8558,8 @@ class $dc7f221b5f1045df$var$PreloadAction extends (0, $82db5595f3eb13f9$export$2
     async execute(items) {
         const { preloader: preloader  } = this.state;
         preloader.clear();
-        preloader.preload(...items);
-        return Promise.resolve();
+        await Promise.resolve(); // this is just to make the method actually async
+        return preloader.preload(...items);
     }
     // eslint-disable-next-line class-methods-use-this
     unpack(options) {
@@ -8629,6 +8629,54 @@ var $91327a1ca1fd2def$export$2e2bcd8739ae039 = $91327a1ca1fd2def$var$ReloadActio
 
 
 
+class $c023f3034e047f76$export$af22135957e110d7 {
+    promise() {
+        return this._promise;
+    }
+    resolve(result) {
+        return this._resolve(result);
+    }
+    reject() {
+        return this._reject();
+    }
+    constructor(){
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_promise", void 0);
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_resolve", void 0);
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_reject", void 0);
+        // dummy initialization required to satisfy TS2564 (definite assignment)
+        let tmpResolve = ()=>{};
+        let tmpReject = ()=>{};
+        this._promise = new Promise((resolve, reject)=>{
+            tmpResolve = resolve;
+            tmpReject = reject;
+        });
+        this._resolve = tmpResolve;
+        this._reject = tmpReject;
+    }
+}
+async function $c023f3034e047f76$export$1f4f18df0126964a(element, resolveEventNames, rejectEventNames) {
+    return new Promise((resolve, reject)=>{
+        const [resolveHandler, rejectHandler] = [
+            ()=>{
+                resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
+                rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
+                resolve(element);
+            },
+            (e)=>{
+                resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
+                rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
+                reject(e);
+            }, 
+        ];
+        resolveEventNames.forEach((e)=>element.addEventListener(e, resolveHandler));
+        rejectEventNames.forEach((e)=>element.addEventListener(e, rejectHandler));
+    });
+}
+
+
+
+
+
 class $36a0b5dcceb74366$var$Preloader {
     static key(mimetype, url) {
         return `{${mimetype}}{${url}}`;
@@ -8646,7 +8694,7 @@ class $36a0b5dcceb74366$var$Preloader {
         };
     }
     preload(...items) {
-        items.forEach(({ mimetype: mimetype , url: url  })=>this.preloadImpl(mimetype, url));
+        return items.map(({ mimetype: mimetype , url: url  })=>this.preloadImpl(mimetype, url)).map(({ element: element  })=>$36a0b5dcceb74366$var$Preloader.readyForDisplay(element).then());
     }
     get(mimetype, url) {
         const { key: key , element: element  } = this.preloadImpl(mimetype, url);
@@ -8655,6 +8703,30 @@ class $36a0b5dcceb74366$var$Preloader {
         this.container.appendChild(clonedElement);
         this.refs.set(key, clonedElement);
         return element;
+    }
+    static async readyForDisplay(content) {
+        if (content instanceof HTMLImageElement) await $36a0b5dcceb74366$var$Preloader.readyForDisplayImage(content);
+        else if (content instanceof HTMLVideoElement) await $36a0b5dcceb74366$var$Preloader.readyForDisplayVideo(content);
+        else (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
+        return content;
+    }
+    static async readyForDisplayImage(image) {
+        if (!image.complete) await (0, $c023f3034e047f76$export$1f4f18df0126964a)(image, [
+            "load"
+        ], [
+            "abort",
+            "error"
+        ]);
+        return image;
+    }
+    static async readyForDisplayVideo(video) {
+        if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) await (0, $c023f3034e047f76$export$1f4f18df0126964a)(video, [
+            "canplaythrough"
+        ], [
+            "abort",
+            "error"
+        ]);
+        return video;
     }
     static createPreloadingElement(mimetype, url) {
         const type = mimetype.split("/", 1)[0];
@@ -8707,43 +8779,19 @@ class $3f79f3079f811782$var$ContentCreator {
     static create(mimetype, url, preloader = new (0, $36a0b5dcceb74366$export$2e2bcd8739ae039)()) {
         return preloader.get(mimetype, url);
     }
-    static async readyForDisplay(content) {
-        if ($3f79f3079f811782$var$ContentCreator.isImage(content)) await $3f79f3079f811782$var$ContentCreator.readyForDisplayImage(content);
-        else if ($3f79f3079f811782$var$ContentCreator.isVideo(content)) await $3f79f3079f811782$var$ContentCreator.readyForDisplayVideo(content);
-        else (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
-        return content;
-    }
-    static async readyForDisplayImage(image) {
-        if (!image.complete) await $3f79f3079f811782$var$ContentCreator.waitForEvents(image, [
-            "load"
-        ], [
-            "abort",
-            "error"
-        ]);
-        return image;
-    }
-    static async readyForDisplayVideo(video) {
-        if (video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) await $3f79f3079f811782$var$ContentCreator.waitForEvents(video, [
-            "canplaythrough"
-        ], [
-            "abort",
-            "error"
-        ]);
-        return video;
-    }
     static play(content) {
-        if ($3f79f3079f811782$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($3f79f3079f811782$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             content.play().finally(()=>{});
             return content;
         }
         return (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
     }
     static setVolume(content, volume, mode) {
-        if ($3f79f3079f811782$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($3f79f3079f811782$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             switch(mode){
                 case "absolute":
                     // eslint-disable-next-line no-param-reassign
@@ -8761,9 +8809,9 @@ class $3f79f3079f811782$var$ContentCreator {
         return (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
     }
     static setMuted(content, value) {
-        if ($3f79f3079f811782$var$ContentCreator.isImage(content)) // NOOP
+        if (content instanceof HTMLImageElement) // NOOP
         return content;
-        if ($3f79f3079f811782$var$ContentCreator.isVideo(content)) {
+        if (content instanceof HTMLVideoElement) {
             // eslint-disable-next-line no-param-reassign
             content.muted = value;
             return content;
@@ -8771,12 +8819,12 @@ class $3f79f3079f811782$var$ContentCreator {
         return (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
     }
     static async getDimensions(content) {
-        if ($3f79f3079f811782$var$ContentCreator.isImage(content)) return $3f79f3079f811782$var$ContentCreator.getDimensionsImage(content);
-        if ($3f79f3079f811782$var$ContentCreator.isVideo(content)) return $3f79f3079f811782$var$ContentCreator.getDimensionsVideo(content);
+        if (content instanceof HTMLImageElement) return $3f79f3079f811782$var$ContentCreator.getDimensionsImage(content);
+        if (content instanceof HTMLVideoElement) return $3f79f3079f811782$var$ContentCreator.getDimensionsVideo(content);
         return (0, $72b5b0b5fe80c7c1$export$57b5e12ee8bbcf57)(content);
     }
     static async getDimensionsImage(image) {
-        if (!image.complete) await $3f79f3079f811782$var$ContentCreator.waitForEvents(image, [
+        if (!image.complete) await (0, $c023f3034e047f76$export$1f4f18df0126964a)(image, [
             "load"
         ], [
             "abort",
@@ -8788,7 +8836,7 @@ class $3f79f3079f811782$var$ContentCreator {
         };
     }
     static async getDimensionsVideo(video) {
-        if (video.readyState < HTMLMediaElement.HAVE_METADATA) await $3f79f3079f811782$var$ContentCreator.waitForEvents(video, [
+        if (video.readyState < HTMLMediaElement.HAVE_METADATA) await (0, $c023f3034e047f76$export$1f4f18df0126964a)(video, [
             "loadedmetadata"
         ], [
             "abort",
@@ -8798,30 +8846,6 @@ class $3f79f3079f811782$var$ContentCreator {
             width: video.videoWidth,
             height: video.videoHeight
         };
-    }
-    static async waitForEvents(element, resolveEventNames, rejectEventNames) {
-        return new Promise((resolve, reject)=>{
-            const [resolveHandler, rejectHandler] = [
-                ()=>{
-                    resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
-                    rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
-                    resolve(element);
-                },
-                (e)=>{
-                    resolveEventNames.forEach((name)=>element.removeEventListener(name, resolveHandler));
-                    rejectEventNames.forEach((name)=>element.removeEventListener(name, rejectHandler));
-                    reject(e);
-                }, 
-            ];
-            resolveEventNames.forEach((e)=>element.addEventListener(e, resolveHandler));
-            rejectEventNames.forEach((e)=>element.addEventListener(e, rejectHandler));
-        });
-    }
-    static isImage(element) {
-        return element instanceof HTMLImageElement;
-    }
-    static isVideo(element) {
-        return element instanceof HTMLVideoElement;
     }
 }
 var $3f79f3079f811782$export$2e2bcd8739ae039 = $3f79f3079f811782$var$ContentCreator;
@@ -9684,7 +9708,7 @@ class $56750857b8f56d61$var$ClearAction extends (0, $82db5595f3eb13f9$export$2e2
             }
         };
         const { viewer: viewer  } = this.state;
-        return viewer.execute("show", showActionOptions);
+        await viewer.execute("show", showActionOptions);
     }
     // eslint-disable-next-line class-methods-use-this
     unpack(options) {
@@ -9724,33 +9748,6 @@ $4b5ff93cb853ca0a$exports = "@-webkit-keyframes animation-none {\n  0%, 100% {\n
 
 
 
-
-
-class $c023f3034e047f76$export$af22135957e110d7 {
-    promise() {
-        return this._promise;
-    }
-    resolve(result) {
-        return this._resolve(result);
-    }
-    reject() {
-        return this._reject();
-    }
-    constructor(){
-        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_promise", void 0);
-        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_resolve", void 0);
-        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_reject", void 0);
-        // dummy initialization required to satisfy TS2564 (definite assignment)
-        let tmpResolve = ()=>{};
-        let tmpReject = ()=>{};
-        this._promise = new Promise((resolve, reject)=>{
-            tmpResolve = resolve;
-            tmpReject = reject;
-        });
-        this._resolve = tmpResolve;
-        this._reject = tmpReject;
-    }
-}
 
 
 class $73d9c5d550b0e52e$export$2e2bcd8739ae039 {
@@ -10477,7 +10474,7 @@ class $a7c0677d7f0b7b7f$export$a3f2a64f39c0a404 extends HTMLElement {
         super();
         (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "viewer", void 0);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        this.viewer = new $a7c0677d7f0b7b7f$var$HilbertGalleryViewer(this);
+        this.viewer = new $a7c0677d7f0b7b7f$var$HilbertGalleryViewer(this, false);
     }
 }
 class $a7c0677d7f0b7b7f$var$HilbertGalleryViewer {
@@ -10494,7 +10491,7 @@ class $a7c0677d7f0b7b7f$var$HilbertGalleryViewer {
     }
     async execute(action, arg) {
         // executeImpl only exists for the purpose of renaming the parameters
-        await this.executeImpl(action, arg);
+        return this.executeImpl(action, arg);
     }
     async executeImpl(actionName, arg) {
         const action = this.actionRegistry.get(actionName);
@@ -10503,18 +10500,24 @@ class $a7c0677d7f0b7b7f$var$HilbertGalleryViewer {
             const executor = action.buildExecutor(arg);
             // the executor encapsulates the preprocessed arg
             // and allows type-safe execution
-            await executor();
-        } else throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
+            // we need to await the result to avoid several levels of Promises
+            // eslint-disable-next-line @typescript-eslint/return-await
+            return await executor();
+        }
+        throw new TypeError("HilbertGalleryViewer.execute(): unknown action");
     }
     static defineCustomElement() {
         customElements.define("hilbert-gallery-viewer", $a7c0677d7f0b7b7f$export$a3f2a64f39c0a404);
     }
-    constructor(parent){
+    constructor(parent, wrap = true){
         (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "actionRegistry", void 0);
         (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "state", void 0);
-        const element = document.createElement("div");
-        parent.appendChild(element);
-        const shadowRoot = element.attachShadow({
+        const insertWrapper = (element)=>{
+            const wrapper = document.createElement("div");
+            return element.appendChild(wrapper);
+        };
+        const host = wrap ? insertWrapper(parent) : parent;
+        const shadowRoot = host.attachShadow({
             mode: "open"
         });
         (0, $3164f4d4509225dd$export$c2aff9e92362a9b2)(shadowRoot, (0, (/*@__PURE__*/$parcel$interopDefault($3997bf1755da0bed$exports))));
