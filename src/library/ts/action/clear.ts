@@ -49,7 +49,7 @@ class ClearAction extends Base<ClearActionOptions, void> {
       animation: { type: 'none' },
     };
     const { viewer } = this.state;
-    return viewer.execute('show', showActionOptions);
+    await viewer.execute('show', showActionOptions);
   }
 
   // eslint-disable-next-line class-methods-use-this
