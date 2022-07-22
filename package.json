@@ -1,6 +1,6 @@
 {
   "name": "@imaginary-maths/hilbert-gallery-viewer",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Viewer component for hilbert-gallery",
   "author": {
     "name": "Christian Stussak",
