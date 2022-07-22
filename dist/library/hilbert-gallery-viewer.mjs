@@ -9626,9 +9626,9 @@ class $6af70478776110a7$var$ShowAction extends (0, $82db5595f3eb13f9$export$2e2b
         const { activeSlides: activeSlides  } = this.state;
         activeSlides.push(slideData);
         try {
-            await transition.done();
+            await transition.out();
         } catch (e) {
-            const msg = "Waiting for transition to end failed. Proceeding anyway";
+            const msg = "Waiting for transition.out() failed. Proceeding anyway";
             if (e) this.state.log.warn(msg, e);
             else this.state.log.warn(msg);
         }
@@ -9773,15 +9773,15 @@ class $73d9c5d550b0e52e$export$2e2bcd8739ae039 {
 }
 
 
-const $55d81c08903d074d$var$cssBasedAnimationOptionsDefault = {
-    classList: [],
-    cssPropertySetter: ()=>{},
-    cssPropertyRemover: ()=>{},
-    endEventFilter: ()=>true,
-    cancelEventFilter: ()=>true,
-    removeAtEnd: true,
-    removeOnCancel: true
-};
+const $55d81c08903d074d$export$74fdca545475e081 = ()=>({
+        classList: [],
+        cssPropertySetter: ()=>{},
+        cssPropertyRemover: ()=>{},
+        endEventFilter: ()=>true,
+        cancelEventFilter: ()=>true,
+        removeAtEnd: true,
+        removeOnCancel: true
+    });
 class $55d81c08903d074d$var$CssBasedAnimation extends (0, $73d9c5d550b0e52e$export$2e2bcd8739ae039) {
     addClasses() {
         const { classList: classList  } = this.cssBasedAnimationOptions;
@@ -9830,7 +9830,7 @@ class $55d81c08903d074d$var$CssBasedAnimation extends (0, $73d9c5d550b0e52e$expo
         (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "cssBasedAnimationOptions", void 0);
         const { element: element  } = this;
         this.cssBasedAnimationOptions = {
-            ...$55d81c08903d074d$var$cssBasedAnimationOptionsDefault,
+            ...$55d81c08903d074d$export$74fdca545475e081(),
             ...options
         };
         const { cssPropertySetter: cssPropertySetter , endEventFilter: endEventFilter , cancelEventFilter: cancelEventFilter  } = this.cssBasedAnimationOptions;
@@ -10065,16 +10065,54 @@ var $953851fbe1c966da$exports = {};
 $parcel$export($953851fbe1c966da$exports, "NoneTransition", function () { return $953851fbe1c966da$export$b1e3715c3749f16; }, function (v) { return $953851fbe1c966da$export$b1e3715c3749f16 = v; });
 
 var $10da80263759aa0a$exports = {};
-$10da80263759aa0a$exports = "@-webkit-keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n.transition-none {\n  --transition-none-delay: 0s;\n  --transition-none-duration: 0s;\n  opacity: 0;\n  -webkit-animation-delay: var(--transition-none-delay);\n  animation-delay: var(--transition-none-delay);\n  -webkit-animation-duration: var(--transition-none-duration);\n  animation-duration: var(--transition-none-duration);\n  -webkit-animation-name: transition-none;\n  animation-name: transition-none;\n  -webkit-animation-timing-function: ease-in-out;\n  animation-timing-function: ease-in-out;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n\n";
+$10da80263759aa0a$exports = "@-webkit-keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@-webkit-keyframes transition-none-out {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none-out {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n.transition-none {\n  --transition-none-delay: 0s;\n  --transition-none-duration: 0s;\n  opacity: 0;\n  -webkit-animation-delay: var(--transition-none-delay);\n  animation-delay: var(--transition-none-delay);\n  -webkit-animation-duration: var(--transition-none-duration), 0s;\n  animation-duration: var(--transition-none-duration), 0s;\n  -webkit-animation-name: transition-none, transition-none-out;\n  animation-name: transition-none, transition-none-out;\n  -webkit-animation-timing-function: ease-in-out;\n  animation-timing-function: ease-in-out;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n\n";
 
 
 
 
+
+const $bdea27449bd51050$export$7b0c9a61a7106e55 = ()=>({
+        ...(0, $55d81c08903d074d$export$74fdca545475e081)(),
+        outEndEventFilter: ()=>true
+    });
 class $bdea27449bd51050$var$CssBasedTransition extends (0, $55d81c08903d074d$export$2e2bcd8739ae039) {
+    outEnd() {
+        if (!this.isCancelled() && !this.isOut()) {
+            this.element.removeEventListener("animationend", this.outEndHandler);
+            this._isOut = true;
+            this.outPEC.resolve();
+        }
+    }
+    out() {
+        return this.outPEC.promise();
+    }
+    isOut() {
+        return this._isOut;
+    }
+    cancel() {
+        if (!this.isCancelled() && !this.isDone()) {
+            this.outPEC.reject();
+            super.cancel();
+        }
+    }
     constructor(content, options){
         super(content, options);
         (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "targetShowUpDelay", void 0);
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "_isOut", false);
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "outPEC", void 0);
+        (0, $180022016c8cd477$export$2e2bcd8739ae039)(this, "outEndHandler", void 0);
         this.targetShowUpDelay = options.targetShowUpDelay;
+        this.outPEC = new (0, $c023f3034e047f76$export$af22135957e110d7)();
+        // prevent uncaught exceptions in promise
+        this.outPEC.promise().catch(()=>{});
+        const { outEndEventFilter: outEndEventFilter  } = {
+            ...$bdea27449bd51050$export$7b0c9a61a7106e55(),
+            ...options
+        };
+        this.outEndHandler = (ae)=>{
+            if (outEndEventFilter(ae)) this.outEnd();
+        };
+        content.addEventListener("animationend", this.outEndHandler);
     }
 }
 var $bdea27449bd51050$export$2e2bcd8739ae039 = $bdea27449bd51050$var$CssBasedTransition;
@@ -10107,6 +10145,7 @@ const $953851fbe1c966da$var$noneTransitionOptionsSchema = {
 const $953851fbe1c966da$var$validateNoneTransitionOptions = (0, $04d4290cc7e97f72$export$9ea1f4fe5062c6d)($953851fbe1c966da$var$noneTransitionOptionsSchema);
 let $953851fbe1c966da$export$b1e3715c3749f16 = $953851fbe1c966da$var$NoneTransition_1 = class NoneTransition extends (0, $bdea27449bd51050$export$2e2bcd8739ae039) {
     static createCssBasedTransitionOptions(options) {
+        const outAnimationEventFilter = ({ animationName: animationName  })=>animationName === "transition-none-out";
         const animationEventFilter = ({ animationName: animationName  })=>animationName === "transition-none";
         const { delay: delay , duration: duration  } = options;
         const cssPropertySetter = (e)=>{
@@ -10126,6 +10165,7 @@ let $953851fbe1c966da$export$b1e3715c3749f16 = $953851fbe1c966da$var$NoneTransit
                 "transition",
                 "transition-none"
             ],
+            outEndEventFilter: outAnimationEventFilter,
             endEventFilter: animationEventFilter,
             cancelEventFilter: animationEventFilter,
             cssPropertySetter: cssPropertySetter,
@@ -10196,8 +10236,9 @@ const $aec42b5e4047cb4d$var$validateFadeTransitionOptions = (0, $04d4290cc7e97f7
 const $aec42b5e4047cb4d$var$defaultDuration = 2;
 let $aec42b5e4047cb4d$export$b4cd2c531e831209 = $aec42b5e4047cb4d$var$FadeTransition_1 = class FadeTransition extends (0, $bdea27449bd51050$export$2e2bcd8739ae039) {
     static createCssBasedTransitionOptions(options) {
+        const outAnimationEventFilter = ({ animationName: animationName  })=>animationName === "transition-fade-overlay";
         const animationEventFilter = ({ animationName: animationName  })=>animationName === "transition-fade";
-        const { delay: delay , duration: duration  } = {
+        const { delay: delay , duration: duration , color: color  } = {
             duration: $aec42b5e4047cb4d$var$defaultDuration,
             ...options
         };
@@ -10205,11 +10246,13 @@ let $aec42b5e4047cb4d$export$b4cd2c531e831209 = $aec42b5e4047cb4d$var$FadeTransi
             const s = (0, $3164f4d4509225dd$export$d5858ef5ae9c7e87);
             s(e, "--transition-fade-delay", (v)=>`${v}s`, delay);
             s(e, "--transition-fade-duration", (v)=>`${v}s`, duration);
+            s(e, "--transition-fade-color", (v)=>`${v}`, color);
         };
         const cssPropertyRemover = (e)=>{
             const propertyNames = [
                 "--transition-fade-delay",
-                "--transition-fade-duration", 
+                "--transition-fade-duration",
+                "--transition-fade-color", 
             ];
             propertyNames.forEach((n)=>e.style.removeProperty(n));
         };
@@ -10218,6 +10261,7 @@ let $aec42b5e4047cb4d$export$b4cd2c531e831209 = $aec42b5e4047cb4d$var$FadeTransi
                 "transition",
                 "transition-fade"
             ],
+            outEndEventFilter: outAnimationEventFilter,
             endEventFilter: animationEventFilter,
             cancelEventFilter: animationEventFilter,
             cssPropertySetter: cssPropertySetter,
@@ -10301,6 +10345,7 @@ let $8db1ece38e01cdfb$export$4143b605098af1c4 = $8db1ece38e01cdfb$var$CrossFadeT
                 "transition",
                 "transition-cross-fade"
             ],
+            outEndEventFilter: animationEventFilter,
             endEventFilter: animationEventFilter,
             cancelEventFilter: animationEventFilter,
             cssPropertySetter: cssPropertySetter,

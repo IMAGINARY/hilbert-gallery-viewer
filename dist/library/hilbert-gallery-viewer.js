@@ -17034,14 +17034,14 @@ var $8321c7a55257bc04$var$ShowAction = /*#__PURE__*/ function(Base1) {
                                 activeSlides.push(slideData);
                                 _ctx.prev = 17;
                                 _ctx.next = 20;
-                                return transition.done();
+                                return transition.out();
                             case 20:
                                 _ctx.next = 26;
                                 break;
                             case 22:
                                 _ctx.prev = 22;
                                 _ctx.t0 = _ctx["catch"](17);
-                                msg = "Waiting for transition to end failed. Proceeding anyway";
+                                msg = "Waiting for transition.out() failed. Proceeding anyway";
                                 if (_ctx.t0) _this.state.log.warn(msg, _ctx.t0);
                                 else _this.state.log.warn(msg);
                             case 26:
@@ -17291,18 +17291,20 @@ var $fbe767e9a27761f9$export$2e2bcd8739ae039 = /*#__PURE__*/ function() {
 }();
 
 
-var $c6ddb612d8fa565d$var$cssBasedAnimationOptionsDefault = {
-    classList: [],
-    cssPropertySetter: function() {},
-    cssPropertyRemover: function() {},
-    endEventFilter: function() {
-        return true;
-    },
-    cancelEventFilter: function() {
-        return true;
-    },
-    removeAtEnd: true,
-    removeOnCancel: true
+var $c6ddb612d8fa565d$export$74fdca545475e081 = function() {
+    return {
+        classList: [],
+        cssPropertySetter: function() {},
+        cssPropertyRemover: function() {},
+        endEventFilter: function() {
+            return true;
+        },
+        cancelEventFilter: function() {
+            return true;
+        },
+        removeAtEnd: true,
+        removeOnCancel: true
+    };
 };
 var $c6ddb612d8fa565d$var$CssBasedAnimation = /*#__PURE__*/ function(BaseAnimation1) {
     "use strict";
@@ -17316,7 +17318,7 @@ var $c6ddb612d8fa565d$var$CssBasedAnimation = /*#__PURE__*/ function(BaseAnimati
         (0, $3jaBu.default)((0, $apDhX.default)(_this), "cancelHandler", void 0);
         (0, $3jaBu.default)((0, $apDhX.default)(_this), "cssBasedAnimationOptions", void 0);
         var element = (0, $apDhX.default)(_this).element;
-        _this.cssBasedAnimationOptions = (0, $1he00.default)({}, $c6ddb612d8fa565d$var$cssBasedAnimationOptionsDefault, options);
+        _this.cssBasedAnimationOptions = (0, $1he00.default)({}, $c6ddb612d8fa565d$export$74fdca545475e081(), options);
         var _cssBasedAnimationOptions = _this.cssBasedAnimationOptions, cssPropertySetter = _cssBasedAnimationOptions.cssPropertySetter, endEventFilter = _cssBasedAnimationOptions.endEventFilter, cancelEventFilter = _cssBasedAnimationOptions.cancelEventFilter;
         _this.addClasses();
         cssPropertySetter(element);
@@ -17726,7 +17728,7 @@ var $5sttm = parcelRequire("5sttm");
 
 var $8oBD6 = parcelRequire("8oBD6");
 var $57f693248248f92f$exports = {};
-$57f693248248f92f$exports = "@-webkit-keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n.transition-none {\n  --transition-none-delay: 0s;\n  --transition-none-duration: 0s;\n  opacity: 0;\n  -webkit-animation-delay: var(--transition-none-delay);\n  animation-delay: var(--transition-none-delay);\n  -webkit-animation-duration: var(--transition-none-duration);\n  animation-duration: var(--transition-none-duration);\n  -webkit-animation-name: transition-none;\n  animation-name: transition-none;\n  -webkit-animation-timing-function: ease-in-out;\n  animation-timing-function: ease-in-out;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n\n";
+$57f693248248f92f$exports = "@-webkit-keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@-webkit-keyframes transition-none-out {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n@keyframes transition-none-out {\n  0%, 100% {\n    opacity: 1;\n  }\n}\n\n.transition-none {\n  --transition-none-delay: 0s;\n  --transition-none-duration: 0s;\n  opacity: 0;\n  -webkit-animation-delay: var(--transition-none-delay);\n  animation-delay: var(--transition-none-delay);\n  -webkit-animation-duration: var(--transition-none-duration), 0s;\n  animation-duration: var(--transition-none-duration), 0s;\n  -webkit-animation-name: transition-none, transition-none-out;\n  animation-name: transition-none, transition-none-out;\n  -webkit-animation-timing-function: ease-in-out;\n  animation-timing-function: ease-in-out;\n  -webkit-animation-fill-mode: forwards;\n  animation-fill-mode: forwards;\n}\n\n";
 
 
 
@@ -17734,12 +17736,30 @@ var $apDhX = parcelRequire("apDhX");
 
 var $f3yih = parcelRequire("f3yih");
 
+var $2x3qu = parcelRequire("2x3qu");
+
 var $3jaBu = parcelRequire("3jaBu");
+
+var $jdvqV = parcelRequire("jdvqV");
+
+var $7l5ho = parcelRequire("7l5ho");
 
 var $5sttm = parcelRequire("5sttm");
 
+var $1he00 = parcelRequire("1he00");
+
+var $8zIXb = parcelRequire("8zIXb");
+
 var $8oBD6 = parcelRequire("8oBD6");
 
+
+var $8e069b25d58ac599$export$7b0c9a61a7106e55 = function() {
+    return (0, $8zIXb.default)((0, $1he00.default)({}, (0, $c6ddb612d8fa565d$export$74fdca545475e081)()), {
+        outEndEventFilter: function() {
+            return true;
+        }
+    });
+};
 var $8e069b25d58ac599$var$CssBasedTransition = /*#__PURE__*/ function(CssBasedAnimation1) {
     "use strict";
     (0, $5sttm.default)(CssBasedTransition, CssBasedAnimation1);
@@ -17749,9 +17769,53 @@ var $8e069b25d58ac599$var$CssBasedTransition = /*#__PURE__*/ function(CssBasedAn
         var _this;
         _this = _super.call(this, content, options);
         (0, $3jaBu.default)((0, $apDhX.default)(_this), "targetShowUpDelay", void 0);
+        (0, $3jaBu.default)((0, $apDhX.default)(_this), "_isOut", false);
+        (0, $3jaBu.default)((0, $apDhX.default)(_this), "outPEC", void 0);
+        (0, $3jaBu.default)((0, $apDhX.default)(_this), "outEndHandler", void 0);
         _this.targetShowUpDelay = options.targetShowUpDelay;
+        _this.outPEC = new (0, $2ec0177fc7e2e758$export$af22135957e110d7)();
+        // prevent uncaught exceptions in promise
+        _this.outPEC.promise().catch(function() {});
+        var outEndEventFilter = (0, $1he00.default)({}, $8e069b25d58ac599$export$7b0c9a61a7106e55(), options).outEndEventFilter;
+        _this.outEndHandler = function(ae) {
+            if (outEndEventFilter(ae)) _this.outEnd();
+        };
+        content.addEventListener("animationend", _this.outEndHandler);
         return _this;
     }
+    (0, $2x3qu.default)(CssBasedTransition, [
+        {
+            key: "outEnd",
+            value: function outEnd() {
+                if (!this.isCancelled() && !this.isOut()) {
+                    this.element.removeEventListener("animationend", this.outEndHandler);
+                    this._isOut = true;
+                    this.outPEC.resolve();
+                }
+            }
+        },
+        {
+            key: "out",
+            value: function out() {
+                return this.outPEC.promise();
+            }
+        },
+        {
+            key: "isOut",
+            value: function isOut() {
+                return this._isOut;
+            }
+        },
+        {
+            key: "cancel",
+            value: function cancel() {
+                if (!this.isCancelled() && !this.isDone()) {
+                    this.outPEC.reject();
+                    (0, $jdvqV.default)((0, $7l5ho.default)(CssBasedTransition.prototype), "cancel", this).call(this);
+                }
+            }
+        }
+    ]);
     return CssBasedTransition;
 }((0, $c6ddb612d8fa565d$export$2e2bcd8739ae039));
 var $8e069b25d58ac599$export$2e2bcd8739ae039 = $8e069b25d58ac599$var$CssBasedTransition;
@@ -17797,6 +17861,10 @@ var $ca586deb00ed010b$export$b1e3715c3749f16 = $ca586deb00ed010b$var$NoneTransit
         {
             key: "createCssBasedTransitionOptions",
             value: function createCssBasedTransitionOptions(options) {
+                var outAnimationEventFilter = function(param) {
+                    var animationName = param.animationName;
+                    return animationName === "transition-none-out";
+                };
                 var animationEventFilter = function(param) {
                     var animationName = param.animationName;
                     return animationName === "transition-none";
@@ -17825,6 +17893,7 @@ var $ca586deb00ed010b$export$b1e3715c3749f16 = $ca586deb00ed010b$var$NoneTransit
                         "transition",
                         "transition-none"
                     ],
+                    outEndEventFilter: outAnimationEventFilter,
                     endEventFilter: animationEventFilter,
                     cancelEventFilter: animationEventFilter,
                     cssPropertySetter: cssPropertySetter,
@@ -17925,13 +17994,17 @@ var $e03d975d69034be5$export$b4cd2c531e831209 = $e03d975d69034be5$var$FadeTransi
         {
             key: "createCssBasedTransitionOptions",
             value: function createCssBasedTransitionOptions(options) {
+                var outAnimationEventFilter = function(param) {
+                    var animationName = param.animationName;
+                    return animationName === "transition-fade-overlay";
+                };
                 var animationEventFilter = function(param) {
                     var animationName = param.animationName;
                     return animationName === "transition-fade";
                 };
                 var ref = (0, $1he00.default)({
                     duration: $e03d975d69034be5$var$defaultDuration
-                }, options), delay = ref.delay, duration = ref.duration;
+                }, options), delay = ref.delay, duration = ref.duration, color = ref.color;
                 var cssPropertySetter = function(e) {
                     var s = (0, $58b88e7064bf4641$export$d5858ef5ae9c7e87);
                     s(e, "--transition-fade-delay", function(v) {
@@ -17940,11 +18013,15 @@ var $e03d975d69034be5$export$b4cd2c531e831209 = $e03d975d69034be5$var$FadeTransi
                     s(e, "--transition-fade-duration", function(v) {
                         return "".concat(v, "s");
                     }, duration);
+                    s(e, "--transition-fade-color", function(v) {
+                        return "".concat(v);
+                    }, color);
                 };
                 var cssPropertyRemover = function(e) {
                     var propertyNames = [
                         "--transition-fade-delay",
-                        "--transition-fade-duration", 
+                        "--transition-fade-duration",
+                        "--transition-fade-color", 
                     ];
                     propertyNames.forEach(function(n) {
                         return e.style.removeProperty(n);
@@ -17955,6 +18032,7 @@ var $e03d975d69034be5$export$b4cd2c531e831209 = $e03d975d69034be5$var$FadeTransi
                         "transition",
                         "transition-fade"
                     ],
+                    outEndEventFilter: outAnimationEventFilter,
                     endEventFilter: animationEventFilter,
                     cancelEventFilter: animationEventFilter,
                     cssPropertySetter: cssPropertySetter,
@@ -18076,6 +18154,7 @@ var $ad3a7c7195869e2a$export$4143b605098af1c4 = $ad3a7c7195869e2a$var$CrossFadeT
                         "transition",
                         "transition-cross-fade"
                     ],
+                    outEndEventFilter: animationEventFilter,
                     endEventFilter: animationEventFilter,
                     cancelEventFilter: animationEventFilter,
                     cssPropertySetter: cssPropertySetter,

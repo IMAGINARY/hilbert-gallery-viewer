@@ -29,6 +29,8 @@ interface AnimationStatic<A extends Animation, O extends AnimationOptions> {
 }
 interface Transition extends Animation {
     readonly targetShowUpDelay: number;
+    out(): Promise<void>;
+    isOut(): boolean;
 }
 type TransitionOptions = AnimationOptions;
 interface TransitionStatic<T extends Transition, O extends TransitionOptions> {
