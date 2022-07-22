@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import { strict as assert } from 'assert';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import ready from 'document-ready';
 
 import './side-effects';

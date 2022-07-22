@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'console-log-div';
 import { strict as assert } from 'assert';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import ready from 'document-ready';
 
 const defaultConsoleHeight = 30;
