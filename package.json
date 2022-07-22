@@ -80,6 +80,9 @@
   "parcelIgnore": [
     "\\.\\./library/hilbert-gallery-viewer\\.js"
   ],
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@parcel/packager-ts": "2.6.2",
     "@parcel/transformer-inline-string": "2.6.2",
