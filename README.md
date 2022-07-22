@@ -166,9 +166,8 @@ interface TransitionOptions {
 - `duration` (default: depends on the transition): Duration of the transition in
   seconds.
 
-The previous media will be removed after `delay + duration` seconds, i.e. the
-audio of the previously displayed video will continue playing for this amount of
-time.
+The previous media will be removed after it has been transitioned out, i.e. the
+transition determines when the actual removal happens.
 
 ###### The `none` transition
 
