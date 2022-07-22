@@ -40,18 +40,23 @@ export default class FadeTransition extends CssBasedTransition {
       animationName === 'transition-fade-overlay';
     const animationEventFilter = ({ animationName }: AnimationEvent) =>
       animationName === 'transition-fade';
-    const { delay, duration } = { duration: defaultDuration, ...options };
+    const { delay, duration, color } = {
+      duration: defaultDuration,
+      ...options,
+    };
 
     const cssPropertySetter = (e: HTMLElement) => {
       const s = setCSSPropertyIfDefined;
       s(e, '--transition-fade-delay', (v) => `${v}s`, delay);
       s(e, '--transition-fade-duration', (v) => `${v}s`, duration);
+      s(e, '--transition-fade-color', (v) => `${v}`, color);
     };
 
     const cssPropertyRemover = (e: HTMLElement) => {
       const propertyNames = [
         '--transition-fade-delay',
         '--transition-fade-duration',
+        '--transition-fade-color',
       ];
       propertyNames.forEach((n) => e.style.removeProperty(n));
     };
