@@ -38,6 +38,7 @@
       "distDir": "dist/demo",
       "isLibrary": false,
       "context": "browser",
+      "optimize": true,
       "engines": {
         "browsers": [
           "> 0.2% and not dead and supports css-animation",
@@ -45,8 +46,12 @@
         ]
       }
     },
-    "main": {},
-    "module": {},
+    "main": {
+      "optimize": true
+    },
+    "module": {
+      "optimize": true
+    },
     "target-script-tag": {
       "context": "browser",
       "includeNodeModules": true,
