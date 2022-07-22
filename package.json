@@ -127,7 +127,7 @@
   "scripts": {
     "serve": "parcel serve --dist-dir dist-dev --target demo",
     "serve:chrome56": "parcel serve --dist-dir dist-dev --target demo --no-hmr",
-    "watch": "parcel watch",
+    "watch:demo": "parcel watch --target demo",
     "build": "rm -r dist; parcel build --public-url .",
     "build:library": "rm -r dist/library; parcel build --public-url . --target main --target module --target target-script-tag --target target-script-tag-min --target target-script-tag-module --target target-script-tag-module-min --target types",
     "build:demo": "rm -r dist/demo; parcel build --public-url . --target demo",
