@@ -19,13 +19,26 @@ Features:
 - validation of action arguments via JSON Schema
 - supports semi-legacy web browsers: tested with Chrome 56
 
-## Usage
+## Funding
+
+This package is part of the project museum4punkt0 - Digital Strategies for the
+Museum of the Future, sub-project Lively Exhibition. The project museum4punkt0
+is funded by the Federal Government Commissioner for Culture and the Media in
+accordance with a resolution issued by the German Bundestag (Parliament of the
+Federal Republic of Germany). Further information: www.museum4punkt0.de
+
+![Logo of the Federal Government Commissioner for Culture and the Media][logo-bmk]
+![Logo of NeustartKultur][logo-neustartkultur]
+
+## Installation
 
 Install the package via `npm`:
 
 ```shell
 npm install @imaginary-maths/hilbert-gallery-viewer
 ```
+
+## Usage
 
 ### Initialization
 
@@ -436,6 +449,11 @@ Developed by Christian Stussak for IMAGINARY gGmbH.
 
 ## License
 
-Copyright 2022 IMAGINARY gGmbH
+Copyright © 2022 IMAGINARY gGmbH
 
 Licensed under the MIT license (see the [`LICENSE`](LICENSE) file).
+
+[logo-bmk]:
+  https://github.com/museum4punkt0/Object-by-Object/blob/77bba25aa5a7f9948d4fd6f0b59f5bfb56ae89e2/04%20Logos/BKM_Fz_2017_Web_de.gif
+[logo-neustartkultur]:
+  https://github.com/museum4punkt0/Object-by-Object/blob/22f4e86d4d213c87afdba45454bf62f4253cada1/04%20Logos/BKM_Neustart_Kultur_Wortmarke_pos_RGB_RZ_web.jpg
