@@ -22,10 +22,11 @@ Features:
 ## Funding
 
 This package is part of the project museum4punkt0 - Digital Strategies for the
-Museum of the Future, sub-project Lively Exhibition. The project museum4punkt0
-is funded by the Federal Government Commissioner for Culture and the Media in
-accordance with a resolution issued by the German Bundestag (Parliament of the
-Federal Republic of Germany). Further information: www.museum4punkt0.de
+Museum of the Future, sub-project Kulturgut Fastnacht digital (Lively
+Exhibition). The project museum4punkt0 is funded by the Federal Government
+Commissioner for Culture and the Media in accordance with a resolution issued by
+the German Bundestag (Parliament of the Federal Republic of Germany). Further
+information: www.museum4punkt0.de
 
 ![Logo of the Federal Government Commissioner for Culture and the Media][logo-bmk]
 ![Logo of NeustartKultur][logo-neustartkultur]
